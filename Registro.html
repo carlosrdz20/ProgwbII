@@ -7,30 +7,49 @@
     <link rel="stylesheet" href="Registro.css">
 </head>
 <body>
-    <div class="background-image">
+   
         <div class="register-box">
             <div class="logo"></div>
-            <div class="Avion"></div> 
+            <div class="Avion"></div>
             <h2>Registro</h2>
             <form action="#" method="post">
                 <div class="textbox">
-                    <input type="text" placeholder="Nombre" name="nombre" required>
+                    <input type="text" placeholder="Nombre de usuario" name="username" required>
                 </div>
                 <div class="textbox">
-                    <input type="text" placeholder="Apellido" name="apellido" required>
+                    <input type="text" placeholder="Nombre completo" name="name" required>
                 </div>
                 <div class="textbox">
-                    <input type="email" placeholder="Correo electrónico" name="email" required>
+                    <input type="text" placeholder="Correo electrónico" name="email" required>
+                </div>
+                <h4>Foto de perfil</h4>
+                <div class="textbox">
+                    <input type="file"  name="foto" accept="image/*" required>
+                </div>
+                <h4>Fecha de nacimiento</h4>
+                <div class="textbox">
+                    <input type="date"  name="fecha_nacimiento" required>
+                </div>
+                <div class="textbox">
+                    <select name="genero" required>
+                        <option value="" disabled selected>Selecciona tu género</option>
+                        <option value="masculino">Masculino</option>
+                        <option value="femenino">Femenino</option>
+                        <option value="otro">Otro</option>
+                    </select>
                 </div>
                 <div class="textbox">
                     <input type="password" placeholder="Contraseña" name="password" required>
                 </div>
-                <input class="btn" type="submit" value="Registrarse">
+                <div class="textbox">
+                    <input type="password" placeholder="Repetir contraseña" name="passwordrep" required>
+                </div>
+                <input class="btn" type="submit" value="Registrarse  >">
             </form>
             <div class="extras">
-                <p><a href="login.html">¿Ya tienes una cuenta? Inicia sesión</a></p>
+                <p>¿Ya una cuenta?<a href="#">Iniciar sesión</a></p>
             </div>
         </div>
-    </div>
+    
 </body>
 </html>
