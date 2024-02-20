@@ -16,7 +16,6 @@ header {
     padding: 10px 0;
 }
 
-/* Otros estilos... */
 
 .navbar {
   display: flex;
@@ -30,9 +29,9 @@ header {
 }
 
 .navbar h1 img {
-  width: 50px; /* Ajusta el tamaño de la imagen */
-  height: 50px; /* Ajusta el tamaño de la imagen */
-  border-radius: 50%; /* Da forma circular a la imagen */
+  width: 50px; 
+  height: 50px; 
+  border-radius: 50%; 
 }
 
 .logo-search-container {
@@ -43,13 +42,13 @@ header {
 .search-bar {
   display: flex;
   align-items: center;
-  margin-left: 20px; /* Espacio entre el logo y la barra de búsqueda */
+  margin-left: 20px;
 }
 
 .search-input {
   padding: 8px 10px;
-  border: 2px solid rgb(22, 55, 113); /* Borde azul */
-  border-radius: 20px; /* Bordes redondeados */
+  border: 2px solid rgb(22, 55, 113); 
+  border-radius: 20px; 
   outline: none;
 }
 
@@ -58,7 +57,7 @@ header {
   background-color: rgb(22, 55, 113);
   border: none;
   color: white;
-  border-radius: 20px; /* Bordes redondeados */
+  border-radius: 20px; 
   cursor: pointer;
   outline: none;
 }
@@ -68,14 +67,14 @@ header {
   background-color: rgb(22, 55, 113);
   border: none;
   color: white;
-  border-radius: 20px; /* Bordes redondeados */
+  border-radius: 20px; 
   cursor: pointer;
   outline: none;
   margin-left: 20px;
 }
 
 .search-button:hover {
-  background-color: #0056b3; /* Color azul oscuro al pasar el mouse */
+  background-color: #0056b3; 
 }
 
 .user-profile {
@@ -84,14 +83,14 @@ header {
 }
 
 .user-profile img {
-  width: 30px; /* Tamaño de la foto de perfil */
-  height: 30px; /* Tamaño de la foto de perfil */
-  border-radius: 50%; /* Forma circular */
-  margin-right: 10px; /* Espacio entre la foto de perfil y el nombre de usuario */
+  width: 30px; 
+  height: 30px; 
+  border-radius: 50%; 
+  margin-right: 10px; 
 }
 
 .user-profile span {
-  color: rgb(23, 36, 78); /* Color del texto del nombre de usuario */
+  color: rgb(23, 36, 78); 
   font-weight: bold;
   margin-right: 50px;
 }
@@ -115,6 +114,91 @@ header {
   background-color: rgb(255, 255, 255); 
   border-radius: 10px; 
   padding: 15px;
+  margin-top: 150px;
+}
+
+.recuadro-3 {
+  display:block;
+  background-color: rgb(166, 166, 166); 
+  border-radius: 10px; 
+  padding: 15px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.perfil-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.perfil-info {
+  display: flex;
+  align-items: center;
+}
+
+.perfil-img {
+  max-width: 50px;
+  border-radius: 50%;
+}
+
+.bandera-img {
+  max-width: 50px;
+  border-radius: 5px;
+}
+
+.follow-btn {
+  padding: 8px 15px;
+  background-color: rgb(254, 5, 124);
+  border: none;
+  color: white;
+  border-radius: 20px; 
+  cursor: pointer;
+  outline: none;
+  margin-left: 20px;
+}
+
+.favorites-btn{
+  padding: 8px 15px;
+  background-color: rgb(254, 5, 124);
+  border: none;
+  color: white;
+  border-radius: 20px; 
+  cursor: pointer;
+  outline: none;
+  margin-left: 20px;
+}
+
+.stars-container {
+  margin-top: 10px;
+}
+
+.star {
+  color: #ffd700;
+  font-size: 20px;
+}
+
+.description {
+  margin-top: 10px;
+}
+
+.imagen1 {
+  max-width: 200px;
+  height: auto;
+  margin-top: auto; 
+  text-align: center;
+}
+
+.Create-button-Cp {
+  padding: 8px 15px;
+  background-color: rgb(22, 55, 113);
+  border: none;
+  color: white;
+  border-radius: 20px; 
+  cursor: pointer;
+  outline: none;
+  font-size: large;
 }
 
 .recuadro-2 {
@@ -123,6 +207,7 @@ header {
   border-radius: 10px; 
   padding: 15px;
   text-align: left;
+  margin-top: 100px;
 }
 
 .lista-paises {
