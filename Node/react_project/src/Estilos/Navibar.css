@@ -1,0 +1,76 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: monospace, 'Courier New', Courier;
+  font-size: 20px;
+}
+
+body{
+  margin: 0;
+}
+
+.Navbar {
+  background: rgb(90, 173, 212);
+  color: #fff;
+  padding-bottom: 10px;
+  padding-top: 15px;
+}
+
+.MyContainerNavibar{
+  max-width: 100%;
+}
+
+.NavbarLogo{
+  display: flex;
+  justify-content: flex-start;
+}
+
+.NavbarBuscadorContenedor{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.Navbar_Buscador_Contenedor{
+  border-radius: 25px;
+  background-color: rgb(22, 55, 113);
+  width: max-content;
+  padding: 3px;
+  text-align-last: end;
+}
+
+.Navbar-Buscador{
+  width: 400px;
+  border-radius: 25px 0 0 25px;
+  border: none;
+}
+
+.Navbar_Buscador_Contenedor button{
+  background-color: rgba(255, 255, 255, 0);
+  border: none;
+  margin: 0%;
+}
+
+.Navbar_Buscador_Contenedor button:hover{
+  background-color: rgba(255, 255, 255, 0);
+}
+
+.Navbar_Buscador_Contenedor button:focus{
+  background-color: rgba(255, 255, 255, 0);
+}
+
+.Navbar_Buscador_Contenedor button:active{
+  background-color: rgba(255, 255, 255, 0) !important;
+}
+
+.Navbar_Buscador_BusAvan{
+  background-color: rgb(22, 55, 113);
+  border-radius: 25px;
+  color: white;
+  padding: 5px;
+  margin: 6px;
+  width: fit-content;
+  height: 50px;
+  border: none;
+}
