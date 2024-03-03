@@ -1,0 +1,48 @@
+.Footibar{
+  background-color: rgb(22, 55, 113);
+  color: #fff;
+  font-family: monospace, 'Courier New', Courier;
+  padding: 20px;
+  text-align: -webkit-center;
+}
+
+.MyContainerFooter{
+  background-color: rgb(49, 85, 148);
+  margin: 0%;
+}
+
+.MyContainerFooter hr{
+  margin-top: top;
+}
+
+.Footibar_Redes{
+  align-items: center;
+  padding: 10px;
+}
+
+.Footibar_Redes p{
+  margin: 0%;
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.LinkRedes{
+  color: #fff;
+  margin-right: 5px;
+}
+
+.Footibar_Informacion{
+  text-align: center;
+}
+.Footibar_MyCol{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.Footibar_Copyright{
+  text-align-last: center;
+}

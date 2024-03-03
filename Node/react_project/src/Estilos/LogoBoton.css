@@ -1,0 +1,16 @@
+.logoBoton-contenedor {
+  margin: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+  
+.logoBoton {
+  width: 90px;
+  height: auto;
+  margin: 0px;
+}
+
+.logoBoton-contenedor h1 {
+  margin: 0;
+}
