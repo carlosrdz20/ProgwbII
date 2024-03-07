@@ -97,7 +97,7 @@ export default function Registro(){
           <div class="textbox">
             <input type="password" placeholder="Repetir contraseña" name="passwordrep" value={formData.passwordrep} onChange={handleChange} required/>
           </div>
-          <button type="submit" className="btn-IniSes">Iniciar Sesión <strong>{'>'}</strong> </button>
+          <button type="submit" className="btn-IniSes">Registrate <strong>{'>'}</strong> </button>
         </form>
         <div class="extras">
         <p>¿Ya tienes una cuenta? </p>

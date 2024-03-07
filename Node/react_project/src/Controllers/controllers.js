@@ -25,6 +25,37 @@ const insertarUsuario = async (req, res) =>{
     }
 }
 
+
+const autenticarUsuario = async (req, res) =>{
+
+    const {email, password} = req.body;
+
+    try {
+        const usuario = await Usuario.findOne({ Correo: email, Contrasena: password });
+    
+        if (!usuario) {
+          return res.status(401).json({ error: 'Credenciales inválidas' });
+        }
+    
+        const {IDUsuario, NombreUsuario, Nombre, Correo, Foto, Contrasena, FechaNacimiento, Genero } = usuario;
+        res.status(200).json({
+          IDUsuario,
+          NombreUsuario,
+          Nombre,
+          Correo,
+          Contrasena, 
+          Foto,
+          FechaNacimiento,
+          Genero
+        });
+      } catch (error) {
+        console.error('Error al autenticar usuario:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+      }
+
+};
+
 module.exports = {
-    insertarUsuario
+    insertarUsuario,
+    autenticarUsuario
 }

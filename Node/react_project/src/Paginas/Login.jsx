@@ -2,15 +2,16 @@ import { Link, useNavigate } from "react-router-dom";
 import "../Estilos/Login.css";
 import Logo from "../Componentes/Logo.jsx";
 import React, { useState } from 'react';
+import axios from "axios";
 
 export default function Login() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-     email: '',
-      password: '' });
+    email: '',
+    password: '' });
 
-  const Enviar = (evento) => {
+  const Enviar = async (evento) => {
     evento.preventDefault();
     
     // Validación del correo electrónico
@@ -26,8 +27,24 @@ export default function Login() {
       return;
     }
 
-    // Si todas las validaciones son exitosas, puedes enviar el formulario
-    navigate('/');
+    try {
+      const response = await axios.post('http://localhost:4200/autentUsuario', formData);
+
+      if (response.status === 200) {
+        
+        console.log(response.data);
+
+        alert("Iniciaste Sesion");
+      } else {
+        
+        alert('Error al iniciar sesión. Por favor, inténtalo de nuevo.');
+      }
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
+      alert('Error al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde.');
+    }
+
+    
   };
 
   const handleChange = (e) => {
