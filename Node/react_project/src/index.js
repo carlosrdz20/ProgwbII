@@ -7,6 +7,7 @@ import Registro from './Paginas/Registro.jsx';
 import Inicio from './Paginas/Inicio.jsx';
 import Error from './Paginas/Error.jsx';
 
+
 const router = createBrowserRouter([
   {
     path: '/',
