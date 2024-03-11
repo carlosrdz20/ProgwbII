@@ -22,7 +22,7 @@ const Usuario = new Schema({
         required: true
     },
     Foto: {
-        type: Buffer, 
+        type: String, 
         required: false 
     },
     FechaNacimiento: {

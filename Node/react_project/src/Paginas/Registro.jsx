@@ -19,7 +19,7 @@ export default function Registro(){
     NombreUsuario: "",
     Nombre: "",
     Correo: "",
-    foto: null,
+    Foto: null,
     FechaNacimiento: "",
     Genero: "",
     Contrasena: "",
@@ -27,23 +27,34 @@ export default function Registro(){
   });
 
   const handleChange = (e) => {
-    const { name, value, type } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === "file" ? e.target.files[0] : value
-    }));
+    const { name, value, type, files } = e.target;
+    // Si es un campo de archivo, actualiza formData con el archivo seleccionado
+    if (type === "file") {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: files[0] // Guarda solo el primer archivo seleccionado
+      }));
+      
+    } else {
+      // Si no es un campo de archivo, actualiza formData con el valor del campo
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value
+      }));
+    }
+    console.log(formData);
   };
 
   // Función para enviar el formulario y realizar las validaciones
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
+    console.log("Registro",formData);
     alert('Estas Registrandote');
     try {
       // Enviar los datos del formulario al servidor
-      console.log("Llegue Aqui");
-      const response = await axios.post('http://localhost:4200/insertarUsuario', formData);
-      console.log("Llegue Aqui 2")
+      
+      const response = await axios.post('http://localhost:4200/insertarUsuario', formData, {headers:{'Content-Type': 'multipart/form-data'}});
+      
       console.log(response.data);
       alert('Usuario registrado exitosamente');
       
@@ -59,7 +70,7 @@ export default function Registro(){
       <div className="Register-box">
         <h1>Registro</h1>
         <Logo Imagen={'favicon.ico'}/>
-        <form action="#" onSubmit={handleSubmit}>
+        <form action="#" enctype="multipart/form-data" onSubmit={handleSubmit} >
           <h4>Nombre de usuario</h4>
           <div class="textbox">
             <input type="text" placeholder="Nombre de usuario" name="NombreUsuario" value={formData.NombreUsuario} onChange={handleChange} required />
@@ -74,7 +85,7 @@ export default function Registro(){
           </div>
           <h4>Foto de perfil</h4>
           <div class="textbox">
-            <input type="file"  name="foto" accept="image/*" required />
+            <input type="file"  name="Foto" accept="image/*" required onChange={handleChange} />
           </div>
           <h4>Fecha de nacimiento</h4>
           <div class="textbox">

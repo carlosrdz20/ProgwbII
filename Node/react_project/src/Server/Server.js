@@ -16,9 +16,11 @@ app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 
 //routes
-app.use(routes)
+app.use(routes);
+
 
 const httpServer = http.createServer(app);
+
 httpServer.listen(app.get('puerto'), 'localhost', ()=>{
     console.log("Server en puerto: " + app.get('puerto'));
 
