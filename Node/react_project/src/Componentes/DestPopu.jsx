@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import '../Estilos/DestPopu.css'
 import { TiFlag } from "react-icons/ti";
 
-function DestPopu({ Imagen, Pais }) {
+function DestPopu({ Imagen, Pais, Num }) {
   const [error, setError] = useState(false);
 
   const handleError = () => {
@@ -18,9 +18,10 @@ function DestPopu({ Imagen, Pais }) {
           src={Imagen}
           alt="Bandera"
           onError={handleError}
+          style={{marginRight:"5px"}}
         />
       )}
-      <p>{Pais}</p>
+      <p> <a href=""> {(`${Num}.-${Pais}`)} </a></p>
     </div>
   );
 }

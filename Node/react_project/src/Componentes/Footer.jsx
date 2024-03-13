@@ -26,18 +26,6 @@ function Footibar(){
             <h3>Sobre la empresa</h3>
             <p>"Descripción"</p>
           </Col>
-          <Col className="Footibar_MyCol">
-            <h3>Links</h3>
-            <Row>Link 1</Row>
-            <Row>Link 2</Row>
-            <Row>Link 3</Row>
-          </Col>
-          <Col className="Footibar_MyCol">
-            <h3>Ayuda</h3>
-            <Row>Link 1</Row>
-            <Row>Link 2</Row>
-            <Row>Link 3</Row>
-          </Col>
         </Row>
         <hr />
         <Row className="Footibar_Copyright">
