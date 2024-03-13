@@ -7,7 +7,7 @@ function Navibar_Usuario ({ Nombre, Imagen }) {
     <div className='Contenedor'>
       <Link to={'/Login'} className='LinkUsuario'>
         <p className='Nombre_Usuario'>{Nombre}</p>
-        <img className='Imagen_Usuario' src={require(`../Imagenes/${Imagen}`)} alt={<FaRegUserCircle/>} />        
+        <img className='Imagen_Usuario' src={require(`../Imagenes/${Imagen}`)} alt={'ImgUsuario'} />        
       </Link>
     </div>
   );

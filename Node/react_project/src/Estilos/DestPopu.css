@@ -1,0 +1,11 @@
+.DestPopuContenedor{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.DestPopuContenedor img{
+  max-width: 40px;
+  max-height: 40px;
+}

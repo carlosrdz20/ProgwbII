@@ -1,10 +1,8 @@
 import React from "react";
+import '../Estilos/Footer.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Row, Col, Container } from 'react-bootstrap';
-import '../Estilos/Footer.css'
-import { FaFacebookF } from "react-icons/fa";
-import { FaInstagram } from "react-icons/fa";
-
+import { FaFacebookF, FaInstagram } from "react-icons/fa";
 
 function Footibar(){
   return (
