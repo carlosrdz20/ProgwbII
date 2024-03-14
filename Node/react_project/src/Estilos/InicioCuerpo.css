@@ -1,3 +1,18 @@
+button{
+  background-color: rgb(22, 55, 113);
+  border-radius: 35px;
+  padding: 5px 15px 5px 15px;
+  margin: 3px;
+  font-size: 20px;
+  color: white;
+  border: none;
+}
+
+button:hover{
+  background-color: rgb(227, 46, 118);
+  color: black;
+}
+
 .Cuerpo{
   background-color: whitesmoke;
   padding: 10px;
@@ -15,23 +30,9 @@
   font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
-.CuerpoIzquierdaBoton button{
-  background-color: rgb(22, 55, 113);
-  border-radius: 35px;
-  padding: 5px 15px 5px 15px;
-  margin: 5px;
-  font-size: 35px;
-  color: white;
-  border: none;
-}
-
-.CuerpoIzquierdaBoton button:hover{
-  background-color: rgb(227, 46, 118);
-  color: black;
-}
-
 .CuerpoIzquierda ul{
   list-style: none;
+  padding-left: 3px;
 }
 
 .CuerpoIzquerdaLinks{
@@ -48,6 +49,25 @@
   border-left: solid #dbdbdb;
   border-right: solid #dbdbdb;
   display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: row;
+  text-align: center;
+  min-height: 55vh;
+}
+
+.CuerpoCentroBotones{
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.CuerpoCentroPaginacionSola{
+  display: flex;
+  align-items: center;
   justify-content: center;
 }
 
@@ -71,5 +91,25 @@
 .CuerpoDerechaContenedor h1{
   font-size: 30px;
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
 
+.PaginacionCol{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Paginacion{
+  border-top: solid #a09e9e;
+  border-bottom: solid #a09e9e;
+}
+
+.PaginacionBotones{
+  border-radius: 80px;
+  padding: 10px;
+}
+
+.PaginacionBotonesCentro{
+  padding: 5px 7px;
+  border-radius: 60px;
 }

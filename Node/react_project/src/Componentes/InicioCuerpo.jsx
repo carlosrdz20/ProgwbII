@@ -1,20 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
+import '../Estilos/InicioCuerpo.css';
+import DestPopu from "./DestPopu";
+import PublicDisplay from "./PublicacionDisplay";
 import { Row, Col } from 'react-bootstrap';
 import { FaRegPaperPlane, FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { IoHome } from "react-icons/io5";
 import { BsFillArchiveFill, BsFillEraserFill } from "react-icons/bs";
 import { RiLogoutBoxRLine } from "react-icons/ri";
-import DestPopu from "./DestPopu";
-import '../Estilos/InicioCuerpo.css';
+import { TbPointFilled } from "react-icons/tb";
+import { RiArrowLeftCircleFill, RiArrowRightCircleFill } from "react-icons/ri";
+
 
 function InicioCuerpo() {
+  const [ UsuIni ] = useState(true);
+
   return (
     <div className="Cuerpo">
       <Row>
         <Col xs={12} md={12} lg={3} className="CuerpoIzquierda"> 
           <div className="CuerpoIzquierdaBoton">
-            <button>Crear Publicación <FaRegPaperPlane size={28}/> </button>            
+            <button style={{fontSize: '35px'}}>Crear Publicación <FaRegPaperPlane size={28}/> </button>            
           </div>
           <div>
             <ul>
@@ -53,15 +59,42 @@ function InicioCuerpo() {
         </Col>
         <Col xs={12} md={12} lg={7} className="CuerpoCentro"> 
           <Row className="RowCentral">
-            <Col md={6}>
-              Botones de seguir
-            </Col>
-            <Col md={6}>
-              Paginación
-            </Col>
+          {UsuIni ? (
+            <div>
+              <Row>
+                <Col md={3} className="CuerpoCentroBotones">
+                  <button>Para ti</button>
+                  <button>Siguiendo</button>
+                </Col>
+                <Col md={9} className="PaginacionCol">
+                  <div className="Paginacion">
+                    <button className="PaginacionBotones"> <RiArrowLeftCircleFill size={40}/> </button>
+                    <button className="PaginacionBotonesCentro"> <TbPointFilled size={30}/> </button>
+                    <button className="PaginacionBotonesCentro"> <TbPointFilled size={30}/> </button>
+                    <button className="PaginacionBotonesCentro"> <TbPointFilled size={30}/> </button>
+                    <button className="PaginacionBotones"> <RiArrowRightCircleFill size={40}/> </button>
+                  </div>
+                </Col>
+              </Row>
+            </div>
+          ) : (
+            <div>
+              <Row>
+                <Col md={12} className="PaginacionCol">
+                  <div className="Paginacion">
+                    <button className="PaginacionBotones"> <RiArrowLeftCircleFill size={40}/> </button>
+                    <button className="PaginacionBotonesCentro"> <TbPointFilled size={30}/> </button>
+                    <button className="PaginacionBotonesCentro"> <TbPointFilled size={30}/> </button>
+                    <button className="PaginacionBotonesCentro"> <TbPointFilled size={30}/> </button>
+                    <button className="PaginacionBotones"> <RiArrowRightCircleFill size={40}/> </button>
+                  </div>
+                </Col>
+              </Row>
+            </div>
+          )}
             <Col md={12}>
-              Publicaciones
-            </Col>            
+              <PublicDisplay/>
+            </Col>
           </Row>
         </Col>
         <Col xs={12} md={12} lg={2} className="CuerpoDerecha">

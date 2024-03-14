@@ -24,7 +24,12 @@ function Footibar(){
         <Row className="Footibar_Informacion">
           <Col>
             <h3>Sobre la empresa</h3>
-            <p>"Descripción"</p>
+            <p>"Caja de Errores vio una oportunidad de 
+              comuncar a las personas del mundo de una manera divertida 
+              y divertida, creando Travelers Talks, una página donde las personas
+              pueden compartir imagenes e información de sus viajes por todo el mundo,
+              de manera que ayudarán a otros a poder escoger sus proximos viajes
+              o lugares que no conocian y empezar a encontrar lugares populares y preciosos"</p>
           </Col>
         </Row>
         <hr />
