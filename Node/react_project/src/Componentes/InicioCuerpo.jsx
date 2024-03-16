@@ -100,11 +100,11 @@ function InicioCuerpo() {
         <Col xs={12} md={12} lg={2} className="CuerpoDerecha">
           <div className="CuerpoDerechaContenedor">
             <h1>Destinos Populares</h1>
-            <DestPopu Num={"1"} Pais={'México'} Imagen={require('../Imagenes/bandera.png')}/>
-            <DestPopu Num={"2"} Pais={'Japon'} Imagen={require('../Imagenes/japon.png')}/>
-            <DestPopu Num={"3"} Pais={'Francia'} Imagen={require('../Imagenes/espana.png')}/>
-            <DestPopu Num={"4"} Pais={'Alemania'} Imagen={require('../Imagenes/canada.png')}/>
-            <DestPopu Num={"5"} Pais={'Korea'} Imagen={require('../Imagenes/alemania.png')}/>
+            <DestPopu Num={"1"} Pais={'México'} Imagen={'/Imagenes/bandera.png'}/>
+            <DestPopu Num={"2"} Pais={'Japon'} Imagen={'/Imagenes/japon.png'}/>
+            <DestPopu Num={"3"} Pais={'Francia'} Imagen={'Imagenes/espana.png'}/>
+            <DestPopu Num={"4"} Pais={'Alemania'} Imagen={'/Imagenes/canada.png'}/>
+            <DestPopu Num={"5"} Pais={'Korea'} Imagen={'Imagenes/alemania.png'}/>
           </div>
         </Col>
       </Row>

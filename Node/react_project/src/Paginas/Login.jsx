@@ -19,12 +19,12 @@ export default function Login() {
           <div className="textbox">
             <input type="email" placeholder="Correo electrónico" name="email" required />
           </div>
-          <div class="textbox">
+          <div className="textbox">
             <input type="password" placeholder="Contraseña" name="password" required />
           </div>
           <button type="submit" className="btn-IniSes">Iniciar Sesión <strong>{'>'}</strong> </button>
         </form>
-        <div class="extras">
+        <div className="extras">
           <p>¿No tienes una cuenta? </p>
           <p> <Link to={'/Registro'}>Registrate aquí</Link> </p>
           <hr />

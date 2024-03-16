@@ -24,7 +24,7 @@ function PublicDisplay({}){
 		<div className="PublicContenedor">
 			<Row>
 				<Col md={2}>	
-					<img className="PublicUsu" src={require("../Imagenes/Perfil.png")} alt="Imagen de Usuario" />
+					<img className="PublicUsu" src={"Imagenes/Perfil.png"} alt="Imagen de Usuario" />
 				</Col>
 				<Col md={8} className="PublicCentro">
 					<div className="NombreSeguir">
@@ -37,12 +37,12 @@ function PublicDisplay({}){
 					</div>
 				</Col>
 				<Col md={2} className="PublicDerecha">
-					<img className="PublicBan" src={require("../Imagenes/bandera.png")} alt="" />
+					<img className="PublicBan" src={"Imagenes/bandera.png"} alt="" />
 					<Corazon/>
 				</Col>
 				<Col className="PublicTextoImg" md={12}>
 					<p>Prueba de Texto Prueba de Texto Prueba de Texto Prueba de Texto Prueba de Texto Prueba de Texto Prueba de Texto Prueba de Texto Prueba de Texto Prueba de Texto</p>
-					<img className="PublicImg" src={require("../Imagenes/Registro_BG.jpg")} alt="" />
+					<img className="PublicImg" src={"Imagenes/Registro_BG.jpg"} alt="" />
 				</Col>
 			</Row>
 		</div>

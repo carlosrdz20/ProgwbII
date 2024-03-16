@@ -8,7 +8,7 @@ function Logo({ Imagen }) {
     <div 
     className='logo-contenedor'>
       <img 
-        src={require(`../Imagenes/${Imagen}`)}
+        src={`/Imagenes/${Imagen}`}
         className='logo' 
         alt={`Imagen de ${Imagen}`}
       />

@@ -9,7 +9,7 @@
 .loginApp {
   margin: 0;
   padding: 0;
-  background-image: url('../Imagenes/Login_BG.jpg');
+  background-image: url('/public/Imagenes/Login_BG.jpg');
   background-size: cover;
   background-position: center;
   display: flex;

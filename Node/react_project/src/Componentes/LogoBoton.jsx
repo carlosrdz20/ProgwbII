@@ -9,7 +9,7 @@ function Logo({ Imagen }) {
     <div className='logoBoton-contenedor'>
       <Link to={'/'}>
         <img 
-          src={require(`../Imagenes/${Imagen}`)}
+          src={'/public/Imagenes/${Imagen}'}
           className='logoBoton' 
           alt={`Imagen de ${Imagen}`}
         />
