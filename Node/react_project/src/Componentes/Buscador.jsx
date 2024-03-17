@@ -1,5 +1,6 @@
 import { FaSearch } from "react-icons/fa";
 import { Form, Button } from 'react-bootstrap';
+import '../Estilos/Buscador.css'
 
 export default function Buscador() {
   return (

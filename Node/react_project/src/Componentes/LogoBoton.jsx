@@ -9,9 +9,9 @@ function Logo({ Imagen }) {
     <div className='logoBoton-contenedor'>
       <Link to={'/'}>
         <img 
-          src={'/public/Imagenes/${Imagen}'}
+          src={`Imagenes/favicon.ico`}
           className='logoBoton' 
-          alt={`Imagen de ${Imagen}`}
+          alt={'Logo'}
         />
       </Link>
     </div>

@@ -21,7 +21,7 @@ function DestPopu({ Imagen, Pais, Num }) {
           style={{marginRight:"5px"}}
         />
       )}
-      <p> <a href=""> {(`${Num}.-${Pais}`)} </a></p>
+      <p> {(`${Num}.-${Pais}`)} </p>
     </div>
   );
 }

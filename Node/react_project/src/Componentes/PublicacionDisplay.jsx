@@ -13,7 +13,7 @@ function Corazon(props) {
 	);
 }
 
-function PublicDisplay({}){
+function PublicDisplay({ NombreUsu, ImagenUsu, Fecha, Pais, Contenido, Imagen }){
 	const [rating, setRating] = useState(0);
 
   const handleRatingChange = (newRating) => {
@@ -23,25 +23,25 @@ function PublicDisplay({}){
 	return (
 		<div className="PublicContenedor">
 			<Row>
-				<Col md={2}>	
-					<img className="PublicUsu" src={"Imagenes/Perfil.png"} alt="Imagen de Usuario" />
+				<Col sm={3} md={3} xl={3} xxl={3}>	
+					<img className="PublicUsu" src={`/Imagenes/${ImagenUsu}`} alt="Imagen de Usuario" />
 				</Col>
-				<Col md={8} className="PublicCentro">
+				<Col sm={7} md={7} xl={7} xxl={7} className="PublicCentro">
 					<div className="NombreSeguir">
-						<a className="NombreUsu" href="">Nombre de Usuario</a>
+						<a href="">{NombreUsu}</a>
 						<button>+Seguir</button>						
 					</div>
 					<div className="FechaRating">
-						<p>12/12/12</p>
+						<p>{Fecha}</p>
 						<Rating initialRating={rating} onRatingChange={handleRatingChange} />
 					</div>
 				</Col>
-				<Col md={2} className="PublicDerecha">
-					<img className="PublicBan" src={"Imagenes/bandera.png"} alt="" />
+				<Col sm={12} md={2} xl={2} xxl={2} className="PublicDerecha">
+					<img className="PublicBan" src={`/Imagenes/${Pais}`} alt="Bandera" />
 					<Corazon/>
 				</Col>
 				<Col className="PublicTextoImg" md={12}>
-					<p>Prueba de Texto Prueba de Texto Prueba de Texto Prueba de Texto Prueba de Texto Prueba de Texto Prueba de Texto Prueba de Texto Prueba de Texto Prueba de Texto</p>
+					<p>{Contenido}</p>
 					<img className="PublicImg" src={"Imagenes/Registro_BG.jpg"} alt="" />
 				</Col>
 			</Row>
