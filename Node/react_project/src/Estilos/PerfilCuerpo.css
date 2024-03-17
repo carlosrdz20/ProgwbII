@@ -1,0 +1,57 @@
+.CuerpoCentro{
+    border-left: solid #dbdbdb;
+    border-right: solid #dbdbdb;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: row;
+    text-align: center;
+    min-height: 55vh;
+}
+
+.RecuadoPerfil{
+  padding: 20px;
+  background-color:  rgb(90, 173, 212);
+  border-radius: 10px;
+  border: 20px ;
+  border-color: rgb(227, 46, 118);
+  width: 600px;
+  margin:auto;
+  margin-top: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.columna{
+  flex: 1px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.InputContainer{
+  margin-bottom: 10px;
+}
+
+.InputPerfil{
+  border: 2px;
+  border-color: rgb(255, 0, 76);
+  padding: 5px;
+  width: 90%;
+}
+
+.Combobox{
+  border: 2px;
+  border-color: rgb(255, 0, 76);
+  padding: 5px;
+  width: 90%;
+}
+
+.foto{
+  text-align: center;
+}
+
+.FotoPerfil{
+  width: 100%;
+  max-height: 150px;
+  border-radius: 5px;
+}

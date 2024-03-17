@@ -6,6 +6,7 @@ import Login from './Paginas/Login.jsx';
 import Registro from './Paginas/Registro.jsx';
 import Inicio from './Paginas/Inicio.jsx';
 import Error from './Paginas/Error.jsx';
+import Perfil from './Paginas/Perfil.jsx';
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
   {
     path: '/Registro',
     element: <Registro />,
+  },
+  {
+    path:'/Perfil',
+    element: <Perfil />,
   }
 ])
 
