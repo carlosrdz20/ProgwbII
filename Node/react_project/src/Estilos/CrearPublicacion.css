@@ -1,0 +1,23 @@
+.CuerpoCentro{
+    border-left: solid #dbdbdb;
+    border-right: solid #dbdbdb;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: row;
+    text-align: center;
+    min-height: 55vh;
+}
+
+.RecuadoPublicacion{
+  padding: 20px;
+  background-color:  rgb(90, 173, 212);
+  border-radius: 10px;
+  border: 20px ;
+  border-color: rgb(227, 46, 118);
+  width: 600px;
+  margin:auto;
+  margin-top: 5px;
+  display: flex;
+  justify-content: space-between;
+}
