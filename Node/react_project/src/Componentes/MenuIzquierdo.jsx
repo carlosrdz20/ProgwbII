@@ -10,7 +10,8 @@ export function MenuLateral(){
   return (
     <div>
       <div>
-        <button>Crear Publicación <FaRegPaperPlane size={28}/></button>        
+        <button>Crear Publicación <FaRegPaperPlane size={28}/></button>   
+        
       </div>
       <div className="MenuOpc">
         <Link className="MenuLinks">
