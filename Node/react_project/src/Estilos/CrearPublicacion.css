@@ -16,65 +16,65 @@
   height: 100vh;
 }
 .box {
-  min-width: 600px; /* Ancho mínimo del recuadro */
-  height: 300px; /* Altura del recuadro */
-  background-color: rgb(254, 5, 124); /* Color de fondo del recuadro */
-  border-radius: 20px; /* Borde redondeado del recuadro */
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Sombra del recuadro */
+  min-width: 600px; 
+  height: 300px; 
+  background-color: rgb(254, 5, 124); 
+  border-radius: 20px; 
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); 
   display: flex;
   min-height: 330px
 }
 .column {
-  min-width: 200px; /* Ancho mínimo de cada columna */
+  min-width: 200px; 
   max-width: 500px;
   min-height: 300px;
   flex: 1;
-  background-color: rgb(90, 173, 212); /* Color de fondo de las columnas */
-  margin: 10px; /* Espacio entre las columnas */
-  border-radius: 10px; /* Borde redondeado de las columnas */
+  background-color: rgb(90, 173, 212); 
+  margin: 10px; 
+  border-radius: 10px; 
   display: flex;
-  flex-direction: column; /* Elementos apilados verticalmente */
+  flex-direction: column; 
 }
 .input-container {
   margin-bottom: 10px;
-  text-align: center; /* Centrar el texto */
+  text-align: center; 
   display: flex;
-  flex-direction: column; /* Alinear los elementos verticalmente */
-  align-items: center; /* Centrar los elementos horizontalmente */
+  flex-direction: column; 
+  align-items: center; 
 }
 .input-container .input-label {
   font-weight: bold;
   margin-top: 10px;
-  margin-bottom: 5px; /* Espacio entre el título y el input */
+  margin-bottom: 5px; 
 }
 .input-container input.blue-border,
 .input-container select.blue-border {
   padding: 5px;
   border-radius: 5px;
-  border: 2px solid rgb(139, 224, 236); /* Borde azul */
+  border: 2px solid rgb(139, 224, 236); 
   margin-top: 5px;
 }
 
 
 .image-container {
   display: flex;
-  align-items: center; /* Centrar verticalmente */
-  justify-content: center; /* Centrar horizontalmente */
+  align-items: center; 
+  justify-content: center; 
   flex-grow: 1;
-  overflow: hidden; /* Evitar que la imagen se salga de la columna */
+  overflow: hidden; 
 }
 
 .image-container img {
-  max-width: 100%; /* Asegurarse de que la imagen no sea más grande que la columna */
-  max-height: 100%; /* Asegurarse de que la imagen no sea más grande que la columna */
+  max-width: 100%; 
+  max-height: 100%; 
 }
 
 
 .button-container {
   display: flex;
-  justify-content: center; /* Centrar horizontalmente */
-  align-items: flex-end; /* Alinear en la parte inferior */
-  flex-grow: 1; /* Permitir que el contenedor se expanda verticalmente */
+  justify-content: center; 
+  align-items: flex-end; 
+  flex-grow: 1; 
   margin-top: 10px;
   margin-bottom: 10px;
 }
