@@ -6,19 +6,25 @@
   flex-wrap: wrap;
   background: rgb(90, 173, 212);
   color: #fff;
-  padding-bottom: 10px;
-  padding-top: 10px;
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   width: 100%;
-}
-
-.NavbarCentro{
-  margin: 0 10px;
+  padding: 10px;
 }
 
 @media screen and (max-width: 500px) {
-  .Navbar{
+  .NavbarBuscadorContenedor, .Navbar{
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
+  }
+
+  .NavbarIzquierda{
+    width: 20%;
+  }
+  .NavbarCentro{
+    width: 80%;
+  }
+  .NavbarDerecha{
+    width: 100%;
+    padding-left: 100px;
   }
 }

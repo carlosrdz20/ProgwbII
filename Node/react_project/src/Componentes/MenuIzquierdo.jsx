@@ -8,12 +8,12 @@ import { RiLogoutBoxRLine } from "react-icons/ri";
 
 export function MenuLateral(){
   return (
-    <div>
+    <>
       <div>
         <button>Crear Publicación <FaRegPaperPlane size={28}/></button>        
       </div>
       <div className="MenuOpc">
-        <Link className="MenuLinks">
+        <Link to={'/'} className="MenuLinks">
           <IoHome style={{marginRight: "5px"}} size={45}/>
           <p>Inicio</p>
         </Link>
@@ -29,11 +29,11 @@ export function MenuLateral(){
           <BsFillEraserFill style={{marginRight: "5px"}} size={45}/>
           Borradores
         </Link>
-        <Link className="MenuLinks">
+        <Link to={'/Login'} className="MenuLinks">
           <RiLogoutBoxRLine style={{marginRight: "5px"}} size={45}/>
           Cerrar Sesión
         </Link>
       </div>
-    </div>
+    </>
   );
 }

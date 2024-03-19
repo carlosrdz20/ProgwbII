@@ -4,6 +4,7 @@
   font-family: monospace, 'Courier New', Courier;
   padding: 20px;
   text-align: -webkit-center;
+  min-width: 400px;
 }
 
 .MyContainerFooter{

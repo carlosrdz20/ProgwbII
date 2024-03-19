@@ -8,14 +8,14 @@ import NavibarUsuario from './NavibarUsuario.jsx';
 function Navibar() {
   return (
     <nav className='Navbar'>
-      <div className='NavbarCentro'>
+      <div className='NavbarIzquierda'>
         <LogoBoton />
       </div>
       <div className='NavbarCentro'>
         <Buscador />
       </div>
-      <div className='NavbarCentro'>
-        <NavibarUsuario 
+      <div className='NavbarDerecha'>
+        <NavibarUsuario
           Nombre={'15CaracteresMax'} //Máximo 15 caracteres
           Imagen={'Cato.jpg'}
           Iniciado={true}

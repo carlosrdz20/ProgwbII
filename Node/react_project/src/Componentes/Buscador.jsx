@@ -12,7 +12,7 @@ export default function Buscador() {
         </Form>
       </div>
       <div>
-        <button className='Navbar_Buscador_BusAvan'> Busqueda Avanzada </button>
+        <button className='Navbar_Buscador_BusAvan'> Búsqueda Avanzada </button>
       </div>
     </div>
   );
