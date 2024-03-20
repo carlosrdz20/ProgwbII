@@ -3,7 +3,7 @@
   border-radius: 25px;
   margin: 10px;
   min-height: 200px;
-  padding: 20px;
+  padding: 20px 20px 10px 20px;
   min-width: 410px;
 }
 
@@ -16,6 +16,11 @@
   font-size: 30px;
   margin: 0;
   padding-right: 10px;
+}
+
+.ColImg{
+  display: flex;
+  justify-content: center;
 }
 
 .ImgUsu{
@@ -65,7 +70,7 @@
 }
 
 .PublicContenido{
-  padding: 25px;
+  padding: 25px 25px 10px 25px;
   font-size: 20px;
 }
 
@@ -79,6 +84,12 @@
   max-width: 40vw;
   max-height: 400px;
   border-radius: 20px;
+}
+
+.DivButtons{
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 10px;
 }
 
 @media screen and (max-width: 600px) {
