@@ -7,6 +7,7 @@ import Registro from './Paginas/Registro.jsx';
 import Inicio from './Paginas/Inicio.jsx';
 import Error from './Paginas/Error.jsx';
 import Perfil from './Paginas/Perfil.jsx';
+import CrearPublicacion from './Componentes/CrearPublicacionCuerpo.jsx';
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
   {
     path:'/Perfil',
     element: <Perfil />,
+  },
+  {
+    path:'/CrearPublicacion',
+    element: <CrearPublicacion />,
   }
 ])
 

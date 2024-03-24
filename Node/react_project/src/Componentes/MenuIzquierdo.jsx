@@ -9,9 +9,10 @@ import { RiLogoutBoxRLine } from "react-icons/ri";
 export function MenuLateral(){
   return (
     <div>
-      <div>
+      <div>  
+        <Link to={"/CrearPublicacion"}>
         <button>Crear Publicación <FaRegPaperPlane size={28}/></button>   
-        
+        </Link>
       </div>
       <div className="MenuOpc">
         <Link className="MenuLinks">
