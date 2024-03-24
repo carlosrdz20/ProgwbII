@@ -1,13 +1,15 @@
 import Footibar from "../Componentes/Footer.jsx";
 import Navibar from "../Componentes/Navibar.jsx";
 import CrearPublicacionCuerpo from "../Componentes/CrearPublicacionCuerpo.jsx";
+import MenuIzquierdo from "../Componentes/MenuIzquierdo.jsx"
 
-export default function Perfil(){
+export default function CrearPublicacion(){
     return (
     <div>
-      <Navibar />
-      <CrearPublicacionCuerpo />
-      <Footibar />
+      <Navibar/>
+      <MenuIzquierdo/>
+      <CrearPublicacionCuerpo/>
+      <Footibar/>
     </div>
     );
   }

@@ -1,42 +1,19 @@
-.CuerpoCentro{
-    border-left: solid #dbdbdb;
-    border-right: solid #dbdbdb;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    flex-direction: row;
-    text-align: center;
-    min-height: 55vh;
-}
 
-.contenedor {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
 
-.recuadro {
-  min-width: 740px; 
-  height: 440px; 
-  background-color: rgb(254, 5, 124); 
-  border-radius: 20px; 
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); 
-  display: flex;
-  min-height: 330px
-}
-
-.recuadro-pequeno {
+.ROW {
   margin-top: 20px;
   margin-left: 20px;
   width: 700px; 
   height: 400px; 
   background-color: rgb(90, 173, 212);  
+  border: 20px;
   border-radius: 15px; 
   display: flex; 
+  border-color:rgb(254, 5, 124);
+  border-style: solid;
 }
 
-.column {
+.COL {
   min-width: 200px; 
   max-width: 500px;
   min-height: 300px;
@@ -66,8 +43,6 @@
   border: 2px solid rgb(139, 224, 236); 
   margin-top: 5px;
 }
-
-
 .image-container {
   display: flex;
   align-items: center; 
@@ -75,13 +50,10 @@
   flex-grow: 1;
   overflow: hidden; 
 }
-
 .image-container img {
   max-width: 100%; 
   max-height: 100%; 
 }
-
-
 .button-container {
   display: flex;
   justify-content: center; 
@@ -90,7 +62,6 @@
   margin-top: 10px;
   margin-bottom: 10px;
 }
-
 .fotoinput{
   padding: 5px;
   border-radius: 5px;
