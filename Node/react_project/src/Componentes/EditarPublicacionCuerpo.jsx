@@ -1,17 +1,13 @@
 import React, { useState } from "react";
 import '../Estilos/CrearPublicacion.css';
+import { MenuLateral } from "./MenuIzquierdo.jsx";
 import { Row, Col } from 'react-bootstrap';
 import { FaRegPaperPlane, FaStar } from "react-icons/fa";
-import { BsFillArchiveFill, BsFillEraserFill } from "react-icons/bs";
-import { MenuLateral } from "../Componentes/MenuIzquierdo.jsx";
 
-
-
-
-function CrearPublicacion() {
+function EditarPublicacion() {
 
     return (
-        <div className="CrearPublicacion">
+        <div className="EditarPublicacion">
             <Row>
                 <Col className="Izquierdo" xs={12}  md ={12} lg = {3}>
                 <MenuLateral/>
@@ -36,9 +32,6 @@ function CrearPublicacion() {
                                 <option value="opcion3">Opción 3</option>
                             </select>
                         </div>
-                        <div class="button-container">
-                            <button class="btn">Borrador <BsFillEraserFill  size={25}/></button>
-                        </div>
                     </Col>
                     <Col className="COL" xs={12} sm ={12} md ={12} lg = {6}>
                         <div class="input-container">
@@ -58,5 +51,5 @@ function CrearPublicacion() {
     );
   }
   
-  export default CrearPublicacion;
+  export default EditarPublicacion;
   
