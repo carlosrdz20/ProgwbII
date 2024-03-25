@@ -1,13 +1,13 @@
 import Footibar from "../Componentes/Footer.jsx";
 import Navibar from "../Componentes/Navibar.jsx";
-import EditarBorrador from "../Componentes/EditarBorradorCuerpo.jsx";
+import EditarPerfil from "../Componentes/EditarPerfilCuerpo.jsx";
 
 
-export default function EditarBorra(){
+export default function EditarPerf(){
     return (
     <div>
       <Navibar/>
-      <EditarBorrador/>
+      <EditarPerfil/>
       <Footibar/>
     </div>
     );

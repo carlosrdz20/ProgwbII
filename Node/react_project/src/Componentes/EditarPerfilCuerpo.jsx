@@ -4,11 +4,10 @@ import { MenuLateral } from "./MenuIzquierdo.jsx";
 import { Row, Col } from 'react-bootstrap';
 import { FaRegPaperPlane, FaStar } from "react-icons/fa";
 import { BsFillArchiveFill, BsFillEraserFill } from "react-icons/bs";
-import { Link } from "react-router-dom";
 
 
 
-function PerfilCuerpo() {
+function EditarPerfilCuerpo() {
 
   return (
     <div className="Cuerpo">
@@ -30,6 +29,10 @@ function PerfilCuerpo() {
                     <label htmlFor="Password">Contraseña Actual:</label>
                     <input type="text" id="Password" className="InputPerfil"/>
                 </div>
+                <div className="InputContainer">
+                    <label htmlFor="NPassword">Contraseña Nueva:</label>
+                    <input type="text" id="NPassword" className="InputPerfil"/>
+                </div>
             </Col>
             <Col className="COL" xs={12} sm ={12} md ={12} lg = {6}>
                 <div className="InputContainer">
@@ -48,12 +51,14 @@ function PerfilCuerpo() {
                     <input type="date" id="fecha" className="InputPerfil" />
                 </div>
                 <div>
-                    <Link to={"/EditarPerfil"}>
-                        <button className="btn">Editar Perfil</button>   
-                    </Link>
+                    <button class="btn">Aceptar cambios</button>
                 </div>
             </Col>
             <Col className="COL" xs={12} sm ={12} md ={12} lg = {6}>
+                <div class="input-container">
+                    <label for="photoInput" class="input-label">Nueva foto de perfil:</label>
+                    <input type="file" id="photoInput" accept="image/*" class="fotoinput" multiple/>
+                </div>
                 <div className="foto">
                     <label htmlFor="Fotoperfil">Foto de perfil:</label>
                     <img src="/Imagenes/Perfil.png" alt="" className="FotoPerfil" />
@@ -65,4 +70,4 @@ function PerfilCuerpo() {
   );
 }
 
-export default PerfilCuerpo;
+export default EditarPerfilCuerpo   ;
