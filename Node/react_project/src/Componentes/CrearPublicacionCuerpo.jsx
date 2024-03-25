@@ -37,7 +37,7 @@ function CrearPublicacion() {
                 <Col className="COL">
                     <div class="input-container">
                         <label for="photoInput" class="input-label">Publicar:</label>
-                        <input type="file" id="photoInput" accept="image/*" class="fotoinput"/>
+                        <input type="file" id="photoInput" accept="image/*" class="fotoinput" multiple/>
                     </div>
                     <div class="image-container">
                         <img src="./Imagenes/Paisaje.jpg" alt="Imagen" id="uploadedImage"/>
