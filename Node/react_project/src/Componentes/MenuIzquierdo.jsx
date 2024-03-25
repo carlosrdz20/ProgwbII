@@ -9,9 +9,11 @@ import { IoIosHeart } from "react-icons/io";
 
 export function MenuLateral(){
   return (
-    <>
-      <div>
-        <button>Crear Publicación <FaRegPaperPlane size={28}/></button>        
+    <div>
+      <div>  
+        <Link to={"/CrearPublicacion"}>
+        <button>Crear Publicación <FaRegPaperPlane size={28}/></button>   
+        </Link>
       </div>
       <div className="MenuOpc">
         <Link to={'/'} className="MenuLinks">
@@ -35,6 +37,6 @@ export function MenuLateral(){
           Cerrar Sesión
         </Link>
       </div>
-    </>
+    </div>
   );
 }
