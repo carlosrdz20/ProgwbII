@@ -11,6 +11,7 @@ import CrearPublicacion  from './Paginas/CrearPublicacion.jsx';
 import EditarPublicacion  from './Paginas/EditarPublicacion.jsx';
 import EditarBorrador from './Paginas/EditarBorrador.jsx';
 import EditarPerfil from './Paginas/EditarPerfil.jsx';
+import PerfilAjeno from './Paginas/PerfilAjeno.jsx';
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
   {
     path:'/EditarPerfil',
     element: <EditarPerfil />,
+  },
+  {
+    path:'/PerfilAjeno',
+    element: <PerfilAjeno />,
   }
 ])
 
