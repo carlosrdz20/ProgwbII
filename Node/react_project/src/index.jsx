@@ -9,6 +9,7 @@ import Error from './Paginas/Error.jsx';
 import Perfil from './Paginas/Perfil.jsx';
 import CrearPublicacion  from './Paginas/CrearPublicacion.jsx';
 import EditarPublicacion  from './Paginas/EditarPublicacion.jsx';
+import EditarBorrador from './Paginas/EditarBorrador.jsx';
 
 const router = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
   {
     path:'/EditarPublicacion',
     element: <EditarPublicacion />,
+  },
+  {
+    path:'/EditarBorrador',
+    element: <EditarBorrador />,
   }
 ])
 
