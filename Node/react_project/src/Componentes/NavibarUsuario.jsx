@@ -20,7 +20,7 @@ function Navibar_Usuario ({ Nombre, Imagen, Iniciado }) {
           {error ? (
             <FaRegUserCircle size={75} color='#fff'/>
           ) : (
-            <img className='UsuImg' onError={handleError} src={`/Imagenes/${Imagen}`}/>
+            <img className='UsuImg' alt="Imagen de Usuario" onError={handleError} src={`/Imagenes/${Imagen}`}/>
           )}       
         </div>
       ) : (

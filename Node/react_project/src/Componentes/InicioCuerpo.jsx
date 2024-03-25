@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import '../Estilos/InicioCuerpo.css';
 import DestPopu from "./DestPopu.jsx";
-import { MenuLateral } from "./MenuIzquierdo.jsx";
+import MenuLateral  from "./MenuIzquierdo.jsx";
 import PublicDisplay from "./PublicacionDisplay.jsx";
 import { Row, Col } from 'react-bootstrap';
 import { RiArrowLeftCircleFill, RiArrowRightCircleFill } from "react-icons/ri";
@@ -13,7 +13,7 @@ function InicioCuerpo() {
     <div className="Cuerpo">
       <Row>
         <Col className="Izquierdo" xs={12} md={12} lg={3}>
-          <MenuLateral />
+          <MenuLateral pagina={'Inicio'} />
         </Col>
 
         <Col className="Centro" xs={12} sm={12} md={12} lg={6}>
@@ -56,8 +56,8 @@ function InicioCuerpo() {
                 Tipo={'Ajeno'}
               />
               <PublicDisplay
-                NombreUsu={'KFecito09'}
-                ImagenUsu={'WillamDeVerde.jpg'}
+                NombreUsu={'Carlangas72'}
+                ImagenUsu={'Cato.jpg'}
                 Fecha={'12/12/12'}
                 Pais={'Bandera.png'}
                 Contenido={'Lorem Ipsum Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit... No hay nadie que ame el dolor mismo, que lo busque, lo encuentre y lo quiera, simplemente porque es el dolor.'}
@@ -65,8 +65,8 @@ function InicioCuerpo() {
                 Tipo={'Propio'}
               />
               <PublicDisplay
-                NombreUsu={'KFecito09'}
-                ImagenUsu={'WillamDeVerde.jpg'}
+                NombreUsu={'Carlangas72'}
+                ImagenUsu={'Cato.jpg'}
                 Fecha={'12/12/12'}
                 Pais={'Bandera.png'}
                 Contenido={'Lorem Ipsum Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit... No hay nadie que ame el dolor mismo, que lo busque, lo encuentre y lo quiera, simplemente porque es el dolor.'}

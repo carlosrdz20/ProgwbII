@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import '../Estilos/CrearPublicacion.css';
-import { MenuLateral } from "./MenuIzquierdo.jsx";
+import MenuLateral from "./MenuIzquierdo.jsx";
 import { Row, Col } from 'react-bootstrap';
-import { FaRegPaperPlane, FaStar } from "react-icons/fa";
+import { FaRegPaperPlane } from "react-icons/fa";
 
 function EditarPublicacion() {
 

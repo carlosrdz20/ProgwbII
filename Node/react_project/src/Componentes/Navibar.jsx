@@ -16,7 +16,7 @@ function Navibar() {
       </div>
       <div className='NavbarDerecha'>
         <NavibarUsuario
-          Nombre={'15CaracteresMax'} //Máximo 15 caracteres
+          Nombre={'Carlangas72'} //Máximo 15 caracteres
           Imagen={'Cato.jpg'}
           Iniciado={true}
         />

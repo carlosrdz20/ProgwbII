@@ -9,13 +9,6 @@
   border-right: solid #dbdbdb;
 }
 
-.Izquierdo h1{
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-  display: flex;
-  justify-content: flex-start;
-  padding-left: 5px;
-}
-
 .Centro{
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   font-size: 10px;

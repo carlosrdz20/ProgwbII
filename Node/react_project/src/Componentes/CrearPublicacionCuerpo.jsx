@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import '../Estilos/CrearPublicacion.css';
 import { Row, Col } from 'react-bootstrap';
-import { FaRegPaperPlane, FaStar } from "react-icons/fa";
-import { BsFillArchiveFill, BsFillEraserFill } from "react-icons/bs";
-import { MenuLateral } from "../Componentes/MenuIzquierdo.jsx";
+import { FaRegPaperPlane } from "react-icons/fa";
+import {  BsFillEraserFill } from "react-icons/bs";
+import MenuLateral from "../Componentes/MenuIzquierdo.jsx";
 
 
 

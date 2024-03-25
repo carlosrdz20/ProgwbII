@@ -38,7 +38,7 @@ function PublicDisplay({ NombreUsu, ImagenUsu, Fecha, Pais, Contenido, Imagen, T
 							</div>
 						) : Tipo === 'Ajeno' ? (
 							<div className="NomBot">
-								<Link className="LinkUsuName">{NombreUsu}</Link>
+								<Link className="LinkUsuName" to={'/PerfilAjeno'}>{NombreUsu}</Link>
 								<button>+Seguir</button>
 							</div>
 						) : Tipo === 'Borrador' ? (

@@ -1,6 +1,6 @@
 import React from "react";
 import '../Estilos/MisFavoCuerpo.css';
-import { MenuLateral } from "./MenuIzquierdo.jsx";
+import MenuLateral from "./MenuIzquierdo.jsx";
 import PublicDisplay from "./PublicacionDisplay.jsx";
 import { Row, Col } from 'react-bootstrap';
 import { RiArrowLeftCircleFill, RiArrowRightCircleFill } from "react-icons/ri";
@@ -10,8 +10,7 @@ function InicioCuerpo() {
     <div className="Cuerpo">
       <Row>
         <Col className="Izquierdo" xs={12} md={12} lg={3}>
-          <h1>Mis Favoritos</h1>
-          <MenuLateral />        
+          <MenuLateral pagina={'Favoritos'}/>
         </Col>
 
         <Col className="Centro" xs={12} sm={12} md={12} lg={6}>
