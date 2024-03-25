@@ -41,6 +41,8 @@ const router = createBrowserRouter([
   {
     path: '/MisBorradores',
     element: <MisBorradores />,
+  },
+  {
     path:'/Perfil',
     element: <Perfil />,
   },

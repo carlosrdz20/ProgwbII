@@ -7,7 +7,7 @@ import { BsFillArchiveFill, BsFillEraserFill } from "react-icons/bs";
 
 
 
-function PerfilAjeno() {
+function PerfilAjenoCuerpo() {
 
   return (
     <div className="Cuerpo">
@@ -39,4 +39,4 @@ function PerfilAjeno() {
   );
 }
 
-export default PerfilAjeno;
+export default PerfilAjenoCuerpo;
