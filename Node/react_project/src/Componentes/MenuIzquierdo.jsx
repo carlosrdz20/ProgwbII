@@ -3,8 +3,9 @@ import '../Estilos/MenuIzquierdo.css'
 import { Link } from "react-router-dom";
 import { IoHome } from "react-icons/io5";
 import { BsFillArchiveFill, BsFillEraserFill } from "react-icons/bs";
-import { FaRegPaperPlane, FaStar } from "react-icons/fa";
+import { FaRegPaperPlane } from "react-icons/fa";
 import { RiLogoutBoxRLine } from "react-icons/ri";
+import { IoIosHeart } from "react-icons/io";
 
 export function MenuLateral(){
   return (
@@ -17,15 +18,15 @@ export function MenuLateral(){
           <IoHome style={{marginRight: "5px"}} size={45}/>
           <p>Inicio</p>
         </Link>
-        <Link className="MenuLinks">
+        <Link to={'/MisPublicaciones'} className="MenuLinks">
           <BsFillArchiveFill style={{marginRight: "5px"}} size={45}/>
           Mis publicaciones
         </Link>
-        <Link className="MenuLinks">
-          <FaStar style={{marginRight: "5px"}} size={45} />
+        <Link to={'/MisFavoritos'} className="MenuLinks">
+          <IoIosHeart style={{marginRight: "5px"}} size={45} />
           Favoritos
         </Link>
-        <Link className="MenuLinks">
+        <Link to={'/MisBorradores'} className="MenuLinks">
           <BsFillEraserFill style={{marginRight: "5px"}} size={45}/>
           Borradores
         </Link>
