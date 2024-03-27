@@ -5,7 +5,7 @@
 }
 
 .Izquierdo{
-  min-width: 400px;
+  width: 500px;
   border-right: solid #dbdbdb;
 }
 
@@ -65,7 +65,7 @@
   flex-wrap: nowrap;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 1320px) {
   .Centro{
     min-width: 400px;
     max-width: 800px;

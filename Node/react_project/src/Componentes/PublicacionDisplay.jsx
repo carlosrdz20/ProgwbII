@@ -6,6 +6,7 @@ import { Row, Col } from 'react-bootstrap';
 import Rating from "./Rating";
 import { FaPencil } from "react-icons/fa6";
 import { FaRegPaperPlane, FaTrash } from "react-icons/fa";
+import Carousel from "./Carousel.jsx";
 
 
 function Corazon(props) {
@@ -17,7 +18,7 @@ function Corazon(props) {
 	);
 }
 
-function PublicDisplay({ NombreUsu, ImagenUsu, Fecha, Pais, Contenido, Imagen, Tipo }){
+function PublicDisplay({ NombreUsu, ImagenUsu, Fecha, Pais, Contenido, Imagen1, Imagen2, Imagen3, Tipo }){
 	const [rating, setRating] = useState(0);
 
   const handleRatingChange = (newRating) => {
@@ -68,10 +69,14 @@ function PublicDisplay({ NombreUsu, ImagenUsu, Fecha, Pais, Contenido, Imagen, T
 				</Col>
 				<Col className="PublicContenido" md={12}>
 					<div>
-						<p>{Contenido}</p>						
+						<p>{Contenido}</p>
 					</div>
-					<div className="divImagen">
-						<img className="PublicImagen" src={`/Imagenes/${Imagen}`} alt="Imagen de Contenido" />
+					<div className="CarouselDiv">	
+						<Carousel
+							Imagen1={`${Imagen1}`}
+							Imagen2={`${Imagen2}`}
+							Imagen3={`${Imagen3}`}
+						/>							
 					</div>
 					{Tipo === 'Propio' ? (
 							<div className="DivButtons">

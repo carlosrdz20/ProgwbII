@@ -78,6 +78,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  width: auto;
 }
 
 .PublicImagen{
@@ -86,10 +87,25 @@
   border-radius: 20px;
 }
 
+.ImgContenedor{
+  text-align: -webkit-center;
+}
+
 .DivButtons{
   display: flex;
   justify-content: flex-end;
   padding-top: 10px;
+}
+
+.CarouselDiv{
+  padding: 30px;
+}
+
+@media screen and (max-width: 1320px) {
+  .PublicContenedor{
+    min-width: 450px;
+    max-width: 600px;
+  }
 }
 
 @media screen and (max-width: 600px) {
@@ -101,5 +117,8 @@
   }
   .PublicImagen{
     max-width: 380px;
+  }
+  .CarouselDiv{
+    padding: 0px;
   }
 }

@@ -12,11 +12,11 @@ function InicioCuerpo() {
   return (
     <div className="Cuerpo">
       <Row>
-        <Col className="Izquierdo" xs={12} md={12} lg={3}>
+        <Col className="Izquierdo" xs={12} md={12} lg={3} xl={3}>
           <MenuLateral pagina={'Inicio'} />
         </Col>
 
-        <Col className="Centro" xs={12} sm={12} md={12} lg={6}>
+        <Col className="Centro" xs={12} sm={12} md={12} lg={6} xl={6}>
           <Row>
           {UsuIni ? (
             <>
@@ -52,7 +52,9 @@ function InicioCuerpo() {
                 Fecha={'12/12/12'}
                 Pais={'Bandera.png'}
                 Contenido={'Lorem Ipsum Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit... No hay nadie que ame el dolor mismo, que lo busque, lo encuentre y lo quiera, simplemente porque es el dolor.'}
-                Imagen={'Registro_BG.jpg'}
+                Imagen1={'Registro_BG.jpg'}
+                Imagen2={'Logo.png'}
+                Imagen3={'Paisaje.jpg'}
                 Tipo={'Ajeno'}
               />
               <PublicDisplay
@@ -61,7 +63,9 @@ function InicioCuerpo() {
                 Fecha={'12/12/12'}
                 Pais={'Bandera.png'}
                 Contenido={'Lorem Ipsum Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit... No hay nadie que ame el dolor mismo, que lo busque, lo encuentre y lo quiera, simplemente porque es el dolor.'}
-                Imagen={'Registro_BG.jpg'}
+                Imagen1={'Registro_BG.jpg'}
+                Imagen2={'Logo.png'}
+                Imagen3={'Paisaje.jpg'}
                 Tipo={'Propio'}
               />
               <PublicDisplay
@@ -70,14 +74,16 @@ function InicioCuerpo() {
                 Fecha={'12/12/12'}
                 Pais={'Bandera.png'}
                 Contenido={'Lorem Ipsum Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit... No hay nadie que ame el dolor mismo, que lo busque, lo encuentre y lo quiera, simplemente porque es el dolor.'}
-                Imagen={'Registro_BG.jpg'}
+                Imagen1={'Registro_BG.jpg'}
+                Imagen2={'Logo.png'}
+                Imagen3={'Paisaje.jpg'}
                 Tipo={'Borrador'}
               />
             </Col>
           </Row>
         </Col>
 
-        <Col className="Derecho" xs={12} sm={12} md={12} lg={3}>
+        <Col className="Derecho" xs={12} sm={12} md={12} lg={3} xl={3}>
           <div className="DestiPopus">
             <h1>"Destinos Populares"</h1>
             <div className="Paises">

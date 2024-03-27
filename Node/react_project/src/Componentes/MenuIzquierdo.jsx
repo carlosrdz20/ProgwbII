@@ -9,7 +9,7 @@ import { IoIosHeart } from "react-icons/io";
 
 function MenuLateral({ pagina }){
   return (
-    <div>
+    <div className="CuerpoMenu">
       <div>
         <Link to={"/CrearPublicacion"}>
         <button>Crear Publicación <FaRegPaperPlane size={28}/></button>   

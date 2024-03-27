@@ -1,13 +1,11 @@
-
+.CrearPublicacion{
+  min-height: 600px;
+}
 
 .ROW {
-  margin-top: 20px;
-  margin-right:300px;
-  margin-bottom: 40px;
-  margin-left: 20px;
   width: 700px; 
   height: 400px; 
-  background-color: rgb(90, 173, 212);  
+  background-color: rgb(90, 173, 212);
   border: 20px;
   border-radius: 15px; 
   display: flex; 

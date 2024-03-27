@@ -5,17 +5,15 @@ import { FaRegPaperPlane } from "react-icons/fa";
 import {  BsFillEraserFill } from "react-icons/bs";
 import MenuLateral from "../Componentes/MenuIzquierdo.jsx";
 
-
-
-
 function CrearPublicacion() {
 
     return (
         <div className="CrearPublicacion">
             <Row>
                 <Col className="Izquierdo" xs={12}  md ={12} lg = {3}>
-                <MenuLateral/>
+                    <MenuLateral/>
                 </Col>
+
                 <Col className="ROW" xs={12} sm ={12} md ={12} lg = {6}>
                     <Col className="COL">
                         <div class="input-container">
