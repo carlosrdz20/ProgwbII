@@ -1,14 +1,39 @@
+import React, { useState } from "react";
 import '../Estilos/NavibarUsuario.css';
-import { FaRegUserCircle } from "react-icons/fa";
 import { Link } from 'react-router-dom';
+import { FaRegUserCircle } from "react-icons/fa";
 
-function Navibar_Usuario ({ Nombre, Imagen }) {
+function Navibar_Usuario ({ Nombre, Imagen, Iniciado }) {
+  const [error, setError] = useState(false);
+
+  const handleError = () => {
+    setError(true);
+  };
+  
   return (
-    <div className='Contenedor'>
-      <Link to={'/Login'} className='LinkUsuario'>
-        <p className='Nombre_Usuario'>{Nombre}</p>
-        <img className='Imagen_Usuario' src={require(`../Imagenes/${Imagen}`)} alt={<FaRegUserCircle/>} />        
-      </Link>
+    <div>
+      {Iniciado ? (
+        <div className="DivUsu">
+          <Link className="UsuLink" to={'/Perfil'}>
+            <h1 className="UsuNom" >{Nombre}</h1>
+          </Link>   
+          {error ? (
+            <FaRegUserCircle size={75} color='#fff'/>
+          ) : (
+            <img className='UsuImg' alt="Imagen de Usuario" onError={handleError} src={`/Imagenes/${Imagen}`}/>
+          )}       
+        </div>
+      ) : (
+        <div className="IniReg">
+          <Link className="IniRegLink" to={'/Login'}>
+            Iniciar Sesión
+          </Link>
+          /
+          <Link className="IniRegLink" to={'/Registro'}>
+            Registrarse          
+          </Link>          
+        </div>
+      )}
     </div>
   );
 };

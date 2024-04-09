@@ -1,0 +1,71 @@
+.NavbarBuscadorContenedor{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 20px;
+}
+  
+.Navbar_Buscador_Contenedor{
+  border-radius: 25px;
+  background-color: rgb(22, 55, 113);
+  width: max-content;
+  padding: 3px;
+  text-align-last: end;
+}
+  
+.Navbar_Buscador_Contenedor:hover{
+  background-color: rgb(227, 46, 118);
+}
+  
+.Navbar-Buscador{
+  width: 30vw;
+  border-radius: 25px 0 0 25px;
+  border: none;
+}
+
+@media screen and (max-width: 1012px){
+  .Navbar-Buscador{
+    width: 320px;
+  }
+}
+  
+.Navbar_Buscador_Contenedor button{
+  background-color: rgba(255, 255, 255, 0);
+  border: none;
+  margin: 0%;
+}
+  
+.Navbar_Buscador_Contenedor button:hover{
+  background-color: rgba(255, 11, 11, 0);
+}
+  
+.Navbar_Buscador_Contenedor button:focus{
+  background-color: rgba(255, 255, 255, 0);
+}
+  
+.Navbar_Buscador_Contenedor button:active{
+  background-color: rgba(255, 255, 255, 0) !important;
+}
+  
+.Navbar_Buscador_BusAvan{
+  background-color: rgb(22, 55, 113);
+  border-radius: 25px;
+  color: white;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin: 6px;
+  width: fit-content;
+  height: 50px;
+  border: none;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-size: 25px;
+}
+  
+.Navbar_Buscador_BusAvan:hover{
+  background-color: rgb(227, 46, 118);
+  color: black;
+}
+
+.Navbar_Buscador_Boton{
+  font-size: 21px;
+}

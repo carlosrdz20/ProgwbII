@@ -9,7 +9,7 @@ h1{
 .Registro_App{
   margin: 0;
   padding: 0;
-  background-image: url('../Imagenes/Registro_BG.jpg');
+  background-image: url('/public/Imagenes/Registro_BG.jpg');
   background-size: cover;
   background-position: center;
   display: flex;

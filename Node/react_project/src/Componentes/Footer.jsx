@@ -1,10 +1,8 @@
 import React from "react";
+import '../Estilos/Footer.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Row, Col, Container } from 'react-bootstrap';
-import '../Estilos/Footer.css'
-import { FaFacebookF } from "react-icons/fa";
-import { FaInstagram } from "react-icons/fa";
-
+import { FaFacebookF, FaInstagram } from "react-icons/fa";
 
 function Footibar(){
   return (
@@ -26,19 +24,12 @@ function Footibar(){
         <Row className="Footibar_Informacion">
           <Col>
             <h3>Sobre la empresa</h3>
-            <p>"Descripción"</p>
-          </Col>
-          <Col className="Footibar_MyCol">
-            <h3>Links</h3>
-            <Row>Link 1</Row>
-            <Row>Link 2</Row>
-            <Row>Link 3</Row>
-          </Col>
-          <Col className="Footibar_MyCol">
-            <h3>Ayuda</h3>
-            <Row>Link 1</Row>
-            <Row>Link 2</Row>
-            <Row>Link 3</Row>
+            <p>"Caja de Errores vio una oportunidad de 
+              comuncar a las personas del mundo de una manera divertida 
+              y divertida, creando Travelers Talks, una página donde las personas
+              pueden compartir imagenes e información de sus viajes por todo el mundo,
+              de manera que ayudarán a otros a poder escoger sus proximos viajes
+              o lugares que no conocian y empezar a encontrar lugares populares y preciosos"</p>
           </Col>
         </Row>
         <hr />
