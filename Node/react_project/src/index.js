@@ -15,17 +15,18 @@ import EditarPublicacion  from './Paginas/EditarPublicacion.jsx';
 import EditarBorrador from './Paginas/EditarBorrador.jsx';
 import EditarPerfil from './Paginas/EditarPerfil.jsx';
 import PerfilAjeno from './Paginas/PerfilAjeno.jsx';
+import { UserProvider } from './Context/UserContext.js';
 
 
 const router = createBrowserRouter([
   {
     path: '/',
+    element: <Login />,
+  }
+  ,{
+    path: '/Inicio',
     element: <Inicio />,
     errorElement: <Error />
-  },
-  {
-    path: '/Login',
-    element: <Login />,
   },
   {
     path: '/Registro',
@@ -72,6 +73,8 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+    <UserProvider>
     <RouterProvider router={router} />
+    </UserProvider>
   </React.StrictMode>
 );

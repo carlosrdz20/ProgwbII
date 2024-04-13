@@ -1,11 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import "../Estilos/Login.css";
 import Logo from "../Componentes/Logo.jsx";
+import { useUser } from '../Context/UserContext.js';
 import React, { useState } from 'react';
 import axios from "axios";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { setUser } = useUser();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -31,10 +33,12 @@ export default function Login() {
       const response = await axios.post('http://localhost:4200/autentUsuario', formData);
 
       if (response.status === 200) {
-        
+        console.log("Datos del usuario:");
         console.log(response.data);
-
+        setUser(response.data);
+        localStorage.setItem('user', JSON.stringify(response.data));
         alert("Iniciaste Sesion");
+        navigate('/Inicio')
       } else {
         
         alert('Error al iniciar sesión. Por favor, inténtalo de nuevo.');

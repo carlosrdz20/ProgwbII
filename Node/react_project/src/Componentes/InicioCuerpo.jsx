@@ -1,13 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import '../Estilos/InicioCuerpo.css';
 import DestPopu from "./DestPopu.jsx";
 import MenuLateral  from "./MenuIzquierdo.jsx";
 import PublicDisplay from "./PublicacionDisplay.jsx";
 import { Row, Col } from 'react-bootstrap';
 import { RiArrowLeftCircleFill, RiArrowRightCircleFill } from "react-icons/ri";
+import axios from "axios";
 
 function InicioCuerpo() {
   const [ UsuIni ] = useState(true);
+  const [publicaciones, setPublicaciones] = useState([]);
+
+  useEffect(() => {
+    // Realiza la solicitud para obtener las publicaciones cuando el componente se monta
+    axios.get('http://localhost:4200/tpublicaciones')
+      .then(response => {
+        setPublicaciones(response.data);
+      })
+      .catch(error => {
+        console.error('Error al obtener las publicaciones:', error);
+      });
+  }, []);
 
   return (
     <div className="Cuerpo">
@@ -46,39 +59,19 @@ function InicioCuerpo() {
             </Col>
           )}
             <Col lg={12}>
-              <PublicDisplay
-                NombreUsu={'KFecito09'}
-                ImagenUsu={'WillamDeVerde.jpg'}
-                Fecha={'12/12/12'}
-                Pais={'Bandera.png'}
-                Contenido={'Lorem Ipsum Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit... No hay nadie que ame el dolor mismo, que lo busque, lo encuentre y lo quiera, simplemente porque es el dolor.'}
-                Imagen1={'Registro_BG.jpg'}
-                Imagen2={'Logo.png'}
-                Imagen3={'Paisaje.jpg'}
-                Tipo={'Ajeno'}
-              />
-              <PublicDisplay
-                NombreUsu={'Carlangas72'}
-                ImagenUsu={'Cato.jpg'}
-                Fecha={'12/12/12'}
-                Pais={'Bandera.png'}
-                Contenido={'Lorem Ipsum Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit... No hay nadie que ame el dolor mismo, que lo busque, lo encuentre y lo quiera, simplemente porque es el dolor.'}
-                Imagen1={'Registro_BG.jpg'}
-                Imagen2={'Logo.png'}
-                Imagen3={'Paisaje.jpg'}
-                Tipo={'Propio'}
-              />
-              <PublicDisplay
-                NombreUsu={'Carlangas72'}
-                ImagenUsu={'Cato.jpg'}
-                Fecha={'12/12/12'}
-                Pais={'Bandera.png'}
-                Contenido={'Lorem Ipsum Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit... No hay nadie que ame el dolor mismo, que lo busque, lo encuentre y lo quiera, simplemente porque es el dolor.'}
-                Imagen1={'Registro_BG.jpg'}
-                Imagen2={'Logo.png'}
-                Imagen3={'Paisaje.jpg'}
-                Tipo={'Borrador'}
-              />
+            {publicaciones.map(publicacion => (
+            <PublicDisplay
+            NombreUsu={publicacion.usuario.NombreUsuario}
+            ImagenUsu={publicacion.usuario.Foto}
+            Fecha={publicacion.FechaPub}
+            Pais={publicacion.pais.imagen}
+            Contenido={publicacion.Descripcion}
+            Imagen1={publicacion.ImagenUno}
+            Imagen2={publicacion.ImagenDos}
+            Imagen3={publicacion.ImagenTres}
+            Tipo={'Borrador'}
+            />
+            ))}
             </Col>
           </Row>
         </Col>

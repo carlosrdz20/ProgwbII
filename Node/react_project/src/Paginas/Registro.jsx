@@ -28,15 +28,15 @@ export default function Registro(){
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
-    // Si es un campo de archivo, actualiza formData con el archivo seleccionado
+    
     if (type === "file") {
       setFormData((prevData) => ({
         ...prevData,
-        [name]: files[0] // Guarda solo el primer archivo seleccionado
+        [name]: files[0] 
       }));
       
     } else {
-      // Si no es un campo de archivo, actualiza formData con el valor del campo
+      
       setFormData((prevData) => ({
         ...prevData,
         [name]: value
