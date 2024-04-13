@@ -15,7 +15,7 @@ function CrearPublicacion() {
     const [formData, setFormData] = useState({
         Titulo: "",
         Descripcion: "",
-        IDPais: "",
+        IDPais: 1,
         ImagenUno: null,
         ImagenDos: null,
         ImagenTres: null,

@@ -16,6 +16,7 @@ function InicioCuerpo() {
     axios.get('http://localhost:4200/tpublicaciones')
       .then(response => {
         setPublicaciones(response.data);
+        console.log("Se insertaron las publicaciones");
       })
       .catch(error => {
         console.error('Error al obtener las publicaciones:', error);

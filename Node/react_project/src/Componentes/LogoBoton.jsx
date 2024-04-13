@@ -7,7 +7,7 @@ import '../Estilos/LogoBoton.css'
 function Logo({ Imagen }) {
   return(
     <div className='logoBoton-contenedor'>
-      <Link to={'/'}>
+      <Link to={'/Inicio'}>
         <img 
           src={`Imagenes/favicon.ico`}
           className='logoBoton' 

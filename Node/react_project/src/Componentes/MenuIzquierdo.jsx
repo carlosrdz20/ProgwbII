@@ -16,7 +16,7 @@ function MenuLateral({ pagina }){
         </Link>
       </div>
       <div className="MenuOpc">
-        <Link to={'/'} className={pagina === 'Inicio' ? "MenuLinks PaginaActual" : "MenuLinks"}>
+        <Link to={'/Inicio'} className={pagina === 'Inicio' ? "MenuLinks PaginaActual" : "MenuLinks"}>
           <IoHome style={{marginRight: "5px"}} size={45}/>
           <p>Inicio</p>
         </Link>
@@ -32,7 +32,7 @@ function MenuLateral({ pagina }){
           <BsFillEraserFill style={{marginRight: "5px"}} size={45}/>
           Borradores
         </Link>
-        <Link to={'/Login'} className="MenuLinks">
+        <Link to={'/'} className="MenuLinks">
           <RiLogoutBoxRLine style={{marginRight: "5px"}} size={45}/>
           Cerrar Sesión
         </Link>

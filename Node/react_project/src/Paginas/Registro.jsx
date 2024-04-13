@@ -112,7 +112,7 @@ export default function Registro(){
         </form>
         <div class="extras">
         <p>¿Ya tienes una cuenta? </p>
-        <p> <Link to={'/Login'}>Inicia sesión aquí</Link> </p>
+        <p> <Link to={'/'}>Inicia sesión aquí</Link> </p>
         </div>
       </div>
     </div>

@@ -24,6 +24,8 @@ function PublicDisplay({ NombreUsu, ImagenUsu, Fecha, Pais, Contenido, Imagen1, 
   const handleRatingChange = (newRating) => {
     setRating(newRating);
   };
+
+  const Fecha2 = Fecha.split("T")[0]; //recortar la fecha
 	
 	return (
 		<div className="PublicContenedor">
@@ -48,7 +50,7 @@ function PublicDisplay({ NombreUsu, ImagenUsu, Fecha, Pais, Contenido, Imagen1, 
 							</div>
 						) : null}
 						<div className="FechaRating">
-							<p>{Fecha}</p>
+							<p>{Fecha2}</p>
 							<Rating initialRating={rating} onRatingChange={handleRatingChange} />
 						</div>
 					</Col>
