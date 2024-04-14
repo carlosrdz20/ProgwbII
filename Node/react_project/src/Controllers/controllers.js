@@ -141,6 +141,52 @@ const insertarPublicacion = async (req, res) => {
   }
 };
 
+const insertarBorrador = async (req, res) => {
+  console.log("INSERTAR BORRADOR ", req.body);
+  console.log("Imágenes", req.files); // Accede a req.files para obtener las imágenes
+
+  const foto = req.file ? req.file : null;
+  let fotoPath = null;
+
+  if (foto) {
+    const uploadDir = 'public/Imagenes'; 
+    const extension = path.extname(foto.originalname);
+    const fotoName = `foto_${uuidv4()}${extension}`;
+    fotoPath = path.join(uploadDir, fotoName);
+    console.log(fotoPath);
+
+    try {
+        console.log("Foto borrador agregada");
+    } catch (error) {
+        console.error("Error al guardar la foto del borrador:", error);
+        return res.status(500).json({ error: "Error al guardar la foto del borrador." }); // Devuelve una respuesta de error
+    }
+}
+  // en Estatus dejare el 1 para publicación, 2 para borrador y 3 para publicación o borrador eliminado --Edgar
+  const publicacion = new Publicaciones({
+      IDPublicacion: Math.floor(Math.random() * (1000000 - 1 + 1)) + 1,
+      Titulo: req.body.Titulo,
+      Descripcion: req.body.Descripcion,
+      IDPais: req.body.IDPais,
+      FechaPub: new Date(),
+      ImagenUno: foto.filename,
+      ImagenDos: foto.filename,
+      ImagenTres: foto.filename,
+      Estatus: 2,
+      IDUsuario: req.body.IDUsuario
+  });
+
+  console.log("Borrador guardado: ", publicacion);
+  try {
+      const publicacionSaved = await publicacion.save();
+      console.log("Borrador guardado:", publicacionSaved);
+      res.status(201).json(publicacionSaved);
+  } catch (error) {
+      console.error("Error al insertar el borrador:", error);
+      res.status(500).json({ error: "Error interno del servidor al guardar el borrador." });
+  }
+};
+
 const mostrarPublicaciones = async (req, res) => {
   try {
     // Utiliza la agregación para realizar un "join" entre las colecciones
@@ -167,6 +213,9 @@ const mostrarPublicaciones = async (req, res) => {
       },
       
       { $unwind: "$pais" },
+
+      // Filtra las publicaciones por el atributo "Estatus"
+      { $match: { Estatus: 1 } }, // Aquí puedes especificar el valor de estatus que desees mostrar
       
       {
         $project: {
@@ -200,5 +249,6 @@ module.exports = {
     autenticarUsuario,
     buscarPaises,
     insertarPublicacion,
-    mostrarPublicaciones
+    mostrarPublicaciones,
+    insertarBorrador
 }

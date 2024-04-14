@@ -66,6 +66,7 @@ function InicioCuerpo() {
             ImagenUsu={publicacion.usuario.Foto}
             Fecha={publicacion.FechaPub}
             Pais={publicacion.pais.imagen}
+            Titulo={publicacion.Titulo}
             Contenido={publicacion.Descripcion}
             Imagen1={publicacion.ImagenUno}
             Imagen2={publicacion.ImagenDos}

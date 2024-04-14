@@ -18,7 +18,7 @@ function Corazon(props) {
 	);
 }
 
-function PublicDisplay({ NombreUsu, ImagenUsu, Fecha, Pais, Contenido, Imagen1, Imagen2, Imagen3, Tipo }){
+function PublicDisplay({ NombreUsu, ImagenUsu, Fecha, Pais, Titulo, Contenido, Imagen1, Imagen2, Imagen3, Tipo }){
 	const [rating, setRating] = useState(0);
 
   const handleRatingChange = (newRating) => {
@@ -37,7 +37,7 @@ function PublicDisplay({ NombreUsu, ImagenUsu, Fecha, Pais, Contenido, Imagen1, 
 					<Col lg={7} className="DivCentro">
 						{Tipo === 'Propio' ? (
 							<div className="NomBot">
-								<Link className="LinkUsuName" to={'/Perfil'}>{NombreUsu}</Link>				
+								<Link className="LinkUsuName" to={Tipo === 'Propio' ? '/Perfil' : Tipo === 'Ajeno' ? '/PerfilAjeno' : Tipo === 'Borrador' ? '/Perfil' : '/Perfil'}>{NombreUsu}</Link>			
 							</div>
 						) : Tipo === 'Ajeno' ? (
 							<div className="NomBot">
@@ -70,6 +70,9 @@ function PublicDisplay({ NombreUsu, ImagenUsu, Fecha, Pais, Contenido, Imagen1, 
 						) : null}
 				</Col>
 				<Col className="PublicContenido" md={12}>
+					<div>
+						<h1>{Titulo}</h1>
+					</div>
 					<div>
 						<p>{Contenido}</p>
 					</div>

@@ -56,6 +56,19 @@ function CrearPublicacion() {
             });
     };
 
+    const handleSubmitBorrador = (event) => {
+        event.preventDefault();
+
+        axios.post('http://localhost:4200/insertarBorrador', formData, {headers:{'Content-Type': 'multipart/form-data'}})
+            .then(response => {
+                console.log('Borrador insertado:', response.data);
+                // Puedes hacer alguna acción después de insertar la publicación, como redirigir al usuario a otra página
+            })
+            .catch(error => {
+                console.error('Error al insertar el borrador:', error);
+            });
+    };
+
     useEffect(() => {
         axios.get('http://localhost:4200/tpaises')
             .then(response => {
@@ -101,7 +114,7 @@ function CrearPublicacion() {
                             </select>
                         </div>
                         <div class="button-container">
-                            <button class="btn">Borrador <BsFillEraserFill  size={25}/></button>
+                            <button class="btn" onClick={handleSubmitBorrador}>Borrador <BsFillEraserFill  size={25}/></button>
                         </div>
                     </Col>
                     <Col className="COL" xs={12} sm ={12} md ={12} lg = {6}>
