@@ -75,6 +75,7 @@ function InicioCuerpo() {
             Imagen2={publicacion.ImagenDos}
             Imagen3={publicacion.ImagenTres}
             Tipo={publicacion.Tipo}
+            Saved={publicacion.Saved}
             />
             ))}
             </Col>

@@ -190,8 +190,6 @@ const insertarBorrador = async (req, res) => {
 
 const mostrarPublicaciones = async (req, res) => {
   try {
-    const userID = parseInt(req.params.IDUsuario);
-    const pubID = parseInt(req.params.IDPublicacion);
     // Utiliza la agregación para realizar un "join" entre las colecciones
     const publicacionesConUsuariosYPaises = await Publicaciones.aggregate([
       // Realiza un "lookup" para unir la colección de usuarios
@@ -232,6 +230,37 @@ const mostrarPublicaciones = async (req, res) => {
           }
         }
       },
+
+      //Buscar si el usuario ha guardado la publicación para mandar un Saved en true o false y rellenar el corazón o no
+      // Realiza una búsqueda en el documento "guardados" para verificar si el usuario ha guardado la publicación
+      {
+        $lookup: {
+          from: "guardados",
+          let: { pubId: "$IDPublicacion" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$IDPublicacion", "$$pubId"] },
+                    { $eq: ["$IDUsuario", parseInt(req.params.IDUsuario)] },
+                    { $eq: ["$Estatus", 1] }
+                  ]
+                }
+              }
+            },
+            { $count: "savedCount" }
+          ],
+          as: "saved"
+        }
+      },
+      // Agrega el campo "Saved" basado en si se encontró un registro en "guardados"
+      {
+        $addFields: {
+          Saved: { $gt: [{ $size: "$saved" }, 0] }
+        }
+      },
+      //
       
       {
         $project: {

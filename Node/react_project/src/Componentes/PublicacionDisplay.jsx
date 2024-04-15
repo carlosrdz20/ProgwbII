@@ -11,7 +11,7 @@ import axios from "axios";
 
 
 function Corazon(props) {
-	const [active, setActive] = useState(false);
+	const [active, setActive] = useState(props.Savedxd);
 	const userData = localStorage.getItem('user');
 	const user = JSON.parse(userData);
 	const [formData, setFormData] = useState({
@@ -36,7 +36,7 @@ function Corazon(props) {
 	);
 }
 
-function PublicDisplay({ IDPublicacion, NombreUsu, ImagenUsu, Fecha, Pais, Titulo, Contenido, Imagen1, Imagen2, Imagen3, Tipo }){
+function PublicDisplay({ IDPublicacion, NombreUsu, ImagenUsu, Fecha, Pais, Titulo, Contenido, Imagen1, Imagen2, Imagen3, Tipo, Saved }){
 	const [rating, setRating] = useState(0);
 
   const handleRatingChange = (newRating) => {
@@ -79,7 +79,7 @@ function PublicDisplay({ IDPublicacion, NombreUsu, ImagenUsu, Fecha, Pais, Titul
 						) : Tipo === 'Ajeno' ? (
 							<Col lg={2} className="PaisReacc">
 								<img className="PublicBan" src={`/Imagenes/${Pais}`} alt="Bandera" />
-								<Corazon IDPublicacionxd={IDPublicacion} />
+								<Corazon IDPublicacionxd={IDPublicacion} Savedxd={Saved} />
 							</Col>
 						) : Tipo === 'Borrador' ? (
 							<Col lg={2} className="PaisReacc">
@@ -90,6 +90,7 @@ function PublicDisplay({ IDPublicacion, NombreUsu, ImagenUsu, Fecha, Pais, Titul
 				<Col className="PublicContenido" md={12}>
 					<div>
 						<h1>{Titulo}</h1>
+						{Saved === true ? (<h2>es true</h2>) : (<h2>es false</h2>)}
 					</div>
 					<div>
 						<p>{Contenido}</p>
