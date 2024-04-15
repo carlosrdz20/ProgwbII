@@ -1,5 +1,6 @@
 const Usuario = require('../Schemas/Usuarios');
 const Publicaciones = require('../Schemas/Publicaciones');
+const Guardados = require('../Schemas/Guardados');
 const Pais = require('../Schemas/Paises');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
@@ -189,6 +190,8 @@ const insertarBorrador = async (req, res) => {
 
 const mostrarPublicaciones = async (req, res) => {
   try {
+    const userID = parseInt(req.params.IDUsuario);
+    const pubID = parseInt(req.params.IDPublicacion);
     // Utiliza la agregación para realizar un "join" entre las colecciones
     const publicacionesConUsuariosYPaises = await Publicaciones.aggregate([
       // Realiza un "lookup" para unir la colección de usuarios
@@ -216,10 +219,24 @@ const mostrarPublicaciones = async (req, res) => {
 
       // Filtra las publicaciones por el atributo "Estatus"
       { $match: { Estatus: 1 } }, // Aquí puedes especificar el valor de estatus que desees mostrar
+
+      // Agrega el campo "Tipo" basado en la condición proporcionada
+      {
+        $addFields: {
+          Tipo: {
+            $cond: { 
+              if: { $eq: ["$usuario.IDUsuario", parseInt(req.params.IDUsuario)] }, 
+              then: "Propio", 
+              else: "Ajeno" 
+            }
+          }
+        }
+      },
       
       {
         $project: {
           _id: 1,
+          IDPublicacion: 1,
           Titulo: 1,
           Descripcion: 1,
           FechaPub: 1,
@@ -230,7 +247,9 @@ const mostrarPublicaciones = async (req, res) => {
           "usuario.NombreUsuario": 1, 
           "usuario.Foto": 1, 
           "pais.pais": 1, 
-          "pais.imagen": 1
+          "pais.imagen": 1,
+          Tipo: 1,
+          Saved: 1
         }
       }
     ]);
@@ -242,6 +261,47 @@ const mostrarPublicaciones = async (req, res) => {
   }
 };
 
+//Guardados
+const insertarGuardado = async (req, res) => {
+  console.log("INSERTAR GUARDADO ", req.body);
+  const { IDPublicacion, IDUsuario } = req.body;
+
+  try {
+    // Verificar si ya existe un registro de guardado para esta publicación y usuario
+    let guardadoExistente = await Guardados.findOne({ IDPublicacion, IDUsuario });
+
+    if (guardadoExistente) {
+      // Si existe un registro, actualiza el campo de estatus
+      guardadoExistente.Estatus = guardadoExistente.Estatus === 1 ? 2 : 1;
+      await guardadoExistente.save();
+      console.log("Guardado actualizado:", guardadoExistente);
+      res.status(200).json(guardadoExistente);
+    } else {
+      // Si no existe un registro, crea uno nuevo con el estatus 1
+      // en Estatus dejare el 1 para publicación, 2 para borrador y 3 para publicación o borrador eliminado --Edgar
+      const guardado = new Guardados({
+        IDGuardado: Math.floor(Math.random() * (1000000 - 1 + 1)) + 1,
+        IDPublicacion: req.body.IDPublicacion,
+        Estatus: 1,
+        IDUsuario: req.body.IDUsuario
+      });
+
+      console.log("Guardado salvado: ", guardado);
+      try {
+        const guardadoSaved = await guardado.save();
+        console.log("Guardado salvado:", guardadoSaved);
+        res.status(201).json(guardadoSaved);
+      } catch (error) {
+        console.error("Error al insertar el guardado:", error);
+        res.status(500).json({ error: "Error interno del servidor al salvar el guardado." });
+      }
+    }
+  } catch (error) {
+    console.error("Error al insertar o actualizar el guardado:", error);
+    res.status(500).json({ error: "Error interno del servidor al salvar el guardado." });
+  }
+};
+
 
 
 module.exports = {
@@ -250,5 +310,6 @@ module.exports = {
     buscarPaises,
     insertarPublicacion,
     mostrarPublicaciones,
-    insertarBorrador
+    insertarBorrador,
+    insertarGuardado
 }

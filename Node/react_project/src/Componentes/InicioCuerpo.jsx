@@ -13,7 +13,9 @@ function InicioCuerpo() {
 
   useEffect(() => {
     // Realiza la solicitud para obtener las publicaciones cuando el componente se monta
-    axios.get('http://localhost:4200/tpublicaciones')
+    const userData = localStorage.getItem('user');
+    const user = JSON.parse(userData);
+    axios.get(`http://localhost:4200/tpublicaciones/${user.IDUsuario}`)
       .then(response => {
         setPublicaciones(response.data);
         console.log("Se insertaron las publicaciones");
@@ -62,6 +64,7 @@ function InicioCuerpo() {
             <Col lg={12}>
             {publicaciones.map(publicacion => (
             <PublicDisplay
+            IDPublicacion={publicacion.IDPublicacion}
             NombreUsu={publicacion.usuario.NombreUsuario}
             ImagenUsu={publicacion.usuario.Foto}
             Fecha={publicacion.FechaPub}
@@ -71,7 +74,7 @@ function InicioCuerpo() {
             Imagen1={publicacion.ImagenUno}
             Imagen2={publicacion.ImagenDos}
             Imagen3={publicacion.ImagenTres}
-            Tipo={'Borrador'}
+            Tipo={publicacion.Tipo}
             />
             ))}
             </Col>

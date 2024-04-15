@@ -22,7 +22,8 @@ routers.post('/insertarUsuario', upload.single('Foto'), controllers.insertarUsua
 routers.post('/autentUsuario', controllers.autenticarUsuario);
 routers.get('/tpaises', controllers.buscarPaises);
 routers.post('/insertarPublicacion', upload.single('Foto'), controllers.insertarPublicacion);
-routers.get('/tpublicaciones', controllers.mostrarPublicaciones);
+routers.get('/tpublicaciones/:IDUsuario', controllers.mostrarPublicaciones);
 routers.post('/insertarBorrador', upload.single('Foto'), controllers.insertarBorrador);
+routers.post('/insertarGuardado', controllers.insertarGuardado);
 
 module.exports = [routers];

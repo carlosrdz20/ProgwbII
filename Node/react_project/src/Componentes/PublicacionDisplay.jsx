@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState } from "react";
 import Heart from "react-heart"
 import { Link } from "react-router-dom";
 import '../Estilos/PublicacionDisplay.css'
@@ -7,18 +7,36 @@ import Rating from "./Rating";
 import { FaPencil } from "react-icons/fa6";
 import { FaRegPaperPlane, FaTrash } from "react-icons/fa";
 import Carousel from "./Carousel.jsx";
+import axios from "axios";
 
 
 function Corazon(props) {
-	const [active, setActive] = useState(false)
+	const [active, setActive] = useState(false);
+	const userData = localStorage.getItem('user');
+	const user = JSON.parse(userData);
+	const [formData, setFormData] = useState({
+		IDPublicacion: props.IDPublicacionxd,
+		IDUsuario: user.IDUsuario
+	});
+
+	const HandleClick = async () => {
+		setActive(!active);
+		try {
+			await axios.post('http://localhost:4200/insertarGuardado', formData);
+		  console.log('Guardado agregado correctamente');
+		} catch (error) {
+		  console.error('Error al agregar el guardado:', error);
+		}
+	};
+
 	return (
 		<div style={{ width: "50px" }}>
-			<Heart isActive={active} onClick={() => setActive(!active)} animationScale = {1.2} animationTrigger = "both" activeColor = "rgb(227, 46, 118)" animationDuration = {.2} className = {`customHeart${active ? " active": ""}`}/>
+			<Heart isActive={active} onClick={HandleClick} animationScale = {1.2} animationTrigger = "both" activeColor = "rgb(227, 46, 118)" animationDuration = {.2} className = {`customHeart${active ? " active": ""}`}/>
 		</div>
 	);
 }
 
-function PublicDisplay({ NombreUsu, ImagenUsu, Fecha, Pais, Titulo, Contenido, Imagen1, Imagen2, Imagen3, Tipo }){
+function PublicDisplay({ IDPublicacion, NombreUsu, ImagenUsu, Fecha, Pais, Titulo, Contenido, Imagen1, Imagen2, Imagen3, Tipo }){
 	const [rating, setRating] = useState(0);
 
   const handleRatingChange = (newRating) => {
@@ -61,7 +79,7 @@ function PublicDisplay({ NombreUsu, ImagenUsu, Fecha, Pais, Titulo, Contenido, I
 						) : Tipo === 'Ajeno' ? (
 							<Col lg={2} className="PaisReacc">
 								<img className="PublicBan" src={`/Imagenes/${Pais}`} alt="Bandera" />
-								<Corazon />
+								<Corazon IDPublicacionxd={IDPublicacion} />
 							</Col>
 						) : Tipo === 'Borrador' ? (
 							<Col lg={2} className="PaisReacc">
