@@ -25,5 +25,7 @@ routers.post('/insertarPublicacion', upload.single('Foto'), controllers.insertar
 routers.get('/tpublicaciones/:IDUsuario', controllers.mostrarPublicaciones);
 routers.post('/insertarBorrador', upload.single('Foto'), controllers.insertarBorrador);
 routers.post('/insertarGuardado', controllers.insertarGuardado);
+routers.get('/misfavoritos/:IDUsuario', controllers.mostrarFavoritos);
+routers.get('/misfavoritosfiltrados/:IDUsuario', controllers.mostrarFavoritosFiltrados);
 
 module.exports = [routers];

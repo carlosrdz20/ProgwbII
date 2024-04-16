@@ -15,7 +15,7 @@ function CrearPublicacion() {
     const [formData, setFormData] = useState({
         Titulo: "",
         Descripcion: "",
-        IDPais: 1,
+        IDPais: 1, //puse el ID 1 de inicio por si nunca entra al handleChange
         ImagenUno: null,
         ImagenDos: null,
         ImagenTres: null,

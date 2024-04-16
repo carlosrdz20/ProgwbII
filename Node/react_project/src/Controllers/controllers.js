@@ -331,6 +331,182 @@ const insertarGuardado = async (req, res) => {
   }
 };
 
+const mostrarFavoritos = async (req, res) => {
+  try {
+    const userID = parseInt(req.params.IDUsuario);
+
+    // Utiliza la agregación para filtrar las publicaciones guardadas por el usuario actual
+    const publicacionesFavoritas = await Publicaciones.aggregate([
+      // Realiza un "lookup" para unir la colección de usuarios
+      {
+        $lookup: {
+          from: "usuarios", 
+          localField: "IDUsuario", 
+          foreignField: "IDUsuario", 
+          as: "usuario" 
+        }
+      },
+      
+      { $unwind: "$usuario" },
+      
+      {
+        $lookup: {
+          from: "paises", 
+          localField: "IDPais", 
+          foreignField: "idPais", 
+          as: "pais"
+        }
+      },
+      
+      { $unwind: "$pais" },
+
+      // Filtra las publicaciones por el atributo "Estatus"
+      { $match: { Estatus: 1 } }, // Aquí puedes especificar el valor de estatus que desees mostrar
+
+      {
+        $lookup: {
+          from: "guardados",
+          let: { pubId: "$IDPublicacion" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$IDPublicacion", "$$pubId"] },
+                    { $eq: ["$IDUsuario", userID] },
+                    { $eq: ["$Estatus", 1] }
+                  ]
+                }
+              }
+            },
+            { $count: "savedCount" }
+          ],
+          as: "saved"
+        }
+      },
+      // Filtra las publicaciones que han sido guardadas por el usuario actual
+      { $match: { "saved.savedCount": { $gt: 0 } } },
+      {
+        $project: {
+          _id: 1,
+          IDPublicacion: 1,
+          Titulo: 1,
+          Descripcion: 1,
+          FechaPub: 1,
+          ImagenUno: 1,
+          ImagenDos: 1,
+          ImagenTres: 1,
+          Estatus: 1,
+          "usuario.NombreUsuario": 1,
+          "usuario.Foto": 1,
+          "pais.pais": 1,
+          "pais.imagen": 1
+        }
+      }
+    ]);
+
+    res.status(200).json(publicacionesFavoritas);
+  } catch (error) {
+    console.error("Error al buscar publicaciones favoritas:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+const mostrarFavoritosFiltrados = async (req, res) => {
+  const userID = parseInt(req.params.IDUsuario);
+  const { pais, fechaInicio, fechaFin } = req.query;
+
+  let matchPublicaciones = {
+    Estatus: 1 // Suponiendo que solo quieres las publicaciones activas
+  };
+
+  if (pais) {
+    matchPublicaciones['IDPais'] = parseInt(pais);
+  }
+
+  if (fechaInicio && fechaFin) {
+    matchPublicaciones.FechaPub = { $gte: new Date(fechaInicio), $lte: new Date(fechaFin + 'T23:59:59') };
+  }
+
+  try {
+    // Utiliza la agregación para filtrar las publicaciones guardadas por el usuario actual
+    const publicacionesFiltradas = await Publicaciones.aggregate([
+      // Realiza un "lookup" para unir la colección de usuarios
+      {
+        $lookup: {
+          from: "usuarios", 
+          localField: "IDUsuario", 
+          foreignField: "IDUsuario", 
+          as: "usuario" 
+        }
+      },
+      
+      { $unwind: "$usuario" },
+      
+      {
+        $lookup: {
+          from: "paises", 
+          localField: "IDPais", 
+          foreignField: "idPais", 
+          as: "pais"
+        }
+      },
+      
+      { $unwind: "$pais" },
+
+      // Filtra las publicaciones por el atributo "Estatus"
+      { $match: matchPublicaciones }, // Aquí puedes especificar el valor de estatus que desees mostrar
+
+      {
+        $lookup: {
+          from: "guardados",
+          let: { pubId: "$IDPublicacion" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$IDPublicacion", "$$pubId"] },
+                    { $eq: ["$IDUsuario", userID] },
+                    { $eq: ["$Estatus", 1] }
+                  ]
+                }
+              }
+            },
+            { $count: "savedCount" }
+          ],
+          as: "saved"
+        }
+      },
+      // Filtra las publicaciones que han sido guardadas por el usuario actual
+      { $match: { "saved.savedCount": { $gt: 0 } } },
+      {
+        $project: {
+          _id: 1,
+          IDPublicacion: 1,
+          Titulo: 1,
+          Descripcion: 1,
+          FechaPub: 1,
+          ImagenUno: 1,
+          ImagenDos: 1,
+          ImagenTres: 1,
+          Estatus: 1,
+          "usuario.NombreUsuario": 1,
+          "usuario.Foto": 1,
+          "pais.pais": 1,
+          "pais.imagen": 1
+        }
+      }
+    ]);
+
+    res.status(200).json(publicacionesFiltradas);
+  } catch (error) {
+    console.error("Error al buscar publicaciones filtradas:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+
 
 
 module.exports = {
@@ -340,5 +516,7 @@ module.exports = {
     insertarPublicacion,
     mostrarPublicaciones,
     insertarBorrador,
-    insertarGuardado
+    insertarGuardado,
+    mostrarFavoritos,
+    mostrarFavoritosFiltrados
 }

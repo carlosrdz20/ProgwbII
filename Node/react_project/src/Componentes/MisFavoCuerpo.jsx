@@ -1,12 +1,35 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import '../Estilos/MisFavoCuerpo.css';
 import MenuLateral from "./MenuIzquierdo.jsx";
 import FiltroLateral from "./FiltroDerecho.jsx";
 import PublicDisplay from "./PublicacionDisplay.jsx";
 import { Row, Col } from 'react-bootstrap';
 import { RiArrowLeftCircleFill, RiArrowRightCircleFill } from "react-icons/ri";
+import axios from "axios";
 
-function InicioCuerpo() {
+function MisFavoCuerpo() {
+
+  const [ UsuIni ] = useState(true);
+  const [publicaciones, setPublicaciones] = useState([]);
+
+  useEffect(() => {
+    // Realiza la solicitud para obtener las publicaciones cuando el componente se monta
+    const userData = localStorage.getItem('user');
+    const user = JSON.parse(userData);
+    axios.get(`http://localhost:4200/misfavoritos/${user.IDUsuario}`)
+      .then(response => {
+        setPublicaciones(response.data);
+        console.log("Se insertaron las publicaciones");
+      })
+      .catch(error => {
+        console.error('Error al obtener las publicaciones:', error);
+      });
+  }, []);
+
+  const actualizarPublicaciones = (nuevasPublicaciones) => {
+    setPublicaciones(nuevasPublicaciones);
+  };  
+
   return (
     <div className="Cuerpo">
       <Row>
@@ -26,49 +49,39 @@ function InicioCuerpo() {
               </div>
             </Col>
             <Col lg={12}>
-              <PublicDisplay
-                NombreUsu={'KFecito09'}
-                ImagenUsu={'WillamDeVerde.jpg'}
-                Fecha={'12/12/12'}
-                Pais={'Bandera.png'}
-                Contenido={'Lorem Ipsum Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit... No hay nadie que ame el dolor mismo, que lo busque, lo encuentre y lo quiera, simplemente porque es el dolor.'}
-                Imagen1={'Registro_BG.jpg'}
-                Imagen2={'Logo.png'}
-                Imagen3={'Paisaje.jpg'}
-                Tipo={'Ajeno'}
-              />
-              <PublicDisplay
-                NombreUsu={'KFecito09'}
-                ImagenUsu={'WillamDeVerde.jpg'}
-                Fecha={'12/12/12'}
-                Pais={'Bandera.png'}
-                Contenido={'Lorem Ipsum Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit... No hay nadie que ame el dolor mismo, que lo busque, lo encuentre y lo quiera, simplemente porque es el dolor.'}
-                Imagen1={'Registro_BG.jpg'}
-                Imagen2={'Logo.png'}
-                Imagen3={'Paisaje.jpg'}
-                Tipo={'Ajeno'}
-              />
-              <PublicDisplay
-                NombreUsu={'KFecito09'}
-                ImagenUsu={'WillamDeVerde.jpg'}
-                Fecha={'12/12/12'}
-                Pais={'Bandera.png'}
-                Contenido={'Lorem Ipsum Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit... No hay nadie que ame el dolor mismo, que lo busque, lo encuentre y lo quiera, simplemente porque es el dolor.'}
-                Imagen1={'Registro_BG.jpg'}
-                Imagen2={'Logo.png'}
-                Imagen3={'Paisaje.jpg'}
-                Tipo={'Ajeno'}
-              />
+              {publicaciones.length === 0 ? (
+                  <div className="">
+                    <img src={"/Imagenes/error.jpg"} alt="No tienes favoritos" style={{ marginLeft: '200px' }}/>
+                    <h1>No tienes favoritos aún. ¡Explora y guarda tus publicaciones favoritas!</h1>
+                  </div>
+                ) : (
+                  publicaciones.map(publicacion => (
+                    <PublicDisplay
+                      IDPublicacion={publicacion.IDPublicacion}
+                      NombreUsu={publicacion.usuario.NombreUsuario}
+                      ImagenUsu={publicacion.usuario.Foto}
+                      Fecha={publicacion.FechaPub}
+                      Pais={publicacion.pais.imagen}
+                      Titulo={publicacion.Titulo}
+                      Contenido={publicacion.Descripcion}
+                      Imagen1={publicacion.ImagenUno}
+                      Imagen2={publicacion.ImagenDos}
+                      Imagen3={publicacion.ImagenTres}
+                      Tipo={"Ajeno"}
+                      Saved={true}
+                    />
+                  ))
+                )}
             </Col>
           </Row>
         </Col>
 
         <Col className="Derecho" xs={12} sm={12} md={12} lg={3}>
-          <FiltroLateral />
+          <FiltroLateral actualizarPublicaciones={actualizarPublicaciones}/>
         </Col>
       </Row>
     </div>
   );
 }
 
-export default InicioCuerpo;
+export default MisFavoCuerpo;

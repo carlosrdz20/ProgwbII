@@ -44,6 +44,7 @@ function PublicDisplay({ IDPublicacion, NombreUsu, ImagenUsu, Fecha, Pais, Titul
   };
 
   const Fecha2 = Fecha.split("T")[0]; //recortar la fecha
+  //const Fecha2 = Fecha;
 	
 	return (
 		<div className="PublicContenedor">
@@ -90,7 +91,6 @@ function PublicDisplay({ IDPublicacion, NombreUsu, ImagenUsu, Fecha, Pais, Titul
 				<Col className="PublicContenido" md={12}>
 					<div>
 						<h1>{Titulo}</h1>
-						{Saved === true ? (<h2>es true</h2>) : (<h2>es false</h2>)}
 					</div>
 					<div>
 						<p>{Contenido}</p>
