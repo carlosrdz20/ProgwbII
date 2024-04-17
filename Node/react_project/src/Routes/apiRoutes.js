@@ -27,5 +27,6 @@ routers.post('/insertarBorrador', upload.single('Foto'), controllers.insertarBor
 routers.post('/insertarGuardado', controllers.insertarGuardado);
 routers.get('/misfavoritos/:IDUsuario', controllers.mostrarFavoritos);
 routers.get('/misfavoritosfiltrados/:IDUsuario', controllers.mostrarFavoritosFiltrados);
+routers.put('/editarPerfil', upload.single('Foto'), controllers.editarUsuario);
 
 module.exports = [routers];

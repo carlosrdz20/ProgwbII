@@ -34,6 +34,16 @@ function FiltroLateral({ actualizarPublicaciones }){
   };
 
   const aplicarFiltros = () => {
+    //Verificar si existe la fecha de inicio
+    if(!fechaInicio){
+      alert("Seleccione una fecha inicial.");
+      return;
+    }
+    //Verificar si existe la fecha de fin
+    if(!fechaFin){
+      alert("Seleccione una fecha final.");
+      return;
+    }
     // Verificar si la fecha inicial es mayor que la fecha final
     if (fechaInicio && fechaFin && new Date(fechaInicio) > new Date(fechaFin)) {
       alert("La fecha inicial no puede ser mayor que la fecha final");

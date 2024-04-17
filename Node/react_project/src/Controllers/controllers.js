@@ -80,6 +80,55 @@ const autenticarUsuario = async (req, res) =>{
 
 };
 
+const editarUsuario = async (req, res) => {
+  const { IDUsuario } = req.body; // ID del usuario a editar
+  const { NombreUsuario, Nombre, Correo, Contrasena, FechaNacimiento, Genero } = req.body; // Datos actualizados del usuario
+  const foto = req.file ? req.file : null;
+
+  // Verifica si se adjuntó una nueva foto
+  let fotoPath = null;
+  if (req.file) {
+    const uploadDir = 'public/Imagenes';
+    const extension = path.extname(req.file.originalname);
+    const fotoName = `foto_${uuidv4()}${extension}`;
+    fotoPath = path.join(uploadDir, fotoName);
+    // Aquí guardarías la foto en el servidor
+    try {
+      console.log("Foto agregada");
+    } catch (error) {
+      console.error("Error al guardar la foto:", error);
+      return res.status(500).json({ error: "Error al guardar la foto" });
+    }
+  }
+
+  try {
+    // Buscar y actualizar el usuario en la base de datos
+    const usuarioActualizado = await Usuario.findOneAndUpdate(
+      { IDUsuario: IDUsuario },
+      {
+        NombreUsuario: NombreUsuario,
+        Nombre: Nombre,
+        Correo: Correo,
+        Contrasena: Contrasena,
+        FechaNacimiento: FechaNacimiento,
+        Genero: Genero,
+        // Si se adjuntó una nueva foto, actualiza la ruta de la foto
+        Foto: fotoPath ? foto.filename : req.body.Foto // Si no se adjuntó una nueva foto, usa la foto existente
+      },
+      { new: true } // Devolver el documento actualizado en lugar del original
+    );
+
+    if (!usuarioActualizado) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    res.status(200).json(usuarioActualizado);
+  } catch (error) {
+    console.error("Error al editar usuario:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
 //Paises
 const buscarPaises = async (req, res) => {
   try {
@@ -518,5 +567,6 @@ module.exports = {
     insertarBorrador,
     insertarGuardado,
     mostrarFavoritos,
-    mostrarFavoritosFiltrados
+    mostrarFavoritosFiltrados,
+    editarUsuario
 }
