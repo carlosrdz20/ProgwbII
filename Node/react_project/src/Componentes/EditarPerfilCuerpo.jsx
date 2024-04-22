@@ -3,14 +3,16 @@ import MenuLateral from "./MenuIzquierdo.jsx";
 import { Row, Col } from 'react-bootstrap';
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { useUser } from '../Context/UserContext';
+import useAuth from '../Context/useAuth';
+import { Link, useNavigate } from "react-router-dom";
 
 function EditarPerfilCuerpo() {
-
-  const { user, setUser } = useUser();
+  const navigate = useNavigate();
   const [fechaFormateada, setFecha] = useState();
   const [fotoxd, setFotoxd] = useState();
   const [user2, setuser2] = useState();
+  const { user, logout, login } = useAuth();
+  
   const [formData, setFormData] = useState({
     email: '',
     password: '' });
@@ -18,7 +20,6 @@ function EditarPerfilCuerpo() {
   useEffect(() => {
     const userData = localStorage.getItem('user');
     if (userData) {
-      setUser(JSON.parse(userData));
       setuser2(user);
       // Formatear la fecha
       setFecha(user.FechaNacimiento.split('T')[0]);
@@ -69,7 +70,7 @@ function EditarPerfilCuerpo() {
     try {
       // Enviar los datos del formulario al servidor
       //FALTA CAMBIAR RUTA
-      const response = await axios.put('http://localhost:4200/editarPerfil', user2, {headers:{'Content-Type': 'multipart/form-data'}});
+      const response = await axios.put('http://localhost:4200/editarPerfil', user2, {headers:{'Content-Type': 'multipart/form-data', 'authorization': 'Bearer ' + localStorage.getItem('token')}});
       
       console.log(response.data);
       try {
@@ -78,8 +79,9 @@ function EditarPerfilCuerpo() {
         if (response.status === 200) {
           console.log("Datos del usuario:");
           console.log(response.data);
-          setUser(response.data);
-          localStorage.setItem('user', JSON.stringify(response.data));
+          login(response.data, response.data.token)
+          alert("Iniciaste Sesion");
+          navigate('/Inicio')
         } else {
           
           alert('Error al iniciar sesión. Por favor, inténtalo de nuevo.');
@@ -87,15 +89,22 @@ function EditarPerfilCuerpo() {
       } catch (error) {
         console.error('Error al iniciar sesión:', error);
         alert('Error al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde.');
+        logout();
+        alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
+        navigate('/');
       }
       alert('Perfil actualizado exitosamente');
       
     } catch (error) {
       console.error('Error al editar perfil:', error);
       alert('Ocurrió un error al editar su perfil, intente de nuevo más tarde.');
+      logout();
+      alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
+      navigate('/');
     }
     
   };
+
 
   return (
     <div className="PerfilCuerpo">

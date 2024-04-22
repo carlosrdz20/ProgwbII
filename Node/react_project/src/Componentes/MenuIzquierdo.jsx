@@ -6,8 +6,15 @@ import { BsFillArchiveFill, BsFillEraserFill } from "react-icons/bs";
 import { FaRegPaperPlane } from "react-icons/fa";
 import { RiLogoutBoxRLine } from "react-icons/ri";
 import { IoIosHeart } from "react-icons/io";
+import useAuth from '../Context/useAuth';
 
 function MenuLateral({ pagina }){
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <div className="CuerpoMenu">
       <div>
@@ -32,7 +39,7 @@ function MenuLateral({ pagina }){
           <BsFillEraserFill style={{marginRight: "5px"}} size={45}/>
           Borradores
         </Link>
-        <Link to={'/'} className="MenuLinks">
+        <Link to={'/'} className="MenuLinks" onClick={handleLogout}>
           <RiLogoutBoxRLine style={{marginRight: "5px"}} size={45}/>
           Cerrar Sesión
         </Link>

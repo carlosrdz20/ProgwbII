@@ -16,6 +16,8 @@ import EditarBorrador from './Paginas/EditarBorrador.jsx';
 import EditarPerfil from './Paginas/EditarPerfil.jsx';
 import PerfilAjeno from './Paginas/PerfilAjeno.jsx';
 import { UserProvider } from './Context/UserContext.js';
+import AuthProvider from './Context/AuthProvider.js';
+import PublicacionProvider from './Context/PubProvider.js';
 
 
 const router = createBrowserRouter([
@@ -74,7 +76,11 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <UserProvider>
+    <AuthProvider>
+    <PublicacionProvider>
     <RouterProvider router={router} />
+    </PublicacionProvider>
+    </AuthProvider>
     </UserProvider>
   </React.StrictMode>
 );

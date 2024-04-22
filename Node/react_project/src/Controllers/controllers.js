@@ -4,6 +4,7 @@ const Guardados = require('../Schemas/Guardados');
 const Pais = require('../Schemas/Paises');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
+const { crearToken } = require('../helpers/jwt_helper');
 
 //Usuarios
 const insertarUsuario = async (req, res) => {
@@ -63,6 +64,7 @@ const autenticarUsuario = async (req, res) =>{
         }
     
         const {IDUsuario, NombreUsuario, Nombre, Correo, Foto, Contrasena, FechaNacimiento, Genero } = usuario;
+        const token = await crearToken({usuario});
         res.status(200).json({
           IDUsuario,
           NombreUsuario,
@@ -71,7 +73,8 @@ const autenticarUsuario = async (req, res) =>{
           Contrasena, 
           Foto,
           FechaNacimiento,
-          Genero
+          Genero,
+          token
         });
       } catch (error) {
         console.error('Error al autenticar usuario:', error);
@@ -171,7 +174,7 @@ const insertarPublicacion = async (req, res) => {
       IDPublicacion: Math.floor(Math.random() * (1000000 - 1 + 1)) + 1,
       Titulo: req.body.Titulo,
       Descripcion: req.body.Descripcion,
-      IDPais: req.body.IDPais,
+      IDPais: parseInt(req.body.IDPais),
       FechaPub: new Date(),
       ImagenUno: foto.filename,
       ImagenDos: foto.filename,
@@ -556,7 +559,446 @@ const mostrarFavoritosFiltrados = async (req, res) => {
 };
 
 
+const mostrarMisPublicaciones = async (req, res) => {
+  try {
+    // Utiliza la agregación para realizar un "join" entre las colecciones
+    const publicacionesDelUsuario = await Publicaciones.aggregate([
+      // Agrega un filtro para obtener solo las publicaciones del usuario específico
+      {
+        $match: {
+          IDUsuario: parseInt(req.params.IDUsuario), // Filtra por el ID del usuario
+          Estatus: 1 // Filtra por el estatus de la publicación si es necesario
+        }
+      },
+      // Realiza un "lookup" para unir la colección de usuarios
+      {
+        $lookup: {
+          from: "usuarios", 
+          localField: "IDUsuario", 
+          foreignField: "IDUsuario", 
+          as: "usuario" 
+        }
+      },
+      
+      { $unwind: "$usuario" },
+      
+      {
+        $lookup: {
+          from: "paises", 
+          localField: "IDPais", 
+          foreignField: "idPais", 
+          as: "pais"
+        }
+      },
+      
+      { $unwind: "$pais" },
 
+      //Buscar si el usuario ha guardado la publicación para mandar un Saved en true o false y rellenar el corazón o no
+      // Realiza una búsqueda en el documento "guardados" para verificar si el usuario ha guardado la publicación
+      {
+        $lookup: {
+          from: "guardados",
+          let: { pubId: "$IDPublicacion" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$IDPublicacion", "$$pubId"] },
+                    { $eq: ["$IDUsuario", parseInt(req.params.IDUsuario)] },
+                    { $eq: ["$Estatus", 1] }
+                  ]
+                }
+              }
+            },
+            { $count: "savedCount" }
+          ],
+          as: "saved"
+        }
+      },
+      // Agrega el campo "Saved" basado en si se encontró un registro en "guardados"
+      {
+        $addFields: {
+          Saved: { $gt: [{ $size: "$saved" }, 0] }
+        }
+      },
+      
+      {
+        $project: {
+          _id: 1,
+          IDPublicacion: 1,
+          Titulo: 1,
+          Descripcion: 1,
+          FechaPub: 1,
+          ImagenUno: 1,
+          ImagenDos: 1,
+          ImagenTres: 1,
+          Estatus: 1,
+          "usuario.NombreUsuario": 1, 
+          "usuario.Foto": 1, 
+          "pais.pais": 1, 
+          "pais.imagen": 1,
+          Saved: 1
+        }
+      }
+    ]);
+
+    res.status(200).json(publicacionesDelUsuario);
+  } catch (error) {
+    console.error("Error al buscar publicaciones del usuario:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+const buscarPublicacionPorID = async (req, res) => {
+  try {
+    // Utiliza la agregación para realizar la búsqueda de la publicación por su ID
+    const publicacion = await Publicaciones.aggregate([
+      // Agrega un filtro para obtener solo la publicación con el ID especificado
+      {
+        $match: {
+          IDPublicacion: parseInt(req.params.IDPublicacion) // Filtra por el ID de la publicación
+        }
+      },
+      // Realiza un "lookup" para unir la colección de usuarios
+      {
+        $lookup: {
+          from: "usuarios", 
+          localField: "IDUsuario", 
+          foreignField: "IDUsuario", 
+          as: "usuario" 
+        }
+      },
+      
+      { $unwind: "$usuario" },
+      
+      {
+        $lookup: {
+          from: "paises", 
+          localField: "IDPais", 
+          foreignField: "idPais", 
+          as: "pais"
+        }
+      },
+      
+      { $unwind: "$pais" },
+
+      //Buscar si el usuario ha guardado la publicación para mandar un Saved en true o false y rellenar el corazón o no
+      // Realiza una búsqueda en el documento "guardados" para verificar si el usuario ha guardado la publicación
+      {
+        $lookup: {
+          from: "guardados",
+          let: { pubId: "$IDPublicacion" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$IDPublicacion", "$$pubId"] },
+                    { $eq: ["$IDUsuario", "$usuario.IDUsuario"] },
+                    { $eq: ["$Estatus", 1] }
+                  ]
+                }
+              }
+            },
+            { $count: "savedCount" }
+          ],
+          as: "saved"
+        }
+      },
+      // Agrega el campo "Saved" basado en si se encontró un registro en "guardados"
+      {
+        $addFields: {
+          Saved: { $gt: [{ $size: "$saved" }, 0] }
+        }
+      },
+      
+      {
+        $project: {
+          _id: 1,
+          IDPublicacion: 1,
+          Titulo: 1,
+          Descripcion: 1,
+          FechaPub: 1,
+          ImagenUno: 1,
+          ImagenDos: 1,
+          ImagenTres: 1,
+          Estatus: 1,
+          "usuario.NombreUsuario": 1, 
+          "usuario.Foto": 1, 
+          "pais.pais": 1, 
+          "pais.imagen": 1,
+          "pais.idPais": 1,
+          Saved: 1
+        }
+      }
+    ]);
+
+    // Verificar si se encontró la publicación
+    if (publicacion.length === 0) {
+      return res.status(404).json({ mensaje: "La publicación no fue encontrada" });
+    }
+
+    // Devolver la publicación encontrada
+    res.status(200).json(publicacion[0]);
+  } catch (error) {
+    console.error("Error al buscar la publicación por ID:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+const editarPublicacion = async (req, res) => {
+  console.log("Entré");
+  const idPublicacion = req.body.IDPublicacion; // Suponiendo que obtienes el ID de la publicación de los parámetros de la solicitud
+
+  // Verificar si se proporcionó un archivo de imagen
+  const foto = req.file ? req.file : null;
+  let fotoPath = null;
+  console.log("Antes de foto");
+
+  if (foto) {
+    const uploadDir = 'public/Imagenes'; 
+    const extension = path.extname(foto.originalname);
+    const fotoName = `foto_${uuidv4()}${extension}`;
+    fotoPath = path.join(uploadDir, fotoName);
+    console.log(fotoPath);
+
+    try {
+        console.log("Foto agregada");
+    } catch (error) {
+        console.error("Error al guardar la foto:", error);
+        return res.status(500).json({ error: "Error al guardar la foto" }); // Devuelve una respuesta de error
+    }
+  }
+  console.log("Despues de foto");
+  // Crear un objeto con los campos a actualizar
+  const camposActualizar = {
+    Titulo: req.body.Titulo,
+    Descripcion: req.body.Descripcion,
+    IDPais: parseInt(req.body.IDPais),    
+    FechaPub: req.body.FechaPub,
+    ImagenUno: fotoPath ? foto.filename : req.body.Foto,
+    ImagenDos: fotoPath ? foto.filename : req.body.Foto,
+    ImagenTres: fotoPath ? foto.filename : req.body.Foto,
+    Estatus: 1,
+    IDUsuario: req.body.IDUsuario
+  };
+  console.log("Después de campo");
+  try {
+    // Actualizar la publicación en la base de datos
+    console.log("Antes de actualizar");
+    const publicacionActualizada = await Publicaciones.findByIdAndUpdate(idPublicacion, camposActualizar, { new: true });
+    
+    // Verificar si la publicación fue encontrada y actualizada correctamente
+    if (!publicacionActualizada) {
+      return res.status(404).json({ error: "La publicación no fue encontrada" });
+    }
+      // Actualizar otros campos de imagen si es necesario
+      await publicacionActualizada.save(); // Guardar la publicación actualizada con la nueva imagen
+    
+    res.status(200).json(publicacionActualizada);
+  } catch (error) {
+    console.error("Error al editar la publicación:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+const borrarPublicacion = async (req, res) => {
+  try {
+      // Busca la publicación por su ID
+      console.log("Antes de la busqueda");
+      console.log(req.params.IDPublicacion);
+      console.log(req.body.IDPublicacion);
+      const publicacion = await Publicaciones.findOne({ IDPublicacion: req.params.IDPublicacion });
+      console.log(req.params.IDPublicacion);
+      console.log("Después de la busqueda");
+      // Verifica si la publicación existe
+      if (!publicacion) {
+          return res.status(404).json({ error: 'Publicación no encontrada' });
+      }
+            publicacion.Estatus = 3;
+            
+            const publicacionActualizada = await publicacion.save();
+
+            res.status(200).json(publicacionActualizada);
+        
+  } catch (error) {
+      console.error('Error al borrar la publicación:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+const mostrarMisBorradores = async (req, res) => {
+  try {
+    // Utiliza la agregación para realizar un "join" entre las colecciones
+    const publicacionesDelUsuario = await Publicaciones.aggregate([
+      // Agrega un filtro para obtener solo las publicaciones del usuario específico
+      {
+        $match: {
+          IDUsuario: parseInt(req.params.IDUsuario), // Filtra por el ID del usuario
+          Estatus: 2 // Filtra por el estatus de la publicación si es necesario
+        }
+      },
+      // Realiza un "lookup" para unir la colección de usuarios
+      {
+        $lookup: {
+          from: "usuarios", 
+          localField: "IDUsuario", 
+          foreignField: "IDUsuario", 
+          as: "usuario" 
+        }
+      },
+      
+      { $unwind: "$usuario" },
+      
+      {
+        $lookup: {
+          from: "paises", 
+          localField: "IDPais", 
+          foreignField: "idPais", 
+          as: "pais"
+        }
+      },
+      
+      { $unwind: "$pais" },
+
+      //Buscar si el usuario ha guardado la publicación para mandar un Saved en true o false y rellenar el corazón o no
+      // Realiza una búsqueda en el documento "guardados" para verificar si el usuario ha guardado la publicación
+      {
+        $lookup: {
+          from: "guardados",
+          let: { pubId: "$IDPublicacion" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$IDPublicacion", "$$pubId"] },
+                    { $eq: ["$IDUsuario", parseInt(req.params.IDUsuario)] },
+                    { $eq: ["$Estatus", 1] }
+                  ]
+                }
+              }
+            },
+            { $count: "savedCount" }
+          ],
+          as: "saved"
+        }
+      },
+      // Agrega el campo "Saved" basado en si se encontró un registro en "guardados"
+      {
+        $addFields: {
+          Saved: { $gt: [{ $size: "$saved" }, 0] }
+        }
+      },
+      
+      {
+        $project: {
+          _id: 1,
+          IDPublicacion: 1,
+          Titulo: 1,
+          Descripcion: 1,
+          FechaPub: 1,
+          ImagenUno: 1,
+          ImagenDos: 1,
+          ImagenTres: 1,
+          Estatus: 1,
+          "usuario.NombreUsuario": 1, 
+          "usuario.Foto": 1, 
+          "pais.pais": 1, 
+          "pais.imagen": 1,
+          Saved: 1
+        }
+      }
+    ]);
+
+    res.status(200).json(publicacionesDelUsuario);
+  } catch (error) {
+    console.error("Error al buscar publicaciones del usuario:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+const editarBorrador = async (req, res) => {
+  console.log("Entré");
+  const idPublicacion = req.body.IDPublicacion; // Suponiendo que obtienes el ID de la publicación de los parámetros de la solicitud
+
+  // Verificar si se proporcionó un archivo de imagen
+  const foto = req.file ? req.file : null;
+  let fotoPath = null;
+  console.log("Antes de foto");
+
+  if (foto) {
+    const uploadDir = 'public/Imagenes'; 
+    const extension = path.extname(foto.originalname);
+    const fotoName = `foto_${uuidv4()}${extension}`;
+    fotoPath = path.join(uploadDir, fotoName);
+    console.log(fotoPath);
+
+    try {
+        console.log("Foto agregada");
+    } catch (error) {
+        console.error("Error al guardar la foto:", error);
+        return res.status(500).json({ error: "Error al guardar la foto" }); // Devuelve una respuesta de error
+    }
+  }
+  console.log("Despues de foto");
+  // Crear un objeto con los campos a actualizar
+  const camposActualizar = {
+    Titulo: req.body.Titulo,
+    Descripcion: req.body.Descripcion,
+    IDPais: parseInt(req.body.IDPais),    
+    FechaPub: req.body.FechaPub,
+    ImagenUno: fotoPath ? foto.filename : req.body.Foto,
+    ImagenDos: fotoPath ? foto.filename : req.body.Foto,
+    ImagenTres: fotoPath ? foto.filename : req.body.Foto,
+    Estatus: 2,
+    IDUsuario: req.body.IDUsuario
+  };
+  console.log("Después de campo");
+  try {
+    // Actualizar la publicación en la base de datos
+    console.log("Antes de actualizar");
+    const publicacionActualizada = await Publicaciones.findByIdAndUpdate(idPublicacion, camposActualizar, { new: true });
+    
+    // Verificar si la publicación fue encontrada y actualizada correctamente
+    if (!publicacionActualizada) {
+      return res.status(404).json({ error: "La publicación no fue encontrada" });
+    }
+      // Actualizar otros campos de imagen si es necesario
+      await publicacionActualizada.save(); // Guardar la publicación actualizada con la nueva imagen
+    
+    res.status(200).json(publicacionActualizada);
+  } catch (error) {
+    console.error("Error al editar la publicación:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+const enviarPublicacion = async (req, res) => {
+  try {
+      // Busca la publicación por su ID
+      console.log("Antes de la busqueda");
+      console.log(req.params.IDPublicacion);
+      console.log(req.body.IDPublicacion);
+      const publicacion = await Publicaciones.findOne({ IDPublicacion: req.params.IDPublicacion });
+      console.log(req.params.IDPublicacion);
+      console.log("Después de la busqueda");
+      // Verifica si la publicación existe
+      if (!publicacion) {
+          return res.status(404).json({ error: 'Publicación no encontrada' });
+      }
+            publicacion.Estatus = 1;
+            
+            const publicacionActualizada = await publicacion.save();
+
+            res.status(200).json(publicacionActualizada);
+        
+  } catch (error) {
+      console.error('Error al borrar la publicación:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
 
 module.exports = {
     insertarUsuario,
@@ -568,5 +1010,12 @@ module.exports = {
     insertarGuardado,
     mostrarFavoritos,
     mostrarFavoritosFiltrados,
-    editarUsuario
+    editarUsuario,
+    mostrarMisPublicaciones,
+    buscarPublicacionPorID,
+    editarPublicacion,
+    borrarPublicacion,
+    mostrarMisBorradores,
+    editarBorrador,
+    enviarPublicacion
 }

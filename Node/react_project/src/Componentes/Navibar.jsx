@@ -2,19 +2,13 @@ import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../Estilos/Navibar.css'
 import LogoBoton from './LogoBoton.jsx';
-import { useUser } from '../Context/UserContext';
+import useAuth from '../Context/useAuth';
 import Buscador from './Buscador.jsx';
 import NavibarUsuario from './NavibarUsuario.jsx';
 
 function Navibar() {
-  const { user, setUser } = useUser();
 
-  useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
-  }, []);
+  const { user } = useAuth();
 
   return (
     <nav className='Navbar'>
@@ -25,11 +19,13 @@ function Navibar() {
         <Buscador />
       </div>
       <div className='NavbarDerecha'>
-        <NavibarUsuario
-          Nombre={user.NombreUsuario} 
-          Imagen={user.Foto}
-          Iniciado={true}
-        />
+      {user && (
+          <NavibarUsuario
+            Nombre={user.NombreUsuario} 
+            Imagen={user.Foto}
+            Iniciado={true}
+          />
+        )}
       </div>
     </nav>
   );

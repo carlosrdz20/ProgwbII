@@ -2,13 +2,17 @@ import { Link, useNavigate } from "react-router-dom";
 import "../Estilos/Login.css";
 import Logo from "../Componentes/Logo.jsx";
 import { useUser } from '../Context/UserContext.js';
-import React, { useState } from 'react';
+import React, { useState, useContext  } from 'react';
 import axios from "axios";
+import useAuth from '../Context/useAuth';
+
 
 export default function Login() {
   const navigate = useNavigate();
   const { setUser } = useUser();
-
+  const { login } = useAuth();
+  
+  
   const [formData, setFormData] = useState({
     email: '',
     password: '' });
@@ -35,8 +39,7 @@ export default function Login() {
       if (response.status === 200) {
         console.log("Datos del usuario:");
         console.log(response.data);
-        setUser(response.data);
-        localStorage.setItem('user', JSON.stringify(response.data));
+        login(response.data, response.data.token)
         alert("Iniciaste Sesion");
         navigate('/Inicio')
       } else {

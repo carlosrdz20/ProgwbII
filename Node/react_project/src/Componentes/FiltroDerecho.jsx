@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
 import '../Estilos/FiltroDerecho.css'
 import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import useAuth from '../Context/useAuth';
 
 function FiltroLateral({ actualizarPublicaciones }){
-
+  const navigate = useNavigate();
   const [paises, setPaises] = useState([]);
   const [paisSeleccionado, setPaisSeleccionado] = useState(1); //puse el ID 1 de inicio por si nunca entra al handleChange
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
   const [publicaciones, setPublicaciones] = useState([]);
-  const userData = localStorage.getItem('user');
-  const user = JSON.parse(userData);
+  const { user } = useAuth();
+  const { logout } = useAuth();
 
   useEffect(() => {
     axios.get('http://localhost:4200/tpaises')
@@ -50,7 +52,11 @@ function FiltroLateral({ actualizarPublicaciones }){
       return;
     }
     // Realizar la solicitud al backend con los filtros seleccionados
-    axios.get(`http://localhost:4200/misfavoritosfiltrados/${user.IDUsuario}?pais=${paisSeleccionado}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`)
+    axios.get(`http://localhost:4200/misfavoritosfiltrados/${user.IDUsuario}?pais=${paisSeleccionado}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`, {
+      headers: {
+        authorization: 'Bearer ' + localStorage.getItem('token') 
+      }
+    })
       .then(response => {
         const nuevasPublicaciones = response.data;
         // Llamar a la función de callback para actualizar las publicaciones en MisFavoCuerpo
@@ -59,6 +65,9 @@ function FiltroLateral({ actualizarPublicaciones }){
       })
       .catch(error => {
         console.error('Error al obtener las publicaciones filtradas:', error);
+        logout();
+        alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
+        navigate('/')
       });
   };
   

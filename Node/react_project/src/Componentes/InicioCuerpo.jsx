@@ -6,22 +6,33 @@ import PublicDisplay from "./PublicacionDisplay.jsx";
 import { Row, Col } from 'react-bootstrap';
 import { RiArrowLeftCircleFill, RiArrowRightCircleFill } from "react-icons/ri";
 import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import useAuth from '../Context/useAuth';
 
 function InicioCuerpo() {
+  const navigate = useNavigate();
   const [ UsuIni ] = useState(true);
   const [publicaciones, setPublicaciones] = useState([]);
+  const { logout } = useAuth();
 
   useEffect(() => {
     // Realiza la solicitud para obtener las publicaciones cuando el componente se monta
     const userData = localStorage.getItem('user');
     const user = JSON.parse(userData);
-    axios.get(`http://localhost:4200/tpublicaciones/${user.IDUsuario}`)
+    axios.get(`http://localhost:4200/tpublicaciones/${user.IDUsuario}`, {
+      headers: {
+        authorization: 'Bearer ' + localStorage.getItem('token') 
+      }
+    })
       .then(response => {
         setPublicaciones(response.data);
         console.log("Se insertaron las publicaciones");
       })
       .catch(error => {
         console.error('Error al obtener las publicaciones:', error);
+        logout();
+        alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
+        navigate('/')
       });
   }, []);
 
@@ -76,6 +87,7 @@ function InicioCuerpo() {
             Imagen3={publicacion.ImagenTres}
             Tipo={publicacion.Tipo}
             Saved={publicacion.Saved}
+            Pagina = "Inicio"
             />
             ))}
             </Col>

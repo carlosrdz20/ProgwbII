@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect  } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import '../Estilos/MisFavoCuerpo.css';
 import MenuLateral from "./MenuIzquierdo.jsx";
 import FiltroLateral from "./FiltroDerecho.jsx";
@@ -6,8 +7,13 @@ import PublicDisplay from "./PublicacionDisplay.jsx";
 import { Row, Col } from 'react-bootstrap';
 import { RiArrowLeftCircleFill, RiArrowRightCircleFill } from "react-icons/ri";
 import axios from "axios";
+import useAuth from '../Context/useAuth';
 
 function MisFavoCuerpo() {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  
 
   const [ UsuIni ] = useState(true);
   const [publicaciones, setPublicaciones] = useState([]);
@@ -16,13 +22,21 @@ function MisFavoCuerpo() {
     // Realiza la solicitud para obtener las publicaciones cuando el componente se monta
     const userData = localStorage.getItem('user');
     const user = JSON.parse(userData);
-    axios.get(`http://localhost:4200/misfavoritos/${user.IDUsuario}`)
+    axios.get(`http://localhost:4200/misfavoritos/${user.IDUsuario}`, {
+      headers: {
+        authorization: 'Bearer ' + localStorage.getItem('token') 
+      }
+    })
       .then(response => {
         setPublicaciones(response.data);
         console.log("Se insertaron las publicaciones");
       })
       .catch(error => {
+        
         console.error('Error al obtener las publicaciones:', error);
+        logout();
+        alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
+        navigate('/')
       });
   }, []);
 
@@ -69,6 +83,7 @@ function MisFavoCuerpo() {
                       Imagen3={publicacion.ImagenTres}
                       Tipo={"Ajeno"}
                       Saved={true}
+                      Pagina = "MisFavoritos"
                     />
                   ))
                 )}

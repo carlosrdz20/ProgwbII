@@ -6,11 +6,15 @@ import { FaRegPaperPlane } from "react-icons/fa";
 import {  BsFillEraserFill } from "react-icons/bs";
 import MenuLateral from "../Componentes/MenuIzquierdo.jsx";
 import { useUser } from '../Context/UserContext';
+import { Link, useNavigate } from "react-router-dom";
+import useAuth from '../Context/useAuth';
 
 function CrearPublicacion() {
+    const navigate = useNavigate();
     const [paises, setPaises] = useState([]);
     const [paisSeleccionado, setPaisSeleccionado] = useState("");
-    const { user, setUser } = useUser();
+    const { user } = useAuth();
+    const { logout } = useAuth();
 
     const [formData, setFormData] = useState({
         Titulo: "",
@@ -46,26 +50,36 @@ function CrearPublicacion() {
       const handleSubmit = (event) => {
         event.preventDefault();
 
-        axios.post('http://localhost:4200/insertarPublicacion', formData, {headers:{'Content-Type': 'multipart/form-data'}})
+        axios.post('http://localhost:4200/insertarPublicacion', formData, {headers:{'Content-Type': 'multipart/form-data', 'authorization': 'Bearer ' + localStorage.getItem('token') }})
             .then(response => {
                 console.log('Publicación insertada:', response.data);
+                alert("Publicación creada con éxito");
+                navigate('/Inicio');
                 // Puedes hacer alguna acción después de insertar la publicación, como redirigir al usuario a otra página
             })
             .catch(error => {
                 console.error('Error al insertar la publicación:', error);
+                logout();
+                alert("La sesión ya expiró, por favor vuelve a iniciar sesión");
+                navigate('/');
             });
     };
 
     const handleSubmitBorrador = (event) => {
         event.preventDefault();
 
-        axios.post('http://localhost:4200/insertarBorrador', formData, {headers:{'Content-Type': 'multipart/form-data'}})
+        axios.post('http://localhost:4200/insertarBorrador', formData, {headers:{'Content-Type': 'multipart/form-data', 'authorization': 'Bearer ' + localStorage.getItem('token')}})
             .then(response => {
                 console.log('Borrador insertado:', response.data);
+                alert("Borrador creado con éxito");
+                navigate('/Inicio');
                 // Puedes hacer alguna acción después de insertar la publicación, como redirigir al usuario a otra página
             })
             .catch(error => {
                 console.error('Error al insertar el borrador:', error);
+                logout();
+                alert("La sesión ya expiró, por favor vuelve a iniciar sesión");
+                navigate('/');
             });
     };
 
@@ -78,11 +92,6 @@ function CrearPublicacion() {
                 console.error('Error al obtener los países:', error);
             });
 
-            const userData = localStorage.getItem('user');
-            if (userData) {
-              // Parsear los datos del usuario y almacenarlos en el contexto de usuario
-              setUser(JSON.parse(userData));
-            }
     }, []);
 
 

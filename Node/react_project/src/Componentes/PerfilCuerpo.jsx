@@ -5,18 +5,17 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useUser } from '../Context/UserContext';
+import useAuth from '../Context/useAuth';
 
 function PerfilCuerpo() {
 
-  const { user, setUser } = useUser();
+  const { user } = useAuth();
   const [fechaFormateada, setFecha] = useState();
   const [fotoxd, setFotoxd] = useState();
   const [user2, setuser2] = useState();
 
   useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      setUser(JSON.parse(userData));
+    if (user) {
       setuser2(user);
       // Formatear la fecha
       setFecha(user.FechaNacimiento.split('T')[0]);
