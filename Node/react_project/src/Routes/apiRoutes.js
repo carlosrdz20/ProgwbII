@@ -13,7 +13,8 @@ const storage = multer.diskStorage({
     cb(null, 'public/Imagenes');
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname));
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`;
+    cb(null, uniqueSuffix);
   },
 });
 
@@ -22,19 +23,40 @@ const upload = multer({ storage: storage });
 routers.post('/insertarUsuario', upload.single('Foto'), controllers.insertarUsuario);
 routers.post('/autentUsuario', controllers.autenticarUsuario);
 routers.get('/tpaises', controllers.buscarPaises); 
-routers.post('/insertarPublicacion', upload.single('Foto'), jwt_helper.verifyToken , controllers.insertarPublicacion);
+routers.post(
+  '/insertarPublicacion', 
+  upload.fields([
+    { name: 'Fotos1', maxCount: 1 }, 
+    { name: 'Fotos2', maxCount: 1 }, 
+    { name: 'Fotos3', maxCount: 1 }
+  ]), 
+  jwt_helper.verifyToken, 
+  controllers.insertarPublicacion
+);
 routers.get('/tpublicaciones/:IDUsuario',jwt_helper.verifyToken, controllers.mostrarPublicaciones);
-routers.post('/insertarBorrador', upload.single('Foto'),jwt_helper.verifyToken, controllers.insertarBorrador);
+routers.post('/insertarBorrador', upload.fields([
+  { name: 'Fotos1', maxCount: 1 }, 
+  { name: 'Fotos2', maxCount: 1 }, 
+  { name: 'Fotos3', maxCount: 1 }
+]), jwt_helper.verifyToken, controllers.insertarBorrador);
 routers.post('/insertarGuardado',jwt_helper.verifyToken, controllers.insertarGuardado); 
 routers.get('/misfavoritos/:IDUsuario',jwt_helper.verifyToken, controllers.mostrarFavoritos);
 routers.get('/misfavoritosfiltrados/:IDUsuario',jwt_helper.verifyToken, controllers.mostrarFavoritosFiltrados);
 routers.put('/editarPerfil', upload.single('Foto'),jwt_helper.verifyToken, controllers.editarUsuario);
 routers.get('/mispublicaciones/:IDUsuario',jwt_helper.verifyToken, controllers.mostrarMisPublicaciones);
 routers.get('/bpID/:IDPublicacion',jwt_helper.verifyToken, controllers.buscarPublicacionPorID);
-routers.put('/editarPublicacion', upload.single('Foto'), jwt_helper.verifyToken , controllers.editarPublicacion);
+routers.put('/editarPublicacion', upload.fields([
+  { name: 'Fotos1', maxCount: 1 }, 
+  { name: 'Fotos2', maxCount: 1 }, 
+  { name: 'Fotos3', maxCount: 1 }
+]), jwt_helper.verifyToken , controllers.editarPublicacion);
 routers.put('/borrarPublicacion/:IDPublicacion',jwt_helper.verifyToken, controllers.borrarPublicacion);
 routers.get('/misborradores/:IDUsuario',jwt_helper.verifyToken, controllers.mostrarMisBorradores);
-routers.put('/editarBorrador', upload.single('Foto'), jwt_helper.verifyToken , controllers.editarBorrador);
+routers.put('/editarBorrador', upload.fields([
+  { name: 'Fotos1', maxCount: 1 }, 
+  { name: 'Fotos2', maxCount: 1 }, 
+  { name: 'Fotos3', maxCount: 1 }
+]), jwt_helper.verifyToken , controllers.editarBorrador);
 routers.put('/enviarPublicacion/:IDPublicacion',jwt_helper.verifyToken, controllers.enviarPublicacion);
 
 module.exports = [routers];

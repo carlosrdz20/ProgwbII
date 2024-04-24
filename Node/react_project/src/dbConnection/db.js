@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 async function getConnection(){
-    const uri = 'mongodb://127.0.0.1:27017/travelerstalks';
+    const uri = 'mongodb+srv://rodriguez030124:FmQIOoSLefrtUDhB@clustertravelerstalks.fptdmyf.mongodb.net/TravelersTalks';
     const db = mongoose.connection;
     mongoose.connect(uri); 
 

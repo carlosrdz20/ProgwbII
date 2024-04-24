@@ -13,6 +13,9 @@ function CrearPublicacion() {
     const navigate = useNavigate();
     const [paises, setPaises] = useState([]);
     const [paisSeleccionado, setPaisSeleccionado] = useState("");
+    const [usarFoto, setFoto] = useState();
+    const [usarFoto2, setFoto2] = useState();
+    const [usarFoto3, setFoto3] = useState();
     const { user } = useAuth();
     const { logout } = useAuth();
 
@@ -20,24 +23,34 @@ function CrearPublicacion() {
         Titulo: "",
         Descripcion: "",
         IDPais: 1, //puse el ID 1 de inicio por si nunca entra al handleChange
-        ImagenUno: null,
-        ImagenDos: null,
-        ImagenTres: null,
+        Fotos1: null,
+        Fotos2: null,
+        Fotos3: null,
         Estatus: "",
         IDUsuario: user.IDUsuario
       });
     
-      const handleChange = (e) => {
+      const handleChange = (e, input) => {
         const { name, value, type, files } = e.target;
-    
-        if (type === "file") {
-          setFormData((prevData) => ({
-            ...prevData,
-            [name]: files[0] 
-          }));
-          
-        } else {
-          
+      
+        if (type === "file" && files.length > 0) {
+            // Actualiza el estado formData con solo el primer archivo seleccionado
+            setFormData((prevData) => ({
+              ...prevData,
+              [name]: files[0] // Aquí solo se toma el primer archivo
+            }));
+
+            if(input === 1){
+                setFoto(URL.createObjectURL(files[0]));
+            }
+            if(input === 2){
+                setFoto2(URL.createObjectURL(files[0]));
+            }
+            if(input === 3){
+                setFoto3(URL.createObjectURL(files[0]));
+            }
+          }else {
+          // Si es un campo de texto, actualizamos el estado directamente
           setFormData((prevData) => ({
             ...prevData,
             [name]: value
@@ -59,9 +72,7 @@ function CrearPublicacion() {
             })
             .catch(error => {
                 console.error('Error al insertar la publicación:', error);
-                logout();
-                alert("La sesión ya expiró, por favor vuelve a iniciar sesión");
-                navigate('/');
+                alert("No jaló")
             });
     };
 
@@ -106,17 +117,17 @@ function CrearPublicacion() {
                     <Col className="COL">
                         <div class="input-container">
                             <label for="input1" class="input-label">Título:</label>
-                            <input type="text" id="input1" class="blue-border" placeholder="Ingrese aquí" name="Titulo" onChange={handleChange} value={formData.Titulo}/>
+                            <input type="text" id="input1" class="blue-border" placeholder="Ingrese aquí" name="Titulo" onChange={(e) => handleChange(e, 4)} value={formData.Titulo}/>
                         </div>
                         <div class="input-container">
                             <label for="input2" class="input-label">Descripción:</label>
-                            <input type="text" id="input2" class="blue-border" placeholder="Ingrese aquí" name="Descripcion" onChange={handleChange} value={formData.Descripcion}/>
+                            <input type="text" id="input2" class="blue-border" placeholder="Ingrese aquí" name="Descripcion" onChange={(e) => handleChange(e, 4)} value={formData.Descripcion}/>
                         </div>
                     </Col>
                     <Col className="COL" xs={12} sm ={12} md ={12} lg = {6}>
                         <div class="input-container">
                             <label for="combobox" class="input-label">País:</label>
-                            <select id="combobox" name="IDPais" className="blue-border" value={paisSeleccionado} onChange={handleChange}>
+                            <select id="combobox" name="IDPais" className="blue-border" value={paisSeleccionado} onChange={(e) => handleChange(e, 4)}>
                                 {paises.map(pais => (
                                     <option key={pais.idPais} value={pais.idPais}>{pais.pais}</option>
                                 ))}
@@ -129,10 +140,24 @@ function CrearPublicacion() {
                     <Col className="COL" xs={12} sm ={12} md ={12} lg = {6}>
                         <div class="input-container">
                             <label for="photoInput" class="input-label" >Publicar:</label>
-                            <input type="file" id="photoInput" name="Foto" accept="image/*" class="fotoinput" multiple onChange={handleChange}/>
+                            <input type="file" id="Fotos1" name="Fotos1" accept="image/*" class="fotoinput" onChange={(e) => handleChange(e, 1)}/>
                         </div>
                         <div class="image-container">
-                            <img src="./Imagenes/Paisaje.jpg" alt="Imagen" id="uploadedImage"/>
+                            <img src={usarFoto} alt="Imagen" id="uploadedImage"/>
+                        </div>
+                        <div class="input-container">
+                            <label for="photoInput" class="input-label" >Publicar:</label>
+                            <input type="file" id="Fotos2" name="Fotos2" accept="image/*" class="fotoinput" onChange={(e) => handleChange(e, 2)}/>
+                        </div>
+                        <div class="image-container">
+                            <img src={usarFoto2} alt="Imagen" id="uploadedImage"/>
+                        </div>
+                        <div class="input-container">
+                            <label for="photoInput" class="input-label" >Publicar:</label>
+                            <input type="file" id="Fotos3" name="Fotos3" accept="image/*" class="fotoinput" multiple onChange={(e) => handleChange(e, 3)}/>
+                        </div>
+                        <div class="image-container">
+                            <img src={usarFoto3} alt="Imagen" id="uploadedImage"/>
                         </div>
                         <div class="button-container">
                             <button class="btn" onClick={handleSubmit} >Publicar <FaRegPaperPlane size={25}/></button>

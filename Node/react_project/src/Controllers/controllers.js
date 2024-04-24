@@ -150,20 +150,25 @@ const buscarPaises = async (req, res) => {
 
 const insertarPublicacion = async (req, res) => {
   console.log("INSERTAR PUBLICACIÓN ", req.body);
-  console.log("Imágenes", req.files); // Accede a req.files para obtener las imágenes
+  console.log("Imágenes", req.files);
+  console.log("Aquí terminan las imagenes") // Accede a req.files para obtener las imágenes
 
-  const foto = req.file ? req.file : null;
-  let fotoPath = null;
+  const fotos = req.files ? req.files : [];
+  let fotoPaths = [];
 
-  if (foto) {
-    const uploadDir = 'public/Imagenes'; 
-    const extension = path.extname(foto.originalname);
-    const fotoName = `foto_${uuidv4()}${extension}`;
-    fotoPath = path.join(uploadDir, fotoName);
-    console.log(fotoPath);
-
+  if (fotos.length > 0) {
     try {
-        console.log("Foto agregada");
+      console.log("Entramos a fotos")
+                    // Itera sobre los archivos adjuntos para guardarlos y obtener los nombres de archivo
+                    fotoPaths = await Promise.all(
+                      fotos.map(async (foto) => {
+                          const extension = path.extname(foto.originalname);
+                          const fotoName = `foto_${uuidv4()}${extension}`;
+                          const fotoPath = path.join(uploadDir, fotoName);
+                          return fotoName; // Devuelve el nombre del archivo guardado
+                      })
+                  );
+                  console.log("Fotos agregadas:", fotoPaths);
     } catch (error) {
         console.error("Error al guardar la foto:", error);
         return res.status(500).json({ error: "Error al guardar la foto" }); // Devuelve una respuesta de error
@@ -176,9 +181,9 @@ const insertarPublicacion = async (req, res) => {
       Descripcion: req.body.Descripcion,
       IDPais: parseInt(req.body.IDPais),
       FechaPub: new Date(),
-      ImagenUno: foto.filename,
-      ImagenDos: foto.filename,
-      ImagenTres: foto.filename,
+      ImagenUno: req.files.Fotos1[0].filename,
+      ImagenDos: req.files.Fotos2[0].filename,
+      ImagenTres: req.files.Fotos3[0].filename,
       Estatus: 1,
       IDUsuario: req.body.IDUsuario
   });
@@ -198,21 +203,25 @@ const insertarBorrador = async (req, res) => {
   console.log("INSERTAR BORRADOR ", req.body);
   console.log("Imágenes", req.files); // Accede a req.files para obtener las imágenes
 
-  const foto = req.file ? req.file : null;
-  let fotoPath = null;
+  const fotos = req.files ? req.files : [];
+  let fotoPaths = [];
 
-  if (foto) {
-    const uploadDir = 'public/Imagenes'; 
-    const extension = path.extname(foto.originalname);
-    const fotoName = `foto_${uuidv4()}${extension}`;
-    fotoPath = path.join(uploadDir, fotoName);
-    console.log(fotoPath);
-
+  if (fotos.length > 0) {
     try {
-        console.log("Foto borrador agregada");
+      console.log("Entramos a fotos")
+                    // Itera sobre los archivos adjuntos para guardarlos y obtener los nombres de archivo
+                    fotoPaths = await Promise.all(
+                      fotos.map(async (foto) => {
+                          const extension = path.extname(foto.originalname);
+                          const fotoName = `foto_${uuidv4()}${extension}`;
+                          const fotoPath = path.join(uploadDir, fotoName);
+                          return fotoName; // Devuelve el nombre del archivo guardado
+                      })
+                  );
+                  console.log("Fotos agregadas:", fotoPaths);
     } catch (error) {
-        console.error("Error al guardar la foto del borrador:", error);
-        return res.status(500).json({ error: "Error al guardar la foto del borrador." }); // Devuelve una respuesta de error
+        console.error("Error al guardar la foto:", error);
+        return res.status(500).json({ error: "Error al guardar la foto" }); // Devuelve una respuesta de error
     }
 }
   // en Estatus dejare el 1 para publicación, 2 para borrador y 3 para publicación o borrador eliminado --Edgar
@@ -222,9 +231,9 @@ const insertarBorrador = async (req, res) => {
       Descripcion: req.body.Descripcion,
       IDPais: req.body.IDPais,
       FechaPub: new Date(),
-      ImagenUno: foto.filename,
-      ImagenDos: foto.filename,
-      ImagenTres: foto.filename,
+      ImagenUno: req.files.Fotos1[0].filename,
+      ImagenDos: req.files.Fotos2[0].filename,
+      ImagenTres: req.files.Fotos3[0].filename,
       Estatus: 2,
       IDUsuario: req.body.IDUsuario
   });
@@ -749,27 +758,33 @@ const buscarPublicacionPorID = async (req, res) => {
 
 const editarPublicacion = async (req, res) => {
   console.log("Entré");
+  console.log(req.body.Fotos1);
+  console.log(req.body.Fotos2);
+  console.log(req.body.Fotos3);
   const idPublicacion = req.body.IDPublicacion; // Suponiendo que obtienes el ID de la publicación de los parámetros de la solicitud
 
   // Verificar si se proporcionó un archivo de imagen
-  const foto = req.file ? req.file : null;
-  let fotoPath = null;
-  console.log("Antes de foto");
+  const fotos = req.files ? req.files : [];
+  let fotoPaths = [];
 
-  if (foto) {
-    const uploadDir = 'public/Imagenes'; 
-    const extension = path.extname(foto.originalname);
-    const fotoName = `foto_${uuidv4()}${extension}`;
-    fotoPath = path.join(uploadDir, fotoName);
-    console.log(fotoPath);
-
+  if (fotos.length > 0) {
     try {
-        console.log("Foto agregada");
+      console.log("Entramos a fotos")
+                    // Itera sobre los archivos adjuntos para guardarlos y obtener los nombres de archivo
+                    fotoPaths = await Promise.all(
+                      fotos.map(async (foto) => {
+                          const extension = path.extname(foto.originalname);
+                          const fotoName = `foto_${uuidv4()}${extension}`;
+                          const fotoPath = path.join(uploadDir, fotoName);
+                          return fotoName; // Devuelve el nombre del archivo guardado
+                      })
+                  );
+                  console.log("Fotos agregadas:", fotoPaths);
     } catch (error) {
         console.error("Error al guardar la foto:", error);
         return res.status(500).json({ error: "Error al guardar la foto" }); // Devuelve una respuesta de error
     }
-  }
+}
   console.log("Despues de foto");
   // Crear un objeto con los campos a actualizar
   const camposActualizar = {
@@ -777,9 +792,9 @@ const editarPublicacion = async (req, res) => {
     Descripcion: req.body.Descripcion,
     IDPais: parseInt(req.body.IDPais),    
     FechaPub: req.body.FechaPub,
-    ImagenUno: fotoPath ? foto.filename : req.body.Foto,
-    ImagenDos: fotoPath ? foto.filename : req.body.Foto,
-    ImagenTres: fotoPath ? foto.filename : req.body.Foto,
+    ImagenUno: fotoPaths ? (req.files.Fotos1 ? req.files.Fotos1[0].filename : req.body.Fotos1) : req.body.Fotos1,
+    ImagenDos: fotoPaths ? (req.files.Fotos2 ? req.files.Fotos2[0].filename : req.body.Fotos2) : req.body.Fotos2,
+    ImagenTres: fotoPaths ? (req.files.Fotos3 ? req.files.Fotos3[0].filename : req.body.Fotos3) : req.body.Fotos3,
     Estatus: 1,
     IDUsuario: req.body.IDUsuario
   };
@@ -921,27 +936,31 @@ const mostrarMisBorradores = async (req, res) => {
 
 const editarBorrador = async (req, res) => {
   console.log("Entré");
+  
   const idPublicacion = req.body.IDPublicacion; // Suponiendo que obtienes el ID de la publicación de los parámetros de la solicitud
 
   // Verificar si se proporcionó un archivo de imagen
-  const foto = req.file ? req.file : null;
-  let fotoPath = null;
-  console.log("Antes de foto");
+  const fotos = req.files ? req.files : [];
+  let fotoPaths = [];
 
-  if (foto) {
-    const uploadDir = 'public/Imagenes'; 
-    const extension = path.extname(foto.originalname);
-    const fotoName = `foto_${uuidv4()}${extension}`;
-    fotoPath = path.join(uploadDir, fotoName);
-    console.log(fotoPath);
-
+  if (fotos.length > 0) {
     try {
-        console.log("Foto agregada");
+      console.log("Entramos a fotos")
+                    // Itera sobre los archivos adjuntos para guardarlos y obtener los nombres de archivo
+                    fotoPaths = await Promise.all(
+                      fotos.map(async (foto) => {
+                          const extension = path.extname(foto.originalname);
+                          const fotoName = `foto_${uuidv4()}${extension}`;
+                          const fotoPath = path.join(uploadDir, fotoName);
+                          return fotoName; // Devuelve el nombre del archivo guardado
+                      })
+                  );
+                  console.log("Fotos agregadas:", fotoPaths);
     } catch (error) {
         console.error("Error al guardar la foto:", error);
         return res.status(500).json({ error: "Error al guardar la foto" }); // Devuelve una respuesta de error
     }
-  }
+}
   console.log("Despues de foto");
   // Crear un objeto con los campos a actualizar
   const camposActualizar = {
@@ -949,9 +968,9 @@ const editarBorrador = async (req, res) => {
     Descripcion: req.body.Descripcion,
     IDPais: parseInt(req.body.IDPais),    
     FechaPub: req.body.FechaPub,
-    ImagenUno: fotoPath ? foto.filename : req.body.Foto,
-    ImagenDos: fotoPath ? foto.filename : req.body.Foto,
-    ImagenTres: fotoPath ? foto.filename : req.body.Foto,
+    ImagenUno: fotoPaths ? (req.files.Fotos1 ? req.files.Fotos1[0].filename : req.body.Fotos1) : req.body.Fotos1,
+    ImagenDos: fotoPaths ? (req.files.Fotos2 ? req.files.Fotos2[0].filename : req.body.Fotos2) : req.body.Fotos2,
+    ImagenTres: fotoPaths ? (req.files.Fotos3 ? req.files.Fotos3[0].filename : req.body.Fotos3) : req.body.Fotos3,
     Estatus: 2,
     IDUsuario: req.body.IDUsuario
   };

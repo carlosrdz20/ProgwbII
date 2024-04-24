@@ -14,15 +14,19 @@ function EditarPublicacion() {
     const {publicacion} = usePubAuth();
     const [paises, setPaises] = useState([]);
     const { logout } = useAuth();
+    const [usarFoto, setFoto] = useState();
+    const [usarFoto2, setFoto2] = useState();
+    const [usarFoto3, setFoto3] = useState();
+
 
     const [formData, setFormData] = useState({
         IDPublicacion: publicacion._id,
         Titulo: publicacion.Titulo,
         Descripcion: publicacion.Descripcion,
         IDPais: publicacion.pais.idPais,
-        ImagenUno: publicacion.ImagenUno,
-        ImagenDos: publicacion.ImagenDos,
-        ImagenTres: publicacion.ImagenTres,
+        Fotos1: publicacion.ImagenUno,
+        Fotos2: publicacion.ImagenDos,
+        Fotos3: publicacion.ImagenTres,
         Estatus: publicacion.Estatus,
         IDUsuario: user.IDUsuario
     });
@@ -31,6 +35,9 @@ function EditarPublicacion() {
         axios.get('http://localhost:4200/tpaises')
             .then(response => {
                 setPaises(response.data);
+                setFoto(`/Imagenes/${publicacion.ImagenUno}`)
+                setFoto2(`/Imagenes/${publicacion.ImagenDos}`)
+                setFoto3(`/Imagenes/${publicacion.ImagenTres}`)
             })
             .catch(error => {
                 console.error('Error al obtener los países:', error);
@@ -38,8 +45,8 @@ function EditarPublicacion() {
 
     }, []);
 
-    const handleChange = (event) => {
-        const { name, value, type, files } = event.target;
+    const handleChange = (e, input) => {
+        const { name, value, type, files } = e.target;
     
         if (type === "file") {
             setFormData((prevData) => ({
@@ -47,6 +54,16 @@ function EditarPublicacion() {
               [name]: files[0] 
             }));
             
+            if(input === 1){
+                setFoto(URL.createObjectURL(files[0]));
+            }
+            if(input === 2){
+                setFoto2(URL.createObjectURL(files[0]));
+            }
+            if(input === 3){
+                setFoto3(URL.createObjectURL(files[0]));
+            }
+
           } else {
             
             setFormData((prevData) => ({
@@ -87,17 +104,17 @@ function EditarPublicacion() {
                     <Col className="COL">
                         <div class="input-container">
                             <label for="input1" class="input-label">Título:</label>
-                            <input type="text" id="Titulo" name="Titulo" class="blue-border" placeholder="Ingrese aquí" defaultValue = {formData.Titulo} onChange={handleChange}/>
+                            <input type="text" id="Titulo" name="Titulo" class="blue-border" placeholder="Ingrese aquí" defaultValue = {formData.Titulo} onChange={(e) => handleChange(e, 4)}/>
                         </div>
                         <div class="input-container">
                             <label for="input2" class="input-label">Descripción:</label>
-                            <input type="text" id="Descripcion" name = "Descripcion" class="blue-border" placeholder="Ingrese aquí" defaultValue = {formData.Descripcion} onChange={handleChange}/>
+                            <input type="text" id="Descripcion" name = "Descripcion" class="blue-border" placeholder="Ingrese aquí" defaultValue = {formData.Descripcion} onChange={(e) => handleChange(e, 4)}/>
                         </div>
                     </Col>
                     <Col className="COL" xs={12} sm ={12} md ={12} lg = {6}>
                         <div class="input-container">
                             <label for="combobox" class="input-label">País:</label>
-                            <select id="combobox" name="IDPais" class="blue-border" value={formData.IDPais} onChange={handleChange}>
+                            <select id="combobox" name="IDPais" class="blue-border" value={formData.IDPais} onChange={(e) => handleChange(e, 4)}>
                             {paises.map(pais => (
                                     <option key={pais.idPais} value={pais.idPais}>{pais.pais}</option>
                                 ))}
@@ -105,12 +122,26 @@ function EditarPublicacion() {
                         </div>
                     </Col>
                     <Col className="COL" xs={12} sm ={12} md ={12} lg = {6}>
-                        <div class="input-container">
-                            <label for="photoInput" class="input-label">Publicar:</label>
-                            <input type="file" id="photoInput" name="Foto" accept="image/*" class="fotoinput" multiple onChange={handleChange}/>
+                    <div class="input-container">
+                            <label for="photoInput" class="input-label" >Publicar:</label>
+                            <input type="file" id="Fotos1" name="Fotos1" accept="image/*" class="fotoinput" onChange={(e) => handleChange(e, 1)}/>
                         </div>
                         <div class="image-container">
-                            <img src="./Imagenes/Paisaje.jpg" alt="Imagen" id="uploadedImage"/>
+                            <img src={usarFoto} alt="Imagen" id="uploadedImage"/>
+                        </div>
+                        <div class="input-container">
+                            <label for="photoInput" class="input-label" >Publicar:</label>
+                            <input type="file" id="Fotos2" name="Fotos2" accept="image/*" class="fotoinput" onChange={(e) => handleChange(e, 2)}/>
+                        </div>
+                        <div class="image-container">
+                            <img src={usarFoto2} alt="Imagen" id="uploadedImage"/>
+                        </div>
+                        <div class="input-container">
+                            <label for="photoInput" class="input-label" >Publicar:</label>
+                            <input type="file" id="Fotos3" name="Fotos3" accept="image/*" class="fotoinput" multiple onChange={(e) => handleChange(e, 3)}/>
+                        </div>
+                        <div class="image-container">
+                            <img src={usarFoto3} alt="Imagen" id="uploadedImage"/>
                         </div>
                         <div class="button-container">
                             <button class="btn" onClick={handleSubmit}>Publicar <FaRegPaperPlane size={25}/></button>
