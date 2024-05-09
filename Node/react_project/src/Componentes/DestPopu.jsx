@@ -15,7 +15,7 @@ function DestPopu({ Imagen, Pais, Num }) {
         <TiFlag />
       ) : (
         <img 
-          src={Imagen}
+          src={`/Imagenes/${Imagen}`}
           alt="Bandera"
           onError={handleError}
           style={{marginRight:"5px"}}

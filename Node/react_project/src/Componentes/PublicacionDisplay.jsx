@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Heart from "react-heart"
 import { Link, useNavigate } from "react-router-dom";
 import '../Estilos/PublicacionDisplay.css'
@@ -10,6 +10,7 @@ import Carousel from "./Carousel.jsx";
 import axios from "axios";
 import useAuth from '../Context/useAuth';
 import usePubAuth from '../Context/useAuthPub.js';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 
 function Corazon(props) {
@@ -49,14 +50,64 @@ function Corazon(props) {
 
 
 
-function PublicDisplay({ IDPublicacion, NombreUsu, ImagenUsu, Fecha, Pais, Titulo, Contenido, Imagen1, Imagen2, Imagen3, Tipo, Saved, Pagina }){
+function PublicDisplay({ IDPublicacion, idUsuario, NombreUsu, ImagenUsu, Fecha, Pais, Titulo, Contenido, Imagen1, Imagen2, Imagen3, Tipo, Saved, Pagina, Calificacion, PromCalificacion, Sigue }){
 	const [rating, setRating] = useState(0);
 	const navigate = useNavigate();	
-	const {logout} = useAuth();
+	const {logout, user} = useAuth();
 	const {guardarPublicacion} = usePubAuth();
-  const handleRatingChange = (newRating) => {
-    setRating(newRating);
-  };
+	const [ratingData, setRatingData] = useState({
+		IDPublicacion: IDPublicacion,
+		IDUsuario: user.IDUsuario,
+		Calificacion: 0
+	});
+	const [textoBoton, setTextoBoton] = useState("+Seguir");
+
+	useEffect(() => {
+		
+		console.log("Sigue; ", Sigue);
+		if(Sigue === 1){
+            setTextoBoton('Siguiendo');
+          }else{
+            setTextoBoton('+ Seguir');
+          }
+	
+		// Aquí puedes realizar otras acciones después de que el estado textoBoton cambie
+	  }, []);
+	
+	const handleRatingChange = async (newRating) => {
+		setRating(newRating);
+		console.log("Rating: ", newRating);
+		console.log("IDPublicacion", IDPublicacion);
+		console.log("Usuario: ", user.IDUsuario);
+	
+		// Actualizar ratingData antes de enviarlo al servidor y enviar la solicitud de axios
+		setRatingData((prevRatingData) => {
+			const updatedRatingData = {
+				...prevRatingData,
+				Calificacion: newRating
+			};
+	
+			console.log("Data: ", updatedRatingData);
+			return updatedRatingData;
+		});
+	
+		try {
+			axios.post('http://localhost:4200/insertarCalificacion', ratingData, {
+				headers: {
+					authorization: 'Bearer ' + localStorage.getItem('token')
+				}
+			})
+			.then(() => {
+				console.log('Guardado agregado correctamente');
+			})
+			.catch(error => {
+				console.error('Error al agregar el guardado:', error);
+			});
+		} catch (error) {
+			console.error('Error al agregar el guardado:', error);
+		}
+	};
+	
 
   const EditarPublicacion = async (idPublicacion) => {
 
@@ -179,6 +230,36 @@ function PublicDisplay({ IDPublicacion, NombreUsu, ImagenUsu, Fecha, Pais, Titul
 	};
 
 
+	const handleSeguirClick = async (idUsuario) => {
+		const userData = localStorage.getItem('user');
+		const user = JSON.parse(userData);
+		console.log("Usuario ID: ", user._id);
+	
+		const data = {
+		  IDSeguidor: user._id,
+		  IDSeguido: idUsuario
+		};
+	
+		try {
+		  console.log(data.IDSeguidor);
+		  console.log(data.IDSeguido);
+		  await axios.post('http://localhost:4200/insertarSeguimiento', data, {
+			headers: {
+			  authorization: 'Bearer ' + localStorage.getItem('token')
+			}
+		  });
+			  console.log('Guardado agregado correctamente');
+		  if(textoBoton === '+ Seguir'){
+			setTextoBoton('Siguiendo');
+		  }else{
+			setTextoBoton('+ Seguir');
+		  }
+			} catch (error) {
+			  console.error('Error al agregar el guardado:', error);
+			}
+	  };
+	
+
   const Fecha2 = Fecha.split("T")[0]; //recortar la fecha
   //const Fecha2 = Fecha;
 	
@@ -192,12 +273,12 @@ function PublicDisplay({ IDPublicacion, NombreUsu, ImagenUsu, Fecha, Pais, Titul
 					<Col lg={7} className="DivCentro">
 						{Tipo === 'Propio' ? (
 							<div className="NomBot">
-								<Link className="LinkUsuName" to={Tipo === 'Propio' ? '/Perfil' : Tipo === 'Ajeno' ? '/PerfilAjeno' : Tipo === 'Borrador' ? '/Perfil' : '/Perfil'}>{NombreUsu}</Link>			
+								<Link className="LinkUsuName" to={Tipo === 'Propio' ? '/Perfil' : Tipo === 'Ajeno' ? '/PerfilAjeno' : Tipo === 'Borrador' ? '/Perfil' : '/Perfil'} >{NombreUsu}</Link>			
 							</div>
 						) : Tipo === 'Ajeno' ? (
 							<div className="NomBot">
-								<Link className="LinkUsuName" to={'/PerfilAjeno'}>{NombreUsu}</Link>
-								<button>+Seguir</button>
+								<Link className="LinkUsuName" to={'/PerfilAjeno'} onClick={() => localStorage.setItem('usuAjeno', idUsuario)}>{NombreUsu}</Link>
+								<button onClick={() => handleSeguirClick(idUsuario)}>{textoBoton}</button>
 							</div>
 						) : Tipo === 'Borrador' ? (
 							<div className="NomBot">
@@ -206,8 +287,11 @@ function PublicDisplay({ IDPublicacion, NombreUsu, ImagenUsu, Fecha, Pais, Titul
 						) : null}
 						<div className="FechaRating">
 							<p>{Fecha2}</p>
-							<Rating initialRating={rating} onRatingChange={handleRatingChange} />
+							<Rating initialRating={Calificacion} onRatingChange={handleRatingChange} />							
 						</div>
+						<p>
+						{PromCalificacion} <i className="bi bi-star-fill text-warning"></i>
+						</p>
 					</Col>
 						{Tipo === 'Propio' ? (
 							<Col lg={2} className="PaisReacc">

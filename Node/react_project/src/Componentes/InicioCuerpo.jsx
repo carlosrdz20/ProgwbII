@@ -8,18 +8,20 @@ import { RiArrowLeftCircleFill, RiArrowRightCircleFill } from "react-icons/ri";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from '../Context/useAuth';
+import Buscador from './Buscador.jsx';
 
 function InicioCuerpo() {
   const navigate = useNavigate();
   const [ UsuIni ] = useState(true);
   const [publicaciones, setPublicaciones] = useState([]);
+  const [topPaises, setTopPaises] = useState([]);
   const { logout } = useAuth();
 
   useEffect(() => {
     // Realiza la solicitud para obtener las publicaciones cuando el componente se monta
     const userData = localStorage.getItem('user');
     const user = JSON.parse(userData);
-    axios.get(`http://localhost:4200/tpublicaciones/${user.IDUsuario}`, {
+    axios.get(`http://localhost:4200/tpublicaciones/${user.IDUsuario}/${user._id}`, {
       headers: {
         authorization: 'Bearer ' + localStorage.getItem('token') 
       }
@@ -34,10 +36,72 @@ function InicioCuerpo() {
         alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
         navigate('/')
       });
+
+      axios.get(`http://localhost:4200/topPaises`, {
+        headers: {
+          authorization: 'Bearer ' + localStorage.getItem('token') 
+        }
+      })
+        .then(response => {
+          setTopPaises(response.data);
+          console.log("Se insertaron las publicaciones");
+        })
+        .catch(error => {
+          console.error('Error al obtener las publicaciones:', error);
+        });
   }, []);
+  
+
+  const handleParati = async () => {
+    const userData = localStorage.getItem('user');
+    const user = JSON.parse(userData);
+    axios.get(`http://localhost:4200/tpublicaciones/${user.IDUsuario}/${user._id}`, {
+      headers: {
+        authorization: 'Bearer ' + localStorage.getItem('token') 
+      }
+    })
+      .then(response => {
+        setPublicaciones(response.data);
+        console.log("Se insertaron las publicaciones");
+      })
+      .catch(error => {
+        console.error('Error al obtener las publicaciones:', error);
+        logout();
+        alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
+        navigate('/')
+      });
+  };
+
+  const handleSiguiendo = async () => {
+    const userData = localStorage.getItem('user');
+    const user = JSON.parse(userData);
+    axios.get(`http://localhost:4200/mpubSeguidos/${user.IDUsuario}/${user._id}`, {
+      headers: {
+        authorization: 'Bearer ' + localStorage.getItem('token') 
+      }
+    })
+      .then(response => {
+        setPublicaciones(response.data);
+        console.log("Se insertaron las publicaciones");
+      })
+      .catch(error => {
+        console.error('Error al obtener las publicaciones:', error);
+        logout();
+        alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
+        navigate('/')
+      });
+  };
+
+  const actualizarPublicaciones = (nuevasPublicaciones) => {
+    setPublicaciones(nuevasPublicaciones);
+  };  
+
+  
 
   return (
+    
     <div className="Cuerpo">
+      <Buscador actualizarPublicaciones={actualizarPublicaciones} />
       <Row>
         <Col className="Izquierdo" xs={12} md={12} lg={3} xl={3}>
           <MenuLateral pagina={'Inicio'} />
@@ -48,8 +112,8 @@ function InicioCuerpo() {
           {UsuIni ? (
             <>
               <Col className="CentroBot" md={3}>
-                <button>Para ti</button>
-                <button>Siguiendo</button>
+                <button onClick={handleParati}>Para ti</button>
+                <button onClick={handleSiguiendo}>Siguiendo</button>
               </Col>
               <Col md={9} className="PaginacionCol">
                 <div className="Paginacion">
@@ -88,6 +152,10 @@ function InicioCuerpo() {
             Tipo={publicacion.Tipo}
             Saved={publicacion.Saved}
             Pagina = "Inicio"
+            Calificacion ={publicacion.Calificacion}
+            PromCalificacion={publicacion.PromedioCalificaciones}
+            idUsuario={publicacion.usuario._id}
+            Sigue={publicacion.SigueUsuario}
             />
             ))}
             </Col>
@@ -98,11 +166,14 @@ function InicioCuerpo() {
           <div className="DestiPopus">
             <h1>"Destinos Populares"</h1>
             <div className="Paises">
-              <DestPopu Num={"1"} Pais={'México'} Imagen={'/Imagenes/bandera.png'}/>
-              <DestPopu Num={"2"} Pais={'Japon'} Imagen={'/Imagenes/japon.png'}/>
-              <DestPopu Num={"3"} Pais={'Francia'} Imagen={'Imagenes/espana.png'}/>
-              <DestPopu Num={"4"} Pais={'Alemania'} Imagen={'/Imagenes/canada.png'}/>
-              <DestPopu Num={"5"} Pais={'Korea'} Imagen={'Imagenes/alemania.png'}/>              
+            {topPaises.map((pais, index) => (
+                <DestPopu
+                    key={index} // Es importante proporcionar una clave única para cada elemento en el arreglo
+                    Num={index + 1} // El índice comienza en 0, por lo que sumamos 1 para obtener el número correcto
+                    Pais={pais.pais}
+                    Imagen={pais.imagen}
+                />
+            ))}         
             </div>
           </div>
         </Col>

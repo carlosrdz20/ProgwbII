@@ -4,7 +4,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from '../Context/useAuth';
 
-function FiltroLateral({ actualizarPublicaciones }){
+function FiltroLateral({ actualizarPublicaciones, tipoMis }){
   const navigate = useNavigate();
   const [paises, setPaises] = useState([]);
   const [paisSeleccionado, setPaisSeleccionado] = useState(1); //puse el ID 1 de inicio por si nunca entra al handleChange
@@ -51,24 +51,63 @@ function FiltroLateral({ actualizarPublicaciones }){
       alert("La fecha inicial no puede ser mayor que la fecha final");
       return;
     }
-    // Realizar la solicitud al backend con los filtros seleccionados
-    axios.get(`http://localhost:4200/misfavoritosfiltrados/${user.IDUsuario}?pais=${paisSeleccionado}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`, {
-      headers: {
-        authorization: 'Bearer ' + localStorage.getItem('token') 
-      }
-    })
-      .then(response => {
-        const nuevasPublicaciones = response.data;
-        // Llamar a la función de callback para actualizar las publicaciones en MisFavoCuerpo
-        actualizarPublicaciones(nuevasPublicaciones);
-        console.log("Se insertaron las publicaciones filtradas");
+    
+    if(tipoMis === 3){
+      axios.get(`http://localhost:4200/misfavoritosfiltrados/${user.IDUsuario}?pais=${paisSeleccionado}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`, {
+        headers: {
+          authorization: 'Bearer ' + localStorage.getItem('token') 
+        }
       })
-      .catch(error => {
-        console.error('Error al obtener las publicaciones filtradas:', error);
-        logout();
-        alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
-        navigate('/')
-      });
+        .then(response => {
+          const nuevasPublicaciones = response.data;
+          // Llamar a la función de callback para actualizar las publicaciones en MisFavoCuerpo
+          actualizarPublicaciones(nuevasPublicaciones);
+          console.log("Se insertaron las publicaciones filtradas");
+        })
+        .catch(error => {
+          console.error('Error al obtener las publicaciones filtradas:', error);
+          logout();
+          alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
+          navigate('/')
+        });
+    }else if(tipoMis === 2){
+      axios.get(`http://localhost:4200/mborradoresFiltro/${user.IDUsuario}?pais=${paisSeleccionado}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`, {
+        headers: {
+          authorization: 'Bearer ' + localStorage.getItem('token') 
+        }
+      })
+        .then(response => {
+          const nuevasPublicaciones = response.data;
+          // Llamar a la función de callback para actualizar las publicaciones en MisFavoCuerpo
+          actualizarPublicaciones(nuevasPublicaciones);
+          console.log("Se insertaron las publicaciones filtradas");
+        })
+        .catch(error => {
+          console.error('Error al obtener las publicaciones filtradas:', error);
+          logout();
+          alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
+          navigate('/')
+        });
+    }else if(tipoMis === 1){
+      axios.get(`http://localhost:4200/mpubFiltrado/${user.IDUsuario}?pais=${paisSeleccionado}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`, {
+        headers: {
+          authorization: 'Bearer ' + localStorage.getItem('token') 
+        }
+      })
+        .then(response => {
+          const nuevasPublicaciones = response.data;
+          // Llamar a la función de callback para actualizar las publicaciones en MisFavoCuerpo
+          actualizarPublicaciones(nuevasPublicaciones);
+          console.log("Se insertaron las publicaciones filtradas");
+        })
+        .catch(error => {
+          console.error('Error al obtener las publicaciones filtradas:', error);
+          logout();
+          alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
+          navigate('/')
+        });
+    }
+
   };
   
 
@@ -92,7 +131,7 @@ function FiltroLateral({ actualizarPublicaciones }){
         </select>
       </div>
       <div className="FiltrosDivBotones">
-        <button onClick={aplicarFiltros}>Aplicar</button>
+        <button onClick={() => aplicarFiltros()}>Aplicar</button>
       </div>
     </div>
   );

@@ -34,6 +34,10 @@ function InicioCuerpo() {
       });
   }, []);
 
+  const actualizarPublicaciones = (nuevasPublicaciones) => {
+    setMisPublicaciones(nuevasPublicaciones);
+  };  
+
   return (
     <div className="Cuerpo">
       <Row>
@@ -75,7 +79,7 @@ function InicioCuerpo() {
         </Col>
 
         <Col className="Derecho" xs={12} sm={12} md={12} lg={3}>
-          <FiltroLateral />
+        <FiltroLateral actualizarPublicaciones={actualizarPublicaciones} tipoMis = {1}/>
         </Col>
       </Row>
     </div>

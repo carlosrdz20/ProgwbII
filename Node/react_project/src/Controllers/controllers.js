@@ -2,9 +2,14 @@ const Usuario = require('../Schemas/Usuarios');
 const Publicaciones = require('../Schemas/Publicaciones');
 const Guardados = require('../Schemas/Guardados');
 const Pais = require('../Schemas/Paises');
+const Rating = require('../Schemas/Calificaciones')
+const Seguidores = require('../Schemas/Seguidores')
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const { crearToken } = require('../helpers/jwt_helper');
+const Calificaciones = require('../Schemas/Calificaciones');
+const mongoose = require('mongoose');
+
 
 //Usuarios
 const insertarUsuario = async (req, res) => {
@@ -63,7 +68,7 @@ const autenticarUsuario = async (req, res) =>{
           return res.status(401).json({ error: 'Credenciales inválidas' });
         }
     
-        const {IDUsuario, NombreUsuario, Nombre, Correo, Foto, Contrasena, FechaNacimiento, Genero } = usuario;
+        const {IDUsuario, NombreUsuario, Nombre, Correo, Foto, Contrasena, FechaNacimiento, Genero, _id } = usuario;
         const token = await crearToken({usuario});
         res.status(200).json({
           IDUsuario,
@@ -74,7 +79,8 @@ const autenticarUsuario = async (req, res) =>{
           Foto,
           FechaNacimiento,
           Genero,
-          token
+          token,
+          _id
         });
       } catch (error) {
         console.error('Error al autenticar usuario:', error);
@@ -131,6 +137,49 @@ const editarUsuario = async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };
+
+const busquedaAjeno = async (req, res) => {
+  const { userId, sessionID } = req.query; 
+
+  try {
+    
+    const usuario = await Usuario.findOne({ _id: userId });
+
+    if (!usuario) {
+      
+      return res.status(404).json({ error: 'Usuario no encontrado', seguidores: 0, seguidos: 0, sigue: 0 });
+    }
+
+  
+    const seguidores = await Seguidores.countDocuments({ IDSeguido: userId, Estatus: 1 }).catch(() => 0);
+
+    const seguidos = await Seguidores.countDocuments({ IDSeguidor: userId, Estatus: 1 }).catch(() => 0);
+
+    let sigue = await Seguidores.exists({ IDSeguidor: sessionID, IDSeguido: userId });
+
+    if (sigue) {
+      
+      const relacionSeguimiento = await Seguidores.findOne({ IDSeguidor: sessionID, IDSeguido: userId });
+
+      
+      if (relacionSeguimiento.Estatus === 0) {
+        
+        sigue = 0;
+        return res.status(200).json({ usuario, seguidores: 0, seguidos: 0, sigue });
+      }else{
+        sigue = 1;
+        return res.status(200).json({ usuario, seguidores, seguidos, sigue });
+      }
+    }
+
+    
+    res.status(200).json({ usuario, seguidores, seguidos, sigue });
+  } catch (error) {
+    console.error('Error al buscar usuario:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
 
 //Paises
 const buscarPaises = async (req, res) => {
@@ -251,7 +300,6 @@ const insertarBorrador = async (req, res) => {
 
 const mostrarPublicaciones = async (req, res) => {
   try {
-    // Utiliza la agregación para realizar un "join" entre las colecciones
     const publicacionesConUsuariosYPaises = await Publicaciones.aggregate([
       // Realiza un "lookup" para unir la colección de usuarios
       {
@@ -262,9 +310,7 @@ const mostrarPublicaciones = async (req, res) => {
           as: "usuario" 
         }
       },
-      
       { $unwind: "$usuario" },
-      
       {
         $lookup: {
           from: "paises", 
@@ -273,12 +319,9 @@ const mostrarPublicaciones = async (req, res) => {
           as: "pais"
         }
       },
-      
       { $unwind: "$pais" },
-
       // Filtra las publicaciones por el atributo "Estatus"
-      { $match: { Estatus: 1 } }, // Aquí puedes especificar el valor de estatus que desees mostrar
-
+      { $match: { Estatus: 1 } },
       // Agrega el campo "Tipo" basado en la condición proporcionada
       {
         $addFields: {
@@ -291,38 +334,53 @@ const mostrarPublicaciones = async (req, res) => {
           }
         }
       },
-
-      //Buscar si el usuario ha guardado la publicación para mandar un Saved en true o false y rellenar el corazón o no
-      // Realiza una búsqueda en el documento "guardados" para verificar si el usuario ha guardado la publicación
+      // Realiza una búsqueda en el documento "calificaciones" para verificar si el usuario ha calificado la publicación
       {
         $lookup: {
-          from: "guardados",
-          let: { pubId: "$IDPublicacion" },
+          from: "calificaciones",
+          let: { pubId: "$IDPublicacion", userId: parseInt(req.params.IDUsuario) },
           pipeline: [
             {
               $match: {
                 $expr: {
                   $and: [
                     { $eq: ["$IDPublicacion", "$$pubId"] },
-                    { $eq: ["$IDUsuario", parseInt(req.params.IDUsuario)] },
-                    { $eq: ["$Estatus", 1] }
+                    { $eq: ["$IDUsuario", "$$userId"] }
                   ]
                 }
               }
-            },
-            { $count: "savedCount" }
+            }
           ],
-          as: "saved"
+          as: "calificacionUsuario"
         }
       },
-      // Agrega el campo "Saved" basado en si se encontró un registro en "guardados"
+      // Obtén la calificación del usuario si existe, de lo contrario, establece Calificacion como 0
       {
         $addFields: {
-          Saved: { $gt: [{ $size: "$saved" }, 0] }
+          Calificacion: {
+            $cond: { 
+              if: { $gt: [{ $size: "$calificacionUsuario" }, 0] },
+              then: { $arrayElemAt: ["$calificacionUsuario.Calificacion", 0] },
+              else: 0
+            }
+          }
         }
       },
-      //
-      
+      // Realiza una búsqueda en el documento "calificaciones" para calcular el promedio de calificaciones
+      {
+        $lookup: {
+          from: "calificaciones",
+          localField: "IDPublicacion",
+          foreignField: "IDPublicacion",
+          as: "calificaciones"
+        }
+      },
+      // Calcula el promedio de calificaciones
+      {
+        $addFields: {
+          PromedioCalificaciones: { $avg: "$calificaciones.Calificacion" }
+        }
+      },
       {
         $project: {
           _id: 1,
@@ -334,17 +392,40 @@ const mostrarPublicaciones = async (req, res) => {
           ImagenDos: 1,
           ImagenTres: 1,
           Estatus: 1,
+          "usuario._id": 1,
           "usuario.NombreUsuario": 1, 
           "usuario.Foto": 1, 
           "pais.pais": 1, 
           "pais.imagen": 1,
           Tipo: 1,
-          Saved: 1
+          Saved: 1,
+          // Eliminamos la proyección de Calificado
+          PromedioCalificaciones: 1,
+          // Incluimos la calificación del usuario
+          Calificacion: 1
         }
       }
     ]);
 
-    res.status(200).json(publicacionesConUsuariosYPaises);
+    const publicacionesConSeguimiento = await Promise.all(publicacionesConUsuariosYPaises.map(async (publicacion) => {
+      // Realizar la consulta adicional para verificar el seguimiento
+      const sigue = await Seguidores.exists({
+        IDSeguidor: req.params._idUsuario,
+        IDSeguido: publicacion.usuario._id,
+        Estatus: 1
+      });
+
+      // Establecer el valor de SigueUsuario basado en el resultado de la consulta adicional
+      return {
+        ...publicacion,
+        SigueUsuario: sigue ? 1 : 0
+      };
+    }));
+
+    console.log("Publicaciones con seguimiento de usuario:", publicacionesConSeguimiento);
+
+
+    res.status(200).json(publicacionesConSeguimiento);
   } catch (error) {
     console.error("Error al buscar publicaciones con usuarios y países:", error);
     res.status(500).json({ error: "Error interno del servidor" });
@@ -576,6 +657,108 @@ const mostrarMisPublicaciones = async (req, res) => {
       {
         $match: {
           IDUsuario: parseInt(req.params.IDUsuario), // Filtra por el ID del usuario
+          Estatus: 1 // Filtra por el estatus de la publicación si es necesario
+        }
+      },
+      // Realiza un "lookup" para unir la colección de usuarios
+      {
+        $lookup: {
+          from: "usuarios", 
+          localField: "IDUsuario", 
+          foreignField: "IDUsuario", 
+          as: "usuario" 
+        }
+      },
+      
+      { $unwind: "$usuario" },
+      
+      {
+        $lookup: {
+          from: "paises", 
+          localField: "IDPais", 
+          foreignField: "idPais", 
+          as: "pais"
+        }
+      },
+      
+      { $unwind: "$pais" },
+
+      //Buscar si el usuario ha guardado la publicación para mandar un Saved en true o false y rellenar el corazón o no
+      // Realiza una búsqueda en el documento "guardados" para verificar si el usuario ha guardado la publicación
+      {
+        $lookup: {
+          from: "guardados",
+          let: { pubId: "$IDPublicacion" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$IDPublicacion", "$$pubId"] },
+                    { $eq: ["$IDUsuario", parseInt(req.params.IDUsuario)] },
+                    { $eq: ["$Estatus", 1] }
+                  ]
+                }
+              }
+            },
+            { $count: "savedCount" }
+          ],
+          as: "saved"
+        }
+      },
+      // Agrega el campo "Saved" basado en si se encontró un registro en "guardados"
+      {
+        $addFields: {
+          Saved: { $gt: [{ $size: "$saved" }, 0] }
+        }
+      },
+      
+      {
+        $project: {
+          _id: 1,
+          IDPublicacion: 1,
+          Titulo: 1,
+          Descripcion: 1,
+          FechaPub: 1,
+          ImagenUno: 1,
+          ImagenDos: 1,
+          ImagenTres: 1,
+          Estatus: 1,
+          "usuario.NombreUsuario": 1, 
+          "usuario.Foto": 1, 
+          "pais.pais": 1, 
+          "pais.imagen": 1,
+          Saved: 1
+        }
+      }
+    ]);
+
+    res.status(200).json(publicacionesDelUsuario);
+  } catch (error) {
+    console.error("Error al buscar publicaciones del usuario:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+const mpubAjeno = async (req, res) => {
+  try {
+    
+    // Buscar el usuario por su IDUsuario
+    const usuario = await Usuario.findOne({ _id: req.params.IDUsuario });
+
+    if (!usuario) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    // Obtener el IDUsuario del usuario encontrado
+    const userID = usuario.IDUsuario;
+
+    // Realizar la agregación para obtener las publicaciones del usuario
+    const publicacionesDelUsuario = await Publicaciones.aggregate([
+      // Agrega un filtro para obtener solo las publicaciones del usuario específico
+      {
+        $match: {
+          IDUsuario: userID, // Filtra por el ID del usuario encontrado
           Estatus: 1 // Filtra por el estatus de la publicación si es necesario
         }
       },
@@ -1019,6 +1202,799 @@ const enviarPublicacion = async (req, res) => {
   }
 };
 
+//Rating Publicaciones
+const insertarRating = async (req, res) => {
+  console.log("INSERTAR RATING ", req.body);
+  const { IDPublicacion, IDUsuario, Calificacion } = req.body;
+
+  try {
+    // Verificar si ya existe un registro de guardado para esta publicación y usuario
+    let calificacionExistente = await Rating.findOne({ IDPublicacion, IDUsuario });
+
+    if (calificacionExistente) {
+      // Si existe un registro, actualiza el campo de estatus
+      calificacionExistente.Calificacion = Calificacion;
+      await calificacionExistente.save();
+      console.log("Calificacion actualizada:", calificacionExistente);
+      res.status(200).json(calificacionExistente);
+    } else {
+      // Si no existe un registro, crea uno nuevo con el estatus 1
+      // en Estatus dejare el 1 para publicación, 2 para borrador y 3 para publicación o borrador eliminado --Edgar
+      const rating = new Rating({
+        IDCalificacion: Math.floor(Math.random() * (1000000 - 1 + 1)) + 1,
+        IDUsuario: req.body.IDUsuario,
+        IDPublicacion: req.body.IDPublicacion,
+        Calificacion: req.body.Calificacion
+      });
+
+      console.log("Guardado salvado: ", rating);
+      try {
+        const calificaciones = await rating.save();
+        console.log("Guardado salvado:", calificaciones);
+        res.status(201).json(calificaciones);
+      } catch (error) {
+        console.error("Error al insertar el guardado:", error);
+        res.status(500).json({ error: "Error interno del servidor al salvar el guardado." });
+      }
+    }
+  } catch (error) {
+    console.error("Error al insertar o actualizar el guardado:", error);
+    res.status(500).json({ error: "Error interno del servidor al salvar el guardado." });
+  }
+};
+
+
+//Seguidores
+
+const insertarSeguimiento = async (req, res) => {
+  try {
+      const { IDSeguidor, IDSeguido } = req.body;
+      console.log("IDSeguidor", IDSeguidor);
+      console.log("IDSeguido", IDSeguido);
+      
+      // Genera un ID de seguimiento aleatorio
+      const IDSeguimiento = Math.floor(Math.random() * (1000000 - 1 + 1)) + 1;
+
+      // Verifica si ya existe un registro para el IDSeguidor y el IDSeguido
+      const existente = await Seguidores.findOne({ IDSeguidor, IDSeguido });
+
+      if (existente) {
+          // Si existe un registro, actualiza el estado (Estatus)
+          existente.Estatus = existente.Estatus === 0 ? 1 : 0;
+          await existente.save();
+          return res.status(200).json({ success: true, message: "Se actualizó el estado de seguimiento correctamente." });
+      } else {
+          // Si no existe un registro, crea uno nuevo con Estatus 1
+          const nuevoSeguimiento = new Seguidores({ IDSeguimiento, IDSeguidor, IDSeguido, Estatus: 1 });
+          await nuevoSeguimiento.save();
+          return res.status(200).json({ success: true, message: "Se insertó un nuevo seguimiento correctamente." });
+      }
+  } catch (error) {
+      return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+const mpubSeguidos = async (req, res) => {
+  try {
+    const publicacionesConUsuariosYPaises = await Publicaciones.aggregate([
+      // Realiza un "lookup" para unir la colección de usuarios
+      {
+        $lookup: {
+          from: "usuarios", 
+          localField: "IDUsuario", 
+          foreignField: "IDUsuario", 
+          as: "usuario" 
+        }
+      },
+      { $unwind: "$usuario" },
+      {
+        $lookup: {
+          from: "paises", 
+          localField: "IDPais", 
+          foreignField: "idPais", 
+          as: "pais"
+        }
+      },
+      { $unwind: "$pais" },
+      // Filtra las publicaciones por el atributo "Estatus"
+      { $match: { Estatus: 1 } },
+      // Agrega el campo "Tipo" basado en la condición proporcionada
+      {
+        $addFields: {
+          Tipo: {
+            $cond: { 
+              if: { $eq: ["$usuario.IDUsuario", parseInt(req.params.IDUsuario)] }, 
+              then: "Propio", 
+              else: "Ajeno" 
+            }
+          }
+        }
+      },
+      // Realiza una búsqueda en el documento "calificaciones" para verificar si el usuario ha calificado la publicación
+      {
+        $lookup: {
+          from: "calificaciones",
+          let: { pubId: "$IDPublicacion", userId: parseInt(req.params.IDUsuario) },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$IDPublicacion", "$$pubId"] },
+                    { $eq: ["$IDUsuario", "$$userId"] }
+                  ]
+                }
+              }
+            }
+          ],
+          as: "calificacionUsuario"
+        }
+      },
+      // Obtén la calificación del usuario si existe, de lo contrario, establece Calificacion como 0
+      {
+        $addFields: {
+          Calificacion: {
+            $cond: { 
+              if: { $gt: [{ $size: "$calificacionUsuario" }, 0] },
+              then: { $arrayElemAt: ["$calificacionUsuario.Calificacion", 0] },
+              else: 0
+            }
+          }
+        }
+      },
+      // Realiza una búsqueda en el documento "calificaciones" para calcular el promedio de calificaciones
+      {
+        $lookup: {
+          from: "calificaciones",
+          localField: "IDPublicacion",
+          foreignField: "IDPublicacion",
+          as: "calificaciones"
+        }
+      },
+      // Calcula el promedio de calificaciones
+      {
+        $addFields: {
+          PromedioCalificaciones: { $avg: "$calificaciones.Calificacion" }
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          IDPublicacion: 1,
+          Titulo: 1,
+          Descripcion: 1,
+          FechaPub: 1,
+          ImagenUno: 1,
+          ImagenDos: 1,
+          ImagenTres: 1,
+          Estatus: 1,
+          "usuario._id": 1,
+          "usuario.NombreUsuario": 1, 
+          "usuario.Foto": 1, 
+          "pais.pais": 1, 
+          "pais.imagen": 1,
+          Tipo: 1,
+          Saved: 1,
+          // Eliminamos la proyección de Calificado
+          PromedioCalificaciones: 1,
+          // Incluimos la calificación del usuario
+          Calificacion: 1
+        }
+      }
+    ]);
+
+    const publicacionesConSeguimiento = await Promise.all(publicacionesConUsuariosYPaises.map(async (publicacion) => {
+      // Realizar la consulta adicional para verificar el seguimiento
+      const sigue = await Seguidores.exists({
+        IDSeguidor: req.params._idUsuario,
+        IDSeguido: publicacion.usuario._id,
+        Estatus: 1
+      });
+
+      // Establecer el valor de SigueUsuario basado en el resultado de la consulta adicional
+      return {
+        ...publicacion,
+        SigueUsuario: sigue ? 1 : 0
+      };
+    }));
+
+    // Filtrar las publicaciones donde SigueUsuario = 1
+    const publicacionesFiltradas = publicacionesConSeguimiento.filter(publicacion => publicacion.SigueUsuario === 1);
+
+    console.log("Publicaciones con seguimiento de usuario:", publicacionesFiltradas);
+
+    res.status(200).json(publicacionesFiltradas);
+  } catch (error) {
+    console.error("Error al buscar publicaciones con usuarios y países:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+//Filtros
+const obtenerTopPais = async (req, res) => {
+  try {
+      // Obtener todas las publicaciones
+      const publicaciones = await Publicaciones.find({Estatus: 1});
+
+      // Crear un objeto para almacenar el conteo de países
+      const conteoPaises = {};
+
+      // Contar cuántas veces se repite cada país en las publicaciones
+      publicaciones.forEach(publicacion => {
+          const idPais = publicacion.IDPais.toString(); // Convertir a string para garantizar consistencia en las comparaciones
+          if (conteoPaises[idPais]) {
+              conteoPaises[idPais]++;
+          } else {
+              conteoPaises[idPais] = 1;
+          }
+      });
+
+      // Convertir el objeto de conteo a una matriz de pares [idPais, cantidad]
+      const conteoPaisesArray = Object.entries(conteoPaises);
+
+      // Ordenar la matriz por la cantidad de repeticiones en orden descendente
+      conteoPaisesArray.sort((a, b) => b[1] - a[1]);
+
+      // Obtener los IDs de los países en el top 5
+      const top5Ids = conteoPaisesArray.slice(0, Math.min(conteoPaisesArray.length, 5)).map(par => par[0]);
+
+      // Obtener los nombres de los países correspondientes a los IDs del top 5
+      const top5Paises = await Pais.find({ idPais: { $in: top5Ids } });
+
+      // Crear un objeto para almacenar el resultado final
+      const top5Resultados = top5Paises.map(pais => {
+          const idPais = pais.idPais.toString();
+          const cantidad = conteoPaises[idPais];
+          return {
+             pais: pais.pais,
+             imagen: pais.imagen,
+             cantidad };
+      });
+
+      res.status(200).json(top5Resultados);
+  } catch (error) {
+      console.error('Error al obtener el top de países:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+const mostrarMisPublicacionesFiltrados = async (req, res) => {
+  try {
+    const userID = parseInt(req.params.IDUsuario);
+    const { pais, fechaInicio, fechaFin } = req.query;
+
+    let matchPublicaciones = {
+      IDUsuario: userID, // Filtra por el ID del usuario
+      Estatus: 1 // Filtra por el estatus de la publicación si es necesario
+    };
+
+    if (pais) {
+      matchPublicaciones['IDPais'] = parseInt(pais);
+    }
+
+    if (fechaInicio && fechaFin) {
+      matchPublicaciones.FechaPub = { $gte: new Date(fechaInicio), $lte: new Date(fechaFin + 'T23:59:59') };
+    }
+
+    // Utiliza la agregación para realizar un "join" entre las colecciones
+    const publicacionesDelUsuario = await Publicaciones.aggregate([
+      // Agrega un filtro para obtener solo las publicaciones del usuario específico
+      { $match: matchPublicaciones },
+      // Realiza un "lookup" para unir la colección de usuarios
+      {
+        $lookup: {
+          from: "usuarios",
+          localField: "IDUsuario",
+          foreignField: "IDUsuario",
+          as: "usuario"
+        }
+      },
+
+      { $unwind: "$usuario" },
+
+      {
+        $lookup: {
+          from: "paises",
+          localField: "IDPais",
+          foreignField: "idPais",
+          as: "pais"
+        }
+      },
+
+      { $unwind: "$pais" },
+
+      // Agrega el filtro adicional según los criterios de consulta
+      { $match: matchPublicaciones },
+
+      //Buscar si el usuario ha guardado la publicación para mandar un Saved en true o false y rellenar el corazón o no
+      // Realiza una búsqueda en el documento "guardados" para verificar si el usuario ha guardado la publicación
+      {
+        $lookup: {
+          from: "guardados",
+          let: { pubId: "$IDPublicacion" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$IDPublicacion", "$$pubId"] },
+                    { $eq: ["$IDUsuario", userID] },
+                    { $eq: ["$Estatus", 1] }
+                  ]
+                }
+              }
+            },
+            { $count: "savedCount" }
+          ],
+          as: "saved"
+        }
+      },
+      // Agrega el campo "Saved" basado en si se encontró un registro en "guardados"
+      {
+        $addFields: {
+          Saved: { $gt: [{ $size: "$saved" }, 0] }
+        }
+      },
+
+      {
+        $project: {
+          _id: 1,
+          IDPublicacion: 1,
+          Titulo: 1,
+          Descripcion: 1,
+          FechaPub: 1,
+          ImagenUno: 1,
+          ImagenDos: 1,
+          ImagenTres: 1,
+          Estatus: 1,
+          "usuario.NombreUsuario": 1,
+          "usuario.Foto": 1,
+          "pais.pais": 1,
+          "pais.imagen": 1,
+          Saved: 1
+        }
+      }
+    ]);
+
+    res.status(200).json(publicacionesDelUsuario);
+  } catch (error) {
+    console.error("Error al buscar publicaciones del usuario:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+
+const mborradoresFiltro = async (req, res) => {
+  try {
+    const userID = parseInt(req.params.IDUsuario);
+    const { pais, fechaInicio, fechaFin } = req.query;
+
+    let matchPublicaciones = {
+      IDUsuario: userID,
+      Estatus: 2 // Filtra por el estatus de la publicación (borradores)
+    };
+
+    if (pais) {
+      matchPublicaciones['IDPais'] = parseInt(pais);
+    }
+
+    if (fechaInicio && fechaFin) {
+      matchPublicaciones.FechaPub = { $gte: new Date(fechaInicio), $lte: new Date(fechaFin + 'T23:59:59') };
+    }
+
+    // Utiliza la agregación para realizar un "join" entre las colecciones
+    const publicacionesDelUsuario = await Publicaciones.aggregate([
+      // Agrega un filtro para obtener solo las publicaciones del usuario específico
+      {
+        $match: matchPublicaciones
+      },
+      // Realiza un "lookup" para unir la colección de usuarios
+      {
+        $lookup: {
+          from: "usuarios",
+          localField: "IDUsuario",
+          foreignField: "IDUsuario",
+          as: "usuario"
+        }
+      },
+
+      { $unwind: "$usuario" },
+
+      {
+        $lookup: {
+          from: "paises",
+          localField: "IDPais",
+          foreignField: "idPais",
+          as: "pais"
+        }
+      },
+
+      { $unwind: "$pais" },
+
+      // Buscar si el usuario ha guardado la publicación para mandar un Saved en true o false y rellenar el corazón o no
+      // Realiza una búsqueda en el documento "guardados" para verificar si el usuario ha guardado la publicación
+      {
+        $lookup: {
+          from: "guardados",
+          let: { pubId: "$IDPublicacion" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$IDPublicacion", "$$pubId"] },
+                    { $eq: ["$IDUsuario", userID] },
+                    { $eq: ["$Estatus", 1] }
+                  ]
+                }
+              }
+            },
+            { $count: "savedCount" }
+          ],
+          as: "saved"
+        }
+      },
+      // Agrega el campo "Saved" basado en si se encontró un registro en "guardados"
+      {
+        $addFields: {
+          Saved: { $gt: [{ $size: "$saved" }, 0] }
+        }
+      },
+
+      {
+        $project: {
+          _id: 1,
+          IDPublicacion: 1,
+          Titulo: 1,
+          Descripcion: 1,
+          FechaPub: 1,
+          ImagenUno: 1,
+          ImagenDos: 1,
+          ImagenTres: 1,
+          Estatus: 1,
+          "usuario.NombreUsuario": 1,
+          "usuario.Foto": 1,
+          "pais.pais": 1,
+          "pais.imagen": 1,
+          Saved: 1
+        }
+      }
+    ]);
+
+    res.status(200).json(publicacionesDelUsuario);
+  } catch (error) {
+    console.error("Error al buscar publicaciones del usuario:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+//Busquedas
+const mostrarPublicacionesPorTexto = async (req, res) => {
+  try {
+    const textoBusqueda = req.query.textoBusqueda;
+
+    const publicacionesConUsuariosYPaises = await Publicaciones.aggregate([
+      // Realiza un "lookup" para unir la colección de usuarios
+      {
+        $lookup: {
+          from: "usuarios", 
+          localField: "IDUsuario", 
+          foreignField: "IDUsuario", 
+          as: "usuario" 
+        }
+      },
+      { $unwind: "$usuario" },
+      {
+        $lookup: {
+          from: "paises", 
+          localField: "IDPais", 
+          foreignField: "idPais", 
+          as: "pais"
+        }
+      },
+      { $unwind: "$pais" },
+      // Filtra las publicaciones por el atributo "Estatus"
+      { $match: { Estatus: 1 } },
+      // Agrega el campo "Tipo" basado en la condición proporcionada
+      {
+        $addFields: {
+          Tipo: {
+            $cond: { 
+              if: { $eq: ["$usuario.IDUsuario", parseInt(req.params.IDUsuario)] }, 
+              then: "Propio", 
+              else: "Ajeno" 
+            }
+          }
+        }
+      },
+      // Realiza una búsqueda en el documento "calificaciones" para verificar si el usuario ha calificado la publicación
+      {
+        $lookup: {
+          from: "calificaciones",
+          let: { pubId: "$IDPublicacion", userId: parseInt(req.params.IDUsuario) },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$IDPublicacion", "$$pubId"] },
+                    { $eq: ["$IDUsuario", "$$userId"] }
+                  ]
+                }
+              }
+            }
+          ],
+          as: "calificacionUsuario"
+        }
+      },
+      // Obtén la calificación del usuario si existe, de lo contrario, establece Calificacion como 0
+      {
+        $addFields: {
+          Calificacion: {
+            $cond: { 
+              if: { $gt: [{ $size: "$calificacionUsuario" }, 0] },
+              then: { $arrayElemAt: ["$calificacionUsuario.Calificacion", 0] },
+              else: 0
+            }
+          }
+        }
+      },
+      // Realiza una búsqueda en el documento "calificaciones" para calcular el promedio de calificaciones
+      {
+        $lookup: {
+          from: "calificaciones",
+          localField: "IDPublicacion",
+          foreignField: "IDPublicacion",
+          as: "calificaciones"
+        }
+      },
+      // Calcula el promedio de calificaciones
+      {
+        $addFields: {
+          PromedioCalificaciones: { $avg: "$calificaciones.Calificacion" }
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          IDPublicacion: 1,
+          Titulo: 1,
+          Descripcion: 1,
+          FechaPub: 1,
+          ImagenUno: 1,
+          ImagenDos: 1,
+          ImagenTres: 1,
+          Estatus: 1,
+          "usuario._id": 1,
+          "usuario.NombreUsuario": 1, 
+          "usuario.Foto": 1, 
+          "pais.pais": 1, 
+          "pais.imagen": 1,
+          Tipo: 1,
+          Saved: 1,
+          // Eliminamos la proyección de Calificado
+          PromedioCalificaciones: 1,
+          // Incluimos la calificación del usuario
+          Calificacion: 1
+        }
+      }
+    ]);
+
+    const publicacionesConSeguimiento = await Promise.all(publicacionesConUsuariosYPaises.map(async (publicacion) => {
+      // Realizar la consulta adicional para verificar el seguimiento
+      const sigue = await Seguidores.exists({
+        IDSeguidor: req.params._idUsuario,
+        IDSeguido: publicacion.usuario._id,
+        Estatus: 1
+      });
+
+      // Establecer el valor de SigueUsuario basado en el resultado de la consulta adicional
+      return {
+        ...publicacion,
+        SigueUsuario: sigue ? 1 : 0
+      };
+    }));
+
+    // Filtra las publicaciones basadas en el texto de búsqueda
+    const publicacionesFiltradas = publicacionesConSeguimiento.filter(publicacion => {
+      const regex = new RegExp(textoBusqueda, 'i');
+      return regex.test(publicacion.Titulo) || regex.test(publicacion.Descripcion);
+    });
+
+    console.log("Publicaciones filtradas por texto de búsqueda:", publicacionesFiltradas);
+
+    res.status(200).json(publicacionesFiltradas);
+  } catch (error) {
+    console.error("Error al buscar publicaciones con usuarios y países:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+
+const busquedaAvanzadaPublic = async (req, res) => {
+  try {
+    const textoBusqueda = req.query.textoBusqueda;
+    const fechaInicio = req.query.fechaInicio; // Obtener fecha de inicio desde la solicitud
+    const fechaFin = req.query.fechaFin; // Obtener fecha de fin desde la solicitud
+    const paisSeleccionado = req.query.paisSeleccionado; // Obtener país seleccionado desde la solicitud
+
+    let publicacionesConUsuariosYPaises = await Publicaciones.aggregate([
+      // Realiza un "lookup" para unir la colección de usuarios
+      {
+        $lookup: {
+          from: "usuarios", 
+          localField: "IDUsuario", 
+          foreignField: "IDUsuario", 
+          as: "usuario" 
+        }
+      },
+      { $unwind: "$usuario" },
+      {
+        $lookup: {
+          from: "paises", 
+          localField: "IDPais", 
+          foreignField: "idPais", 
+          as: "pais"
+        }
+      },
+      { $unwind: "$pais" },
+      // Filtra las publicaciones por el atributo "Estatus"
+      { $match: { Estatus: 1 } },
+      // Agrega el campo "Tipo" basado en la condición proporcionada
+      {
+        $addFields: {
+          Tipo: {
+            $cond: { 
+              if: { $eq: ["$usuario.IDUsuario", parseInt(req.params.IDUsuario)] }, 
+              then: "Propio", 
+              else: "Ajeno" 
+            }
+          }
+        }
+      },
+      // Realiza una búsqueda en el documento "calificaciones" para verificar si el usuario ha calificado la publicación
+      {
+        $lookup: {
+          from: "calificaciones",
+          let: { pubId: "$IDPublicacion", userId: parseInt(req.params.IDUsuario) },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$IDPublicacion", "$$pubId"] },
+                    { $eq: ["$IDUsuario", "$$userId"] }
+                  ]
+                }
+              }
+            }
+          ],
+          as: "calificacionUsuario"
+        }
+      },
+      // Obtén la calificación del usuario si existe, de lo contrario, establece Calificacion como 0
+      {
+        $addFields: {
+          Calificacion: {
+            $cond: { 
+              if: { $gt: [{ $size: "$calificacionUsuario" }, 0] },
+              then: { $arrayElemAt: ["$calificacionUsuario.Calificacion", 0] },
+              else: 0
+            }
+          }
+        }
+      },
+      // Realiza una búsqueda en el documento "calificaciones" para calcular el promedio de calificaciones
+      {
+        $lookup: {
+          from: "calificaciones",
+          localField: "IDPublicacion",
+          foreignField: "IDPublicacion",
+          as: "calificaciones"
+        }
+      },
+      // Calcula el promedio de calificaciones
+      {
+        $addFields: {
+          PromedioCalificaciones: { $avg: "$calificaciones.Calificacion" }
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          IDPublicacion: 1,
+          Titulo: 1,
+          Descripcion: 1,
+          FechaPub: 1,
+          ImagenUno: 1,
+          ImagenDos: 1,
+          ImagenTres: 1,
+          Estatus: 1,
+          "usuario._id": 1,
+          "usuario.NombreUsuario": 1, 
+          "usuario.Foto": 1, 
+          "pais.pais": 1, 
+          "pais.imagen": 1,
+          "pais.idPais": 1,
+          Tipo: 1,
+          Saved: 1,
+          // Eliminamos la proyección de Calificado
+          PromedioCalificaciones: 1,
+          // Incluimos la calificación del usuario
+          Calificacion: 1,
+          IDPais: 1
+        }
+      }
+    ]);
+
+    const publicacionesConSeguimiento = await Promise.all(publicacionesConUsuariosYPaises.map(async (publicacion) => {
+      // Realizar la consulta adicional para verificar el seguimiento
+      const sigue = await Seguidores.exists({
+        IDSeguidor: req.params._idUsuario,
+        IDSeguido: publicacion.usuario._id,
+        Estatus: 1
+      });
+      
+
+
+      // Establecer el valor de SigueUsuario basado en el resultado de la consulta adicional
+      return {
+        ...publicacion,
+        SigueUsuario: sigue ? 1 : 0
+      };
+    }));
+
+    console.log("De ayuda: ",textoBusqueda);
+    console.log("De ayuda: ",fechaInicio);
+    console.log("De ayuda: ",fechaFin);
+    console.log("De ayuda: ",paisSeleccionado);
+
+    
+
+    // Filtra las publicaciones basadas en el texto de búsqueda
+    let publicacionesFiltradas = publicacionesConSeguimiento.filter(publicacion => {
+      const regex = new RegExp(textoBusqueda, 'i');
+      return regex.test(publicacion.Titulo) || regex.test(publicacion.Descripcion);
+    });
+
+    console.log("De ayuidata hora si", publicacionesFiltradas)
+
+    // Filtra las publicaciones basadas en la fecha de inicio si se proporciona
+    if (fechaInicio) {
+      console.log("Prueba: ", fechaInicio)
+      publicacionesFiltradas = publicacionesFiltradas.filter(publicacion => new Date(publicacion.FechaPub) >= new Date(fechaInicio));
+    }
+    
+    if (fechaFin) {
+
+      console.log("De ayuidata hora si 2", fechaFin)
+      publicacionesFiltradas = publicacionesFiltradas.filter(publicacion => new Date(publicacion.FechaPub) <= new Date(fechaFin));
+    }
+
+    console.log("De ayuidata hora si 3", publicacionesFiltradas)
+
+    
+    if (paisSeleccionado) {
+      console.log("Prueba: ", paisSeleccionado)
+      
+      publicacionesFiltradas = publicacionesFiltradas.filter(publicacion => publicacion.IDPais == paisSeleccionado);
+    }
+
+    console.log("De ayuidata hora si 4", publicacionesFiltradas)
+
+    console.log("Publicaciones filtradas:", publicacionesFiltradas);
+
+    res.status(200).json(publicacionesFiltradas);
+  } catch (error) {
+    console.error("Error al buscar publicaciones con usuarios y países:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
+
+
+
+
+
 module.exports = {
     insertarUsuario,
     autenticarUsuario,
@@ -1036,5 +2012,15 @@ module.exports = {
     borrarPublicacion,
     mostrarMisBorradores,
     editarBorrador,
-    enviarPublicacion
+    enviarPublicacion,
+    insertarRating,
+    busquedaAjeno,
+    mpubAjeno,
+    insertarSeguimiento,
+    mpubSeguidos,
+    obtenerTopPais,
+    mostrarMisPublicacionesFiltrados,
+    mborradoresFiltro,
+    mostrarPublicacionesPorTexto,
+    busquedaAvanzadaPublic
 }

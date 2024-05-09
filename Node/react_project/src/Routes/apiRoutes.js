@@ -33,7 +33,7 @@ routers.post(
   jwt_helper.verifyToken, 
   controllers.insertarPublicacion
 );
-routers.get('/tpublicaciones/:IDUsuario',jwt_helper.verifyToken, controllers.mostrarPublicaciones);
+routers.get('/tpublicaciones/:IDUsuario/:_idUsuario',jwt_helper.verifyToken, controllers.mostrarPublicaciones);
 routers.post('/insertarBorrador', upload.fields([
   { name: 'Fotos1', maxCount: 1 }, 
   { name: 'Fotos2', maxCount: 1 }, 
@@ -58,5 +58,17 @@ routers.put('/editarBorrador', upload.fields([
   { name: 'Fotos3', maxCount: 1 }
 ]), jwt_helper.verifyToken , controllers.editarBorrador);
 routers.put('/enviarPublicacion/:IDPublicacion',jwt_helper.verifyToken, controllers.enviarPublicacion);
+routers.post('/insertarCalificacion',jwt_helper.verifyToken, controllers.insertarRating);
+routers.get('/usuarioAjeno',jwt_helper.verifyToken, controllers.busquedaAjeno);
+routers.get('/mpubAjeno/:IDUsuario', controllers.mpubAjeno);
+routers.post('/insertarSeguimiento',jwt_helper.verifyToken, controllers.insertarSeguimiento);
+routers.get('/mpubSeguidos/:IDUsuario/:_idUsuario',jwt_helper.verifyToken, controllers.mpubSeguidos);
+routers.get('/topPaises', jwt_helper.verifyToken,controllers.obtenerTopPais);
+routers.get('/mpubFiltrado/:IDUsuario', controllers.mostrarMisPublicacionesFiltrados);
+routers.get('/mborradoresFiltro/:IDUsuario', controllers.mborradoresFiltro);
+routers.get('/busquedaPublicaciones/:IDUsuario/:_idUsuario', controllers.mostrarPublicacionesPorTexto);
+routers.get('/busquedaAvanzada/:IDUsuario/:_idUsuario', controllers.busquedaAvanzadaPublic);
+
+
 
 module.exports = [routers];

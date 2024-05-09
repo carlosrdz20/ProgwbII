@@ -92,7 +92,7 @@ function MisFavoCuerpo() {
         </Col>
 
         <Col className="Derecho" xs={12} sm={12} md={12} lg={3}>
-          <FiltroLateral actualizarPublicaciones={actualizarPublicaciones}/>
+          <FiltroLateral actualizarPublicaciones={actualizarPublicaciones} tipoMis = {3}/>
         </Col>
       </Row>
     </div>
