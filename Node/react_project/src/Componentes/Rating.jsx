@@ -27,7 +27,7 @@ const Rating = ({ initialRating = 0, maxRating = 5, onRatingChange }) => {
             <FaStar
               className="star"
               color={ratingValue <= rating ? "#ffc107" : "#e4e5e9"}
-              size={25}
+              size={20}
             />
           </label>
         );

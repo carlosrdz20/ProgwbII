@@ -1,26 +1,23 @@
 .h1Propio{
   color: #1B1B32;
-  font-size: 35px;
+  font-size: 5vw;
   font-family: Arial, Helvetica, sans-serif;
   text-align: center;
   margin: 0px 0;
 }
 
 .loginApp {
-  margin: 0;
-  padding: 0;
   background-image: url('/public/Imagenes/Login_BG.jpg');
   background-size: cover;
   background-position: center;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
   height: 100vh;
 }
 
 .login-box {
-  width: 400px;
+  width: 30%;
   padding: 40px;
   background: rgb(90, 173, 212);
   box-shadow: 0 15px 25px rgba(0, 0, 0, 0.5);
@@ -87,4 +84,23 @@
   margin: 0;
   padding: 0;
   border-color: rgb(150, 7, 76);
+}
+
+.logo-contenedor {
+  width: 100%;
+  margin: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+  
+.logo {
+  width: 200px;
+  margin: 10px;
+}
+
+@media screen and (max-width: 768px) {
+  .login-box{
+    width: 90%;
+  }
 }

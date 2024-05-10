@@ -1,5 +1,5 @@
 import { FaSearch } from "react-icons/fa";
-import { Form, Button, Modal } from 'react-bootstrap';
+import { Form, Button, Modal, Container } from 'react-bootstrap';
 import '../Estilos/Buscador.css'
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -83,15 +83,13 @@ export default function Buscador({actualizarPublicaciones}) {
   const toggleModal = () => setShowModal(!showModal);
 
   return (
-    <div className='NavbarBuscadorContenedor'>
-      <div className='Navbar_Buscador_Contenedor'>
-        
-          <input type="search" placeholder='Buscar' className='Navbar-Buscador' aria-label='Buscar' name="texto" value={texto} onChange={handleChange}/>
-          <Button className='Navbar_Buscador_Boton' onClick={busquedaNormal}> <FaSearch /> </Button>
-        
+    <Container fluid className='BuscadorContenedor'>
+      <div className='Barra'>
+        <Button className='btn btn-primary' onClick={busquedaNormal}> <FaSearch size={"15px"} /> </Button>
+        <input type="search" placeholder='Buscar' className='BarraBuscador' aria-label='Buscar' name="texto" value={texto} onChange={handleChange}/>
       </div>
       <div>
-        <button className='Navbar_Buscador_BusAvan' onClick={toggleModal}> Búsqueda Avanzada </button>
+        <button className='btn btn-primary Navbar_Buscador_BusAvan' onClick={toggleModal}> Búsqueda Avanzada </button>
       </div>
       <Modal show={showModal} onHide={toggleModal}>
         <Modal.Header closeButton>
@@ -130,6 +128,6 @@ export default function Buscador({actualizarPublicaciones}) {
           </Button>
         </Modal.Footer>
       </Modal>
-    </div>
+    </Container>
   );
 }

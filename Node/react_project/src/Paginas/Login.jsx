@@ -1,6 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
 import "../Estilos/Login.css";
-import Logo from "../Componentes/Logo.jsx";
 import { useUser } from '../Context/UserContext.js';
 import React, { useState, useContext  } from 'react';
 import axios from "axios";
@@ -63,7 +62,14 @@ export default function Login() {
     <div className="loginApp">
       <div className="login-box">
         <h1 className="h1Propio">¡Bienvenido de vuelta!</h1>
-        <Logo Imagen={'favicon.ico'}/>
+          <div 
+            className='logo-contenedor'>
+              <img 
+              src={`/Imagenes/favicon.ico`}
+              className='logo' 
+              alt={`Imagen de favicon.ico`}
+            />
+          </div>
         <form action="#" onSubmit={Enviar}>
           <div className="textbox">
             <input type="email" placeholder="Correo electrónico" name="email" value={formData.email} onChange={handleChange} required />

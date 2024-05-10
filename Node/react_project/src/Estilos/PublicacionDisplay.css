@@ -1,35 +1,24 @@
-.PublicContenedor{
+.ContainerPublic {
   background-color: rgb(192, 188, 184);
   border-radius: 25px;
   margin: 10px;
-  min-height: 200px;
-  padding: 20px 20px 10px 20px;
-  min-width: 410px;
+  padding: 20px;
 }
 
-.UsuInfo{
-  display: flex;
-  flex-wrap: wrap;
+.ImgContainer {
+  width: 100%;
+  padding-top: 100%; /* Esto crea una relación de aspecto 1:1 (cuadrada) */
+  position: relative;
 }
 
-.UsuInfo p{
-  font-size: 30px;
-  margin: 0;
-  padding-right: 10px;
-}
-
-.ColImg{
-  display: flex;
-  justify-content: center;
-}
-
-.ImgUsu{
-  max-width: 150px;
-  min-width: 150px;
-  max-height: 150px;
-  min-height: 150px;
+.ImgUsu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-  border: solid rgb(49, 49, 49);
+  border: solid 2px rgb(49, 49, 49);
 }
 
 .DivCentro{
@@ -45,14 +34,14 @@
   display: flex;
   align-items: center;
   flex-direction: row;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
 .FechaRating{
   display: flex;
-  align-items: center;
-  flex-direction: row;
-  flex-wrap: nowrap;
+  align-items: start;
+  flex-direction: column;
+  flex-wrap: wrap;
 }
 
 .PaisReacc{
@@ -69,56 +58,26 @@
   border-radius: 50%;
 }
 
-.PublicContenido{
-  padding: 25px 25px 10px 25px;
-  font-size: 20px;
+.ContenedorContenido{
+  border-top: solid #a09e9e;
+  margin-top: 10px;
+  padding-top: 10px;
+  min-height: 200px;
 }
 
-.divImagen{
+.MiCarouselContainer{
   display: flex;
   justify-content: center;
-  align-items: center;
-  width: auto;
+  width: 100%;
+  max-height: 500px;
 }
 
 .PublicImagen{
-  max-width: 40vw;
-  max-height: 400px;
+  width: 100%;
+  height: 100%;
+  max-height: 500px;
   border-radius: 20px;
 }
 
-.ImgContenedor{
-  text-align: -webkit-center;
-}
 
-.DivButtons{
-  display: flex;
-  justify-content: flex-end;
-  padding-top: 10px;
-}
 
-.CarouselDiv{
-  padding: 30px;
-}
-
-@media screen and (max-width: 1320px) {
-  .PublicContenedor{
-    min-width: 450px;
-    max-width: 600px;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .FechaRating, .NomBot{
-    flex-direction: column;
-  }
-  .PaisReacc{
-    flex-direction: row;
-  }
-  .PublicImagen{
-    max-width: 380px;
-  }
-  .CarouselDiv{
-    padding: 0px;
-  }
-}

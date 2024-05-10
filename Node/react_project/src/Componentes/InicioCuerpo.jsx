@@ -3,12 +3,15 @@ import '../Estilos/InicioCuerpo.css';
 import DestPopu from "./DestPopu.jsx";
 import MenuLateral  from "./MenuIzquierdo.jsx";
 import PublicDisplay from "./PublicacionDisplay.jsx";
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Container } from 'react-bootstrap';
 import { RiArrowLeftCircleFill, RiArrowRightCircleFill } from "react-icons/ri";
+import { BiSolidFoodMenu } from "react-icons/bi";
+import { FaFlag } from "react-icons/fa";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from '../Context/useAuth';
 import Buscador from './Buscador.jsx';
+import Offcanvas from 'react-bootstrap/Offcanvas';
 
 function InicioCuerpo() {
   const navigate = useNavigate();
@@ -96,88 +99,136 @@ function InicioCuerpo() {
     setPublicaciones(nuevasPublicaciones);
   };  
 
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
   
+  const [show2, setShow2] = useState(false);
+
+  const handleClose2 = () => setShow2(false);
+  const handleShow2 = () => setShow2(true);
+
 
   return (
     
     <div className="Cuerpo">
-      <Buscador actualizarPublicaciones={actualizarPublicaciones} />
-      <Row>
-        <Col className="Izquierdo" xs={12} md={12} lg={3} xl={3}>
-          <MenuLateral pagina={'Inicio'} />
-        </Col>
+      <Container fluid>
+        <Row>
+          <Col xs={2} lg={3}>
+            <Container fluid>
+              <button variant="primary" className="d-lg-none" onClick={handleShow}>
+                <BiSolidFoodMenu size={25}/>
+              </button>
+            </Container>
 
-        <Col className="Centro" xs={12} sm={12} md={12} lg={6} xl={6}>
-          <Row>
-          {UsuIni ? (
-            <>
-              <Col className="CentroBot" md={3}>
-                <button onClick={handleParati}>Para ti</button>
-                <button onClick={handleSiguiendo}>Siguiendo</button>
-              </Col>
-              <Col md={9} className="PaginacionCol">
-                <div className="Paginacion">
-                  <button> <RiArrowLeftCircleFill size={50}/> </button>
-                  <button> 1 </button>
-                  <button> 2 </button>
-                  <button> 3 </button>
-                  <button> <RiArrowRightCircleFill size={50}/> </button>
-                </div>
-              </Col>
-            </>
-          ) : (
-            <Col md={12} className="PaginacionCol">
-              <div className="Paginacion">
-                <button> <RiArrowLeftCircleFill size={50}/> </button>
-                <button> 1 </button>
-                <button> 2 </button>
-                <button> 3 </button>
-                <button> <RiArrowRightCircleFill size={50}/> </button>
-              </div>
-            </Col>
-          )}
-            <Col lg={12}>
-            {publicaciones.map(publicacion => (
-            <PublicDisplay
-            IDPublicacion={publicacion.IDPublicacion}
-            NombreUsu={publicacion.usuario.NombreUsuario}
-            ImagenUsu={publicacion.usuario.Foto}
-            Fecha={publicacion.FechaPub}
-            Pais={publicacion.pais.imagen}
-            Titulo={publicacion.Titulo}
-            Contenido={publicacion.Descripcion}
-            Imagen1={publicacion.ImagenUno}
-            Imagen2={publicacion.ImagenDos}
-            Imagen3={publicacion.ImagenTres}
-            Tipo={publicacion.Tipo}
-            Saved={publicacion.Saved}
-            Pagina = "Inicio"
-            Calificacion ={publicacion.Calificacion}
-            PromCalificacion={publicacion.PromedioCalificaciones}
-            idUsuario={publicacion.usuario._id}
-            Sigue={publicacion.SigueUsuario}
-            />
-            ))}
-            </Col>
-          </Row>
-        </Col>
+            <Offcanvas show={show} onHide={handleClose} responsive="lg" className="bodycanvas">
+              <Offcanvas.Header closeButton>
+                <Offcanvas.Title></Offcanvas.Title>
+              </Offcanvas.Header>
+              <Offcanvas.Body>
+                <MenuLateral pagina={'Inicio'}/>
+              </Offcanvas.Body>
+            </Offcanvas>
 
-        <Col className="Derecho" xs={12} sm={12} md={12} lg={3} xl={3}>
-          <div className="DestiPopus">
-            <h1>"Destinos Populares"</h1>
-            <div className="Paises">
-            {topPaises.map((pais, index) => (
-                <DestPopu
-                    key={index} // Es importante proporcionar una clave única para cada elemento en el arreglo
-                    Num={index + 1} // El índice comienza en 0, por lo que sumamos 1 para obtener el número correcto
-                    Pais={pais.pais}
-                    Imagen={pais.imagen}
-                />
-            ))}         
-            </div>
-          </div>
-        </Col>
-      </Row>
+          </Col>
+          
+          <Col xs={8} lg={6}>
+            <Container>
+              <Row className="RowCentro">
+                {UsuIni?(
+                  <>                    
+                    <Col xs={12}>
+                      <Buscador actualizarPublicaciones={actualizarPublicaciones} />
+                    </Col>
+                    <Col xs={12} md={5} className="Siguiendo">
+                        <button onClick={handleParati}>Para ti</button>
+                        <button onClick={handleSiguiendo}>Siguiendo</button>                        
+                    </Col>
+                    <Col xs={12} md={7}>                      
+                      <div className="Paginacion">
+                        <button> <RiArrowLeftCircleFill size={30}/> </button>
+                        <button> 1 </button>
+                        <button> 2 </button>
+                        <button> 3 </button>
+                        <button> <RiArrowRightCircleFill size={30}/> </button>
+                      </div>
+                    </Col>
+                  </>
+                ) : (
+                  <>
+                    <Col xs={12}>
+                      <Buscador actualizarPublicaciones={actualizarPublicaciones} />
+                    </Col>
+                    <Col xs={12}>
+                      <Container fluid className="Paginacion">
+                        <button> <RiArrowLeftCircleFill size={30}/> </button>
+                        <button> 1 </button>
+                        <button> 2 </button>
+                        <button> 3 </button>
+                        <button> <RiArrowRightCircleFill size={30}/> </button>
+                      </Container>
+                    </Col>
+                  </>
+                )}
+                <Col xs={12}>
+                  {publicaciones.map(publicacion => (
+                    <PublicDisplay
+                      IDPublicacion={publicacion.IDPublicacion}
+                      NombreUsu={publicacion.usuario.NombreUsuario}
+                      ImagenUsu={publicacion.usuario.Foto}
+                      Fecha={publicacion.FechaPub}
+                      Pais={publicacion.pais.imagen}
+                      Titulo={publicacion.Titulo}
+                      Contenido={publicacion.Descripcion}
+                      Imagen1={publicacion.ImagenUno}
+                      Imagen2={publicacion.ImagenDos}
+                      Imagen3={publicacion.ImagenTres}
+                      Tipo={publicacion.Tipo}
+                      Saved={publicacion.Saved}
+                      Pagina = "Inicio"
+                      Calificacion ={publicacion.Calificacion}
+                      PromCalificacion={publicacion.PromedioCalificaciones}
+                      idUsuario={publicacion.usuario._id}
+                      Sigue={publicacion.SigueUsuario}
+                    />
+                  ))}
+                </Col>
+              </Row>
+            </Container>
+          </Col>
+          
+          <Col xs={2} lg={3} className="Col3">
+            <Container fluid>
+              <button variant="primary" className="d-lg-none" onClick={handleShow2}>
+                <FaFlag size={18}/>
+              </button>              
+            </Container>
+
+            <Offcanvas show={show2} onHide={handleClose2} responsive="lg" className="bodycanvas" placement="end">
+              <Offcanvas.Header closeButton>
+                <Offcanvas.Title></Offcanvas.Title>
+              </Offcanvas.Header>
+              <Offcanvas.Body>
+                <Container fluid className="DestiPopus">
+                  <h1>"Destinos Populares"</h1>
+                  <div className="Paises">
+                    {topPaises.map((pais, index) => (
+                      <DestPopu
+                        key={index} // Es importante proporcionar una clave única para cada elemento en el arreglo
+                        Num={index + 1} // El índice comienza en 0, por lo que sumamos 1 para obtener el número correcto
+                        Pais={pais.pais}
+                        Imagen={pais.imagen}
+                      />
+                  ))}
+                  </div>      
+                </Container>
+              </Offcanvas.Body>
+            </Offcanvas>
+
+          </Col>
+        </Row>
+      </Container>
     </div>
   );
 }

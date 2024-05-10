@@ -19,6 +19,8 @@ import { UserProvider } from './Context/UserContext.js';
 import AuthProvider from './Context/AuthProvider.js';
 import PublicacionProvider from './Context/PubProvider.js';
 
+import Pruebas from './Paginas/Pruebas.jsx'
+
 
 const router = createBrowserRouter([
   {
@@ -69,6 +71,10 @@ const router = createBrowserRouter([
   {
     path:'/PerfilAjeno',
     element: <PerfilAjeno />,
+  },
+  {
+    path:'/Pruebas',
+    element: <Pruebas />,
   }
 ])
 

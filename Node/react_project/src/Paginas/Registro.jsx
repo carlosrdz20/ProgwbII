@@ -2,8 +2,6 @@ import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import '../Estilos/Registro.css'
-import Logo from "../Componentes/Logo";
-
 
 
 export default function Registro(){
@@ -69,8 +67,14 @@ export default function Registro(){
     <div className="Registro_App">
       <div className="Register-box">
         <h1>Registro</h1>
-        <Logo Imagen={'favicon.ico'}/>
-        <form action="#" enctype="multipart/form-data" onSubmit={handleSubmit} >
+          <div 
+            className='logo-contenedor'>
+              <img 
+              src={`/Imagenes/favicon.ico`}
+              className='logo' 
+              alt={`Imagen de favicon.ico`}
+            />
+          </div>        <form action="#" enctype="multipart/form-data" onSubmit={handleSubmit} >
           <h4>Nombre de usuario</h4>
           <div class="textbox">
             <input type="text" placeholder="Nombre de usuario" name="NombreUsuario" value={formData.NombreUsuario} onChange={handleChange} required />

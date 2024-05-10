@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import Heart from "react-heart"
 import { Link, useNavigate } from "react-router-dom";
 import '../Estilos/PublicacionDisplay.css'
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Container } from 'react-bootstrap';
 import Rating from "./Rating";
 import { FaPencil } from "react-icons/fa6";
 import { FaRegPaperPlane, FaTrash } from "react-icons/fa";
-import Carousel from "./Carousel.jsx";
+import MiCarousel from "./Carousel.jsx";
 import axios from "axios";
 import useAuth from '../Context/useAuth';
 import usePubAuth from '../Context/useAuthPub.js';
@@ -264,82 +264,111 @@ function PublicDisplay({ IDPublicacion, idUsuario, NombreUsu, ImagenUsu, Fecha, 
   //const Fecha2 = Fecha;
 	
 	return (
-		<div className="PublicContenedor">
-			<Row>
-				<Col className="UsuInfo" md={12}>
-					<Col className="ColImg" lg={3}>
-						<img className="ImgUsu" src={`/Imagenes/${ImagenUsu}`} alt="Imagen de Usuario" />
-					</Col>
-					<Col lg={7} className="DivCentro">
-						{Tipo === 'Propio' ? (
-							<div className="NomBot">
-								<Link className="LinkUsuName" to={Tipo === 'Propio' ? '/Perfil' : Tipo === 'Ajeno' ? '/PerfilAjeno' : Tipo === 'Borrador' ? '/Perfil' : '/Perfil'} >{NombreUsu}</Link>			
-							</div>
-						) : Tipo === 'Ajeno' ? (
-							<div className="NomBot">
-								<Link className="LinkUsuName" to={'/PerfilAjeno'} onClick={() => localStorage.setItem('usuAjeno', idUsuario)}>{NombreUsu}</Link>
-								<button onClick={() => handleSeguirClick(idUsuario)}>{textoBoton}</button>
-							</div>
-						) : Tipo === 'Borrador' ? (
-							<div className="NomBot">
-								<Link className="LinkUsuName" to={'/Perfil'}>{NombreUsu}</Link>
-							</div>
-						) : null}
-						<div className="FechaRating">
-							<p>{Fecha2}</p>
-							<Rating initialRating={Calificacion} onRatingChange={handleRatingChange} />							
-						</div>
-						<p>
-						{PromCalificacion} <i className="bi bi-star-fill text-warning"></i>
-						</p>
-					</Col>
-						{Tipo === 'Propio' ? (
-							<Col lg={2} className="PaisReacc">
-								<img className="PublicBan" src={`/Imagenes/${Pais}`} alt="Bandera" />
-							</Col>
-						) : Tipo === 'Ajeno' ? (
-							<Col lg={2} className="PaisReacc">
-								<img className="PublicBan" src={`/Imagenes/${Pais}`} alt="Bandera" />
-								<Corazon IDPublicacionxd={IDPublicacion} Savedxd={Saved} />
-							</Col>
-						) : Tipo === 'Borrador' ? (
-							<Col lg={2} className="PaisReacc">
-								<img className="PublicBan" src={`/Imagenes/${Pais}`} alt="Bandera" />
-							</Col>
-						) : null}
-				</Col>
-				<Col className="PublicContenido" md={12}>
-					<div>
-						<h1>{Titulo}</h1>
-					</div>
-					<div>
-						<p>{Contenido}</p>
-					</div>
-					<div className="CarouselDiv">	
-						<Carousel
-							Imagen1={`${Imagen1}`}
-							Imagen2={`${Imagen2}`}
-							Imagen3={`${Imagen3}`}
-						/>							
-					</div>
-
-					{Tipo === 'Propio' && Pagina !== "Inicio"? (
-						<div className="DivButtons">
-							<button onClick={() => borrarPublicacion(IDPublicacion)} ><FaTrash /></button>
-							<button onClick={() => EditarPublicacion(IDPublicacion)}><FaPencil /></button>
-						</div>
-					) : Tipo === 'Ajeno' ? (
-						<></>
-					) : Tipo === 'Borrador' && Pagina !== "Inicio" ? (
-						<div className="DivButtons">
-							<button onClick={() => borrarPublicacion(IDPublicacion)}><FaTrash /></button>
-							<button onClick={() => EditarBorrador(IDPublicacion)}><FaPencil /></button>
-							<button onClick={() => EnviarPublicacion(IDPublicacion)}><FaRegPaperPlane /></button>
-						</div>
-					) : null}
-				</Col>
-			</Row>
-		</div>
+		<Container fluid className="ContainerPublic">
+      <Row>
+        <Col xs={12}>
+          <Container fluid>
+            <Row>
+              <Col xs={12} md={3}>
+                  <div className="ImgContainer">
+                    <img
+                      className="ImgUsu" 
+                      src={`/Imagenes/${ImagenUsu}`}
+                      alt="Imagen de Usuario"
+                    />
+                  </div>
+              </Col>
+              <Col xs={12} md={7}>
+                {Tipo === 'Propio' ? (
+                  <div className="NomBot">
+                    <Link className="LinkUsuName" to={Tipo === 'Propio' ? '/Perfil' : Tipo === 'Ajeno' ? '/PerfilAjeno' : Tipo === 'Borrador' ? '/Perfil' : '/Perfil'} >{NombreUsu}</Link>			
+                  </div>
+                ) : Tipo === 'Ajeno' ? (
+                  <div className="NomBot">
+                    <Link className="LinkUsuName" to={'/PerfilAjeno'} onClick={() => localStorage.setItem('usuAjeno', idUsuario)}>{NombreUsu}</Link>
+                    <button onClick={() => handleSeguirClick(idUsuario)}>{textoBoton}</button>
+                  </div>
+                ) : Tipo === 'Borrador' ? (
+                  <div className="NomBot">
+                    <Link className="LinkUsuName" to={'/Perfil'}>{NombreUsu}</Link>
+                  </div>
+                ) : null}
+                <div className="FechaRating">
+                  <div>
+                    <h3>
+                      {Fecha2}
+                    </h3>
+                  </div>
+                  <div>
+                    <h4>
+                      <lable>Popularidad: </lable>
+                      {PromCalificacion} <i className="bi bi-star-fill text-warning"></i>
+                    </h4>                    
+                  </div>
+                  <div>
+                    <Rating initialRating={Calificacion} onRatingChange={handleRatingChange} />	                    
+                  </div>
+                </div>
+              </Col>
+              <Col xs={12} md={2}>
+                {Tipo === 'Propio' ? (
+                  <Col lg={2} className="PaisReacc">
+                    <img className="PublicBan" src={`/Imagenes/${Pais}`} alt="Bandera" />
+                  </Col>
+                ) : Tipo === 'Ajeno' ? (
+                  <Col lg={2} className="PaisReacc">
+                    <img className="PublicBan" src={`/Imagenes/${Pais}`} alt="Bandera" />
+                    <Corazon IDPublicacionxd={IDPublicacion} Savedxd={Saved} />
+                  </Col>
+                ) : Tipo === 'Borrador' ? (
+                  <Col lg={2} className="PaisReacc">
+                    <img className="PublicBan" src={`/Imagenes/${Pais}`} alt="Bandera" />
+                  </Col>
+                ) : null}
+              </Col>
+            </Row>
+          </Container>
+        </Col>
+        <Col xs={12}>
+          <Container fluid className="ContenedorContenido">
+            <Row>
+              <Col md={12}>
+                <h1>{Titulo}</h1>
+              </Col>
+              <Col md={12}>
+                <h4>{Contenido}</h4>
+              </Col>
+              <Col md={12}>
+                <Container className="MiCarouselContainer">
+                  <MiCarousel
+                    Imagen1={`${Imagen1}`}
+                    Imagen2={`${Imagen2}`}
+                    Imagen3={`${Imagen3}`}
+                  />                  
+                </Container>
+              </Col>
+              <Col md={12}>
+                {Tipo === 'Propio' && Pagina !== "Inicio"? ( /* Deberían quitar aquí la validadción de inicio porque debería ser capaz de eliminar y editar mi propia publicación */
+                  <div className="DivButtons">
+                    <button onClick={() => borrarPublicacion(IDPublicacion)} ><FaTrash /></button>
+                    <button onClick={() => EditarPublicacion(IDPublicacion)}><FaPencil /></button>
+                  </div>
+                ) : Tipo === 'Ajeno' ? (
+                  <>
+                  </>
+                ) : Tipo === 'Borrador' && Pagina !== "Inicio" ? (
+                  <div className="DivButtons">
+                    <button onClick={() => borrarPublicacion(IDPublicacion)}><FaTrash /></button>
+                    <button onClick={() => EditarBorrador(IDPublicacion)}><FaPencil /></button>
+                    <button onClick={() => EnviarPublicacion(IDPublicacion)}><FaRegPaperPlane /></button>
+                  </div>
+                ) : null}
+              </Col>
+            </Row>
+          </Container>
+        </Col>
+      </Row>
+    </Container>
 	);
 }
 
