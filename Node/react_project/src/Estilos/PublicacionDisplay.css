@@ -3,6 +3,8 @@
   border-radius: 25px;
   margin: 10px;
   padding: 20px;
+  box-shadow: 0 15px 15px rgba(0, 0, 0, 0.5);
+  border: 2px solid rgb(107, 107, 107);
 }
 
 .ImgContainer {
@@ -77,6 +79,12 @@
   height: 100%;
   max-height: 500px;
   border-radius: 20px;
+}
+
+.PublicBotones{
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
 }
 
 

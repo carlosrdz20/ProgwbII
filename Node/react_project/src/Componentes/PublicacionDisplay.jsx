@@ -347,8 +347,8 @@ function PublicDisplay({ IDPublicacion, idUsuario, NombreUsu, ImagenUsu, Fecha, 
                   />                  
                 </Container>
               </Col>
-              <Col md={12}>
-                {Tipo === 'Propio' && Pagina !== "Inicio"? ( /* Deberían quitar aquí la validadción de inicio porque debería ser capaz de eliminar y editar mi propia publicación */
+              <Col md={12} className="PublicBotones">
+                {Tipo === 'Propio' && Pagina !== "Inicio"? (
                   <div className="DivButtons">
                     <button onClick={() => borrarPublicacion(IDPublicacion)} ><FaTrash /></button>
                     <button onClick={() => EditarPublicacion(IDPublicacion)}><FaPencil /></button>

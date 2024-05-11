@@ -1,6 +1,6 @@
 .h1Propio{
   color: #1B1B32;
-  font-size: 5vw;
+  font-size: 3em;
   font-family: Arial, Helvetica, sans-serif;
   text-align: center;
   margin: 0px 0;
@@ -17,7 +17,7 @@
 }
 
 .login-box {
-  width: 30%;
+  max-width: 450px;
   padding: 40px;
   background: rgb(90, 173, 212);
   box-shadow: 0 15px 25px rgba(0, 0, 0, 0.5);
@@ -97,10 +97,4 @@
 .logo {
   width: 200px;
   margin: 10px;
-}
-
-@media screen and (max-width: 768px) {
-  .login-box{
-    width: 90%;
-  }
 }

@@ -2,12 +2,7 @@
   background-color: rgb(187, 206, 225);
   border-radius: 20px;
   padding: 15px;
-  min-height: 200px;
-  max-width: 400px;
-  min-width: 350px;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
+  width: 100%;
 }
 
 .Filtros h1{
@@ -38,16 +33,13 @@
   background-color: rgb(241, 240, 255);
   text-indent: 5px;
   height: 30px;
+  width: 60%;
 }
 
 .Filtros Select:hover{
   border-color: rgb(0, 0, 0);
   background-color: rgb(255, 19, 153);
   color: white;
-}
-
-.Filtros button{
-  font-size: 25px;
 }
 
 .Filtros h1{
@@ -59,22 +51,4 @@
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   font-size: 28px;
   margin: 0px;
-  padding-right: 5px;
-}
-
-.FiltrosDiv{
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-.FiltrosDivBotones{
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items: center;
-  justify-content: center;
-  margin-top: 10px;
 }

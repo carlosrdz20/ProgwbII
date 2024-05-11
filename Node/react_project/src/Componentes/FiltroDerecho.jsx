@@ -3,6 +3,7 @@ import '../Estilos/FiltroDerecho.css'
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from '../Context/useAuth';
+import { Row, Col, Container } from 'react-bootstrap';
 
 function FiltroLateral({ actualizarPublicaciones, tipoMis }){
   const navigate = useNavigate();
@@ -112,28 +113,32 @@ function FiltroLateral({ actualizarPublicaciones, tipoMis }){
   
 
   return (
-    <div className="Filtros">
-      <h1>Filtros</h1>
-      <div className="FiltrosDiv">
-        <p>Fecha Incial: </p>
-        <input type="date" id="FiltroFeIni" name="FiltroFeIni" value={fechaInicio} onChange={handleChange} />
-      </div>
-      <div className="FiltrosDiv">
-        <p>Fecha Final: </p>
-        <input type="date" id="FiltroFeFin" name="FiltroFeFin" value={fechaFin} onChange={handleChange} />
-      </div>
-      <div className="FiltrosDiv">
-        <p>País: </p>
-        <select name="FiltroPais" defaultValue="" value={paisSeleccionado} onChange={handleChange}>
-          {paises.map(pais => (
-            <option key={pais.idPais} value={pais.idPais}>{pais.pais}</option>
-          ))}
-        </select>
-      </div>
-      <div className="FiltrosDivBotones">
-        <button onClick={() => aplicarFiltros()}>Aplicar</button>
-      </div>
-    </div>
+    <Container fluid className="Filtros">
+      <Row>
+        <Col md={12}>
+          <h1>Filtros</h1>
+        </Col>
+        <Col md={12} style={{textAlign: 'center'}}>
+          <p>Fecha Inicial: </p>
+          <input type="date" id="FiltroFeIni" name="FiltroFeIni" value={fechaInicio} onChange={handleChange} />
+        </Col>
+        <Col md={12} style={{textAlign: 'center'}}>
+          <p>Fecha Final: </p>
+          <input type="date" id="FiltroFeFin" name="FiltroFeFin" value={fechaFin} onChange={handleChange} />
+        </Col>
+        <Col md={12} style={{textAlign: 'center'}}>
+          <p>País: </p>
+          <select name="FiltroPais" defaultValue="" value={paisSeleccionado} onChange={handleChange}>
+            {paises.map(pais => (
+              <option key={pais.idPais} value={pais.idPais}>{pais.pais}</option>
+            ))}
+          </select>
+        </Col>
+        <Col md={12} style={{textAlign: 'center', marginTop: '10px'}}>
+          <button onClick={() => aplicarFiltros()}>Aplicar</button>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 

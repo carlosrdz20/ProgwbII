@@ -1,19 +1,20 @@
 import React, { useState, useEffect  } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import '../Estilos/MisFavoCuerpo.css';
 import MenuLateral from "./MenuIzquierdo.jsx";
 import FiltroLateral from "./FiltroDerecho.jsx";
 import PublicDisplay from "./PublicacionDisplay.jsx";
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Container } from 'react-bootstrap';
 import { RiArrowLeftCircleFill, RiArrowRightCircleFill } from "react-icons/ri";
 import axios from "axios";
 import useAuth from '../Context/useAuth';
+import Offcanvas from 'react-bootstrap/Offcanvas';
+import { BiSolidFoodMenu } from "react-icons/bi";
+import { FaFilter } from "react-icons/fa";
+
 
 function MisFavoCuerpo() {
   const navigate = useNavigate();
-  const { logout } = useAuth();
-
-  
+  const { logout } = useAuth();  
 
   const [ UsuIni ] = useState(true);
   const [publicaciones, setPublicaciones] = useState([]);
@@ -44,26 +45,50 @@ function MisFavoCuerpo() {
     setPublicaciones(nuevasPublicaciones);
   };  
 
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  const [show2, setShow2] = useState(false);
+
+  const handleClose2 = () => setShow2(false);
+  const handleShow2 = () => setShow2(true);
+
   return (
     <div className="Cuerpo">
-      <Row>
-        <Col className="Izquierdo" xs={12} md={12} lg={3}>
-          <MenuLateral pagina={'Favoritos'}/>
-        </Col>
+      <Container fluid>
+        <Row>
+          <Col xs={2} lg={3}>
+            <Container fluid>
+              <button variant="primary" className="d-lg-none" onClick={handleShow}>
+                <BiSolidFoodMenu size={25}/>
+              </button>
+            </Container>
 
-        <Col className="Centro" xs={12} sm={12} md={12} lg={6}>
-          <Row>
-            <Col md={12} className="PaginacionCol">
-              <div className="Paginacion">
-                <button> <RiArrowLeftCircleFill size={50}/> </button>
-                <button> 1 </button>
-                <button> 2 </button>
-                <button> 3 </button>
-                <button> <RiArrowRightCircleFill size={50}/> </button>
-              </div>
-            </Col>
-            <Col lg={12}>
-              {publicaciones.length === 0 ? (
+            <Offcanvas show={show} onHide={handleClose} responsive="lg" className="bodycanvas">
+              <Offcanvas.Header closeButton>
+                <Offcanvas.Title></Offcanvas.Title>
+              </Offcanvas.Header>
+              <Offcanvas.Body>
+                <MenuLateral pagina={'Favoritos'}/>
+              </Offcanvas.Body>
+            </Offcanvas>
+          </Col>
+
+          <Col xs={8} lg={6}>
+            <Row>
+              <Col md={12}>
+                <div className="Paginacion">
+                  <button> <RiArrowLeftCircleFill size={30}/> </button>
+                  <button> 1 </button>
+                  <button> 2 </button>
+                  <button> 3 </button>
+                  <button> <RiArrowRightCircleFill size={30}/> </button>
+                </div>
+              </Col>
+              <Col md={12}>
+                {publicaciones.length === 0 ? (
                   <div className="">
                     <img src={"/Imagenes/error.jpg"} alt="No tienes favoritos" style={{ marginLeft: '200px' }}/>
                     <h1>No tienes favoritos aún. ¡Explora y guarda tus publicaciones favoritas!</h1>
@@ -87,14 +112,31 @@ function MisFavoCuerpo() {
                     />
                   ))
                 )}
-            </Col>
-          </Row>
-        </Col>
+              </Col>
+            </Row>
+          </Col>
 
-        <Col className="Derecho" xs={12} sm={12} md={12} lg={3}>
-          <FiltroLateral actualizarPublicaciones={actualizarPublicaciones} tipoMis = {3}/>
-        </Col>
-      </Row>
+          <Col xs={2} lg={3}>
+            <Container fluid>
+              <button variant="primary" className="d-lg-none" onClick={handleShow2}>
+                <FaFilter size={18}/>
+              </button>              
+            </Container>
+
+            <Offcanvas show={show2} onHide={handleClose2} responsive="lg" className="bodycanvas" placement="end">
+              <Offcanvas.Header closeButton>
+                <Offcanvas.Title></Offcanvas.Title>
+              </Offcanvas.Header>
+              <Offcanvas.Body>
+                <Container fluid>
+                  <FiltroLateral actualizarPublicaciones={actualizarPublicaciones} tipoMis = {3}/>
+                </Container>
+              </Offcanvas.Body>
+            </Offcanvas>
+          </Col>
+
+        </Row>
+      </Container>
     </div>
   );
 }

@@ -109,7 +109,6 @@ function InicioCuerpo() {
   const handleClose2 = () => setShow2(false);
   const handleShow2 = () => setShow2(true);
 
-
   return (
     
     <div className="Cuerpo">
@@ -130,7 +129,6 @@ function InicioCuerpo() {
                 <MenuLateral pagina={'Inicio'}/>
               </Offcanvas.Body>
             </Offcanvas>
-
           </Col>
           
           <Col xs={8} lg={6}>
@@ -198,7 +196,7 @@ function InicioCuerpo() {
             </Container>
           </Col>
           
-          <Col xs={2} lg={3} className="Col3">
+          <Col xs={2} lg={3}>
             <Container fluid>
               <button variant="primary" className="d-lg-none" onClick={handleShow2}>
                 <FaFlag size={18}/>
@@ -225,7 +223,6 @@ function InicioCuerpo() {
                 </Container>
               </Offcanvas.Body>
             </Offcanvas>
-
           </Col>
         </Row>
       </Container>
