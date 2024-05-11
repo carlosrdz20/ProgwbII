@@ -75,11 +75,11 @@ function InicioCuerpo() {
             <Row>
               <Col md={12}>
                 <div className="Paginacion">
-                  <button> <RiArrowLeftCircleFill size={50}/> </button>
+                  <button> <RiArrowLeftCircleFill size={30}/> </button>
                   <button> 1 </button>
                   <button> 2 </button>
                   <button> 3 </button>
-                  <button> <RiArrowRightCircleFill size={50}/> </button>
+                  <button> <RiArrowRightCircleFill size={30}/> </button>
                 </div>
               </Col>
               <Col md={12}>

@@ -17,6 +17,7 @@
   background-color: rgb(241, 240, 255);
   text-indent: 5px;
   height: 35px;
+  width: 80%;
 }
 
 .Filtros input:hover{

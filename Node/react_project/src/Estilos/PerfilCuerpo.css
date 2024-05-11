@@ -1,25 +1,66 @@
 .PerfilCuerpo{
-  background-color: whitesmoke;
-  padding: 10px;
-  min-height: 58vh;
+  padding: 5px;
+  background: rgb(90, 173, 212);
+  box-shadow: 0 15px 15px rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+  border: 6px solid rgb(254, 5, 124);
+  text-align: center;
 }
 
-.PerfilROW {
-  margin: 20px;
-  width: 700px;
-  background-color: rgb(90, 173, 212);
-  border: 10px;
-  border-radius: 15px; 
+.PerfilAjenoCuerpo{
+  padding: 5px;
+  background: rgb(90, 173, 212);
+  box-shadow: 0 15px 15px rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+  border: 6px solid rgb(254, 5, 124);
+  text-align: center;
+  width: 100%;
+}
+
+.FPImg{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 5%;
+  border: solid 3px rgb(254, 5, 124);
+}
+
+.FPcontainer{
+  width: 100%;
+  padding-top: 100%; /* Esto crea una relación de aspecto 1:1 (cuadrada) */
+  position: relative;
+}
+
+.PerfilBotones{
+  margin-top: 10px;
   display: flex;
-  border-color:rgb(254, 5, 124);
-  border-style: solid;
+  justify-content: flex-end;
 }
 
-.PerfilROW h1{
-  margin-bottom: 20px;
+.PerfilCol{
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  flex-direction: row;
+  margin-bottom: 10px;
 }
 
-.PerfilROW input{
+.PerfilCuerpo label{
+  font-size: 1.3em;
+}
+
+.PerfilAjenoCuerpo label{
+  font-size: 1.3em;
+}
+
+.PerfilAjenoUsuario{
+  text-align: center;
+  font-weight: bold;
+}
+
+.PerfilCuerpo input{
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   font-size: 20px;
   border-radius: 25px;
@@ -27,76 +68,29 @@
   background-color: rgb(241, 240, 255);
   text-indent: 5px;
   height: 35px;
-  width: 200px;
+  margin-left: 10px;
+  width: 80%;
 }
 
-.PerfilROW input:hover{
+.PerfilCuerpo input:hover{
   border-color: rgb(0, 0, 0);
   background-color: rgb(255, 19, 153);
   color: white;
 }
 
-.PerfilROW Select{
+.PerfilCuerpo Select{
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   font-size: 20px;
   border-radius: 25px;
   border-color: rgb(22, 55, 113);
   background-color: rgb(241, 240, 255);
   text-indent: 5px;
-  height: 30px;
-  width: 90%;
+  height: 35px;
+  margin-left: 10px;
 }
 
-.PerfilROW Select:hover{
+.PerfilCuerpo Select:hover{
   border-color: rgb(0, 0, 0);
   background-color: rgb(255, 19, 153);
   color: white;
-}
-
-.PerfilROW button{
-  font-size: 25px;
-}
-
-.PerfilROW h1{
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-  font-size: 35px;
-}
-
-.PerfilROW p{
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-  font-size: 20px;
-  margin: 0px;
-  padding-right: 5px;
-}
-
-.PerfilCOL {
-  min-width: 200px; 
-  max-width: 500px;
-  min-height: 300px;
-  flex: 1;
-  background-color: rgb(90, 173, 212); 
-  margin: 10px; 
-  border-radius: 10px; 
-  display: flex;
-  flex-direction: column; 
-}
-/*
-.Izquierdo{
-  min-width: 400px;
-  border-right: solid #dbdbdb;
-}
-*/
-
-.InputFoto{
-  width: 200px;
-}
-
-.foto{
-  text-align: center;
-}
-
-.FotoPerfil{
-  width: 100%;
-  max-height: 200px;
-  border-radius: 5px;
 }

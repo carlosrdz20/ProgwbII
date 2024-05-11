@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import '../Estilos/PerfilAjeno.css';
+import '../Estilos/PerfilCuerpo.css';
 import MenuLateral from "./MenuIzquierdo.jsx";
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Container } from 'react-bootstrap';
 import PublicDisplay from "./PublicacionDisplay.jsx";
 import axios from "axios";
-
+import Offcanvas from 'react-bootstrap/Offcanvas';
+import { BiSolidFoodMenu } from "react-icons/bi";
 
 
 function PerfilAjenoCuerpo() {
@@ -101,57 +102,99 @@ function PerfilAjenoCuerpo() {
 		}
   };
 
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   return (
     <div className="Cuerpo">
-    <Row>
-        <Col className="Izquierdo" xs={12}  md ={12} lg = {3}>
-            <MenuLateral/>
-        </Col>
-        <Col className="col-5" xs={12} sm ={12} md ={12} lg = {6}>
-          <Col className="ROW" xs={12} sm ={12} md ={12} lg = {6}>
-              <Col className="COL">
-                  <label className="Subtitulo">Seguidores</label>
-                  <label className="Sub">{seguidores}</label>
-                </Col>
-                <Col className="COL" xs={12} sm ={12} md ={12} lg = {6}>
-                    <div className="foto">
-                      <img src={`/Imagenes/${foto}`} alt="" className="FotoPerfil" />
-                      <label className="USER">{username}</label> 
-                    </div>
-                    <button className="btn" onClick={handleSeguirClick}>
-                    {textoSeguir}
-                    </button>
-                </Col>
-                <Col className="COL" xs={12} sm ={12} md ={12} lg = {6}>
-                    <label className="Subtitulo">Seguidos</label>
-                    <label className="Sub">{seguidos}</label>
-                </Col>
-                
+      <Container fluid>
+        <Row>
+          <Col xs={2} md={3}>
+            <Container fluid>
+              <button variant="primary" className="d-lg-none" onClick={handleShow}>
+                <BiSolidFoodMenu size={25}/>
+              </button>
+            </Container>
+
+            <Offcanvas show={show} onHide={handleClose} responsive="lg" className="bodycanvas">
+              <Offcanvas.Header closeButton>
+                <Offcanvas.Title></Offcanvas.Title>
+              </Offcanvas.Header>
+              <Offcanvas.Body>
+                <MenuLateral/>
+              </Offcanvas.Body>
+            </Offcanvas>
           </Col>
-          <Col lg={12}>
-            {publicaciones.map(publicacion => (
-            <PublicDisplay
-            IDPublicacion={publicacion.IDPublicacion}
-            NombreUsu={publicacion.usuario.NombreUsuario}
-            ImagenUsu={publicacion.usuario.Foto}
-            Fecha={publicacion.FechaPub}
-            Pais={publicacion.pais.imagen}
-            Titulo={publicacion.Titulo}
-            Contenido={publicacion.Descripcion}
-            Imagen1={publicacion.ImagenUno}
-            Imagen2={publicacion.ImagenDos}
-            Imagen3={publicacion.ImagenTres}
-            Tipo={publicacion.Tipo}
-            Saved={publicacion.Saved}
-            Pagina = "Inicio"
-            Calificacion ={publicacion.Calificacion}
-            PromCalificacion={publicacion.PromedioCalificaciones}
-            idUsuario={publicacion.usuario._id}
-            />
-            ))}
-        </Col>
-      </Col>
-    </Row>
+
+          <Col xs={8} md={6} style={{padding:'20px'}}>
+            <Container className="PerfilAjenoCuerpo">
+              <Row>
+                <Col xs={12}>
+                  <Container fluid>
+                    <Row style={{alignItems:'center'}}>
+                      <Col xs={4}>
+                        <div>
+                          <label>Seguidores</label>
+                        </div>
+                        <div>
+                          <label>{seguidores}</label>
+                        </div>
+                      </Col>
+                      <Col xs={4}>
+                        <div>
+                          <label className="PerfilAjenoUsuario">{username}</label> 
+                        </div>
+                        <div className="FPcontainer">
+                          <img src={`/Imagenes/${foto}`} alt="" className="FPImg" />
+                        </div>
+                      </Col>
+                      <Col xs={4}>
+                        <div>
+                          <label>Seguidos</label>                          
+                        </div>
+                        <div>
+                          <label>{seguidos}</label>
+                        </div>
+                      </Col>
+                    </Row>
+                  </Container>
+                </Col>
+                <Col xs={12}>
+                  <button onClick={handleSeguirClick}> {textoSeguir} </button>
+                </Col>
+              </Row>
+            </Container>
+            <Container>
+              <Row>
+                <Col xs={12}>
+                  {publicaciones.map(publicacion => (
+                    <PublicDisplay
+                    IDPublicacion={publicacion.IDPublicacion}
+                    NombreUsu={publicacion.usuario.NombreUsuario}
+                    ImagenUsu={publicacion.usuario.Foto}
+                    Fecha={publicacion.FechaPub}
+                    Pais={publicacion.pais.imagen}
+                    Titulo={publicacion.Titulo}
+                    Contenido={publicacion.Descripcion}
+                    Imagen1={publicacion.ImagenUno}
+                    Imagen2={publicacion.ImagenDos}
+                    Imagen3={publicacion.ImagenTres}
+                    Tipo={publicacion.Tipo}
+                    Saved={publicacion.Saved}
+                    Pagina = "Inicio"
+                    Calificacion ={publicacion.Calificacion}
+                    PromCalificacion={publicacion.PromedioCalificaciones}
+                    idUsuario={publicacion.usuario._id}
+                    />
+                    ))}
+                </Col>
+              </Row>
+            </Container>
+          </Col>
+
+        </Row>
+      </Container>
     </div>
   );
 }

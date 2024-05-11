@@ -133,7 +133,7 @@ function InicioCuerpo() {
           
           <Col xs={8} lg={6}>
             <Container>
-              <Row className="RowCentro">
+              <Row >
                 {UsuIni?(
                   <>                    
                     <Col xs={12}>
@@ -141,9 +141,9 @@ function InicioCuerpo() {
                     </Col>
                     <Col xs={12} md={5} className="Siguiendo">
                         <button onClick={handleParati}>Para ti</button>
-                        <button onClick={handleSiguiendo}>Siguiendo</button>                        
+                        <button onClick={handleSiguiendo}>Siguiendo</button>
                     </Col>
-                    <Col xs={12} md={7}>                      
+                    <Col xs={12} md={7}>
                       <div className="Paginacion">
                         <button> <RiArrowLeftCircleFill size={30}/> </button>
                         <button> 1 </button>

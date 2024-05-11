@@ -127,7 +127,7 @@ function CrearPublicacion() {
                 <Offcanvas.Title></Offcanvas.Title>
               </Offcanvas.Header>
               <Offcanvas.Body>
-                <MenuLateral pagina={'Inicio'}/>
+                <MenuLateral/>
               </Offcanvas.Body>
             </Offcanvas>
           </Col>
@@ -145,7 +145,7 @@ function CrearPublicacion() {
                       <Col md={1}>
                         <label for="input1" class="input-label">Título: </label>
                       </Col>
-                      <Col md={7}>
+                      <Col md={7} style={{paddingLeft:'20px'}}>
                         <input type="text" id="input1" class="blue-border" placeholder="Ingrese aquí" name="Titulo" onChange={(e) => handleChange(e, 4)} value={formData.Titulo}/>
                       </Col>
                       <Col md={4}>

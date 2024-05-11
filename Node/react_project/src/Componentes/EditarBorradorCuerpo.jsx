@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import '../Estilos/CrearPublicacion.css';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col,Container } from 'react-bootstrap';
 import { FaRegPaperPlane } from "react-icons/fa";
 import {  BsFillEraserFill } from "react-icons/bs";
 import MenuLateral from "../Componentes/MenuIzquierdo.jsx";
@@ -8,6 +8,8 @@ import usePubAuth from '../Context/useAuthPub.js';
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from '../Context/useAuth';
+import Offcanvas from 'react-bootstrap/Offcanvas';
+import { BiSolidFoodMenu } from "react-icons/bi";
 
 function EditarBorrador() {
   const navigate = useNavigate();
@@ -111,64 +113,108 @@ function EditarBorrador() {
           });
   };
 
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   return (
-    <div className="EditarBorrador">
+    <div className="Cuerpo">
+      <Container fluid>
         <Row>
-          <Col className="Izquierdo" xs={12}  md ={12} lg = {3}>
-            <MenuLateral/>
+        <Col xs={2} md={3}>
+            <Container fluid>
+              <button variant="primary" className="d-lg-none" onClick={handleShow}>
+                <BiSolidFoodMenu size={25}/>
+              </button>
+            </Container>
+
+            <Offcanvas show={show} onHide={handleClose} responsive="lg" className="bodycanvas">
+              <Offcanvas.Header closeButton>
+                <Offcanvas.Title></Offcanvas.Title>
+              </Offcanvas.Header>
+              <Offcanvas.Body>
+                <MenuLateral/>
+              </Offcanvas.Body>
+            </Offcanvas>
           </Col>
-          <Col className="ROW" xs={12} sm ={12} md ={12} lg = {6}>
-            <Col className="COL">
-              <div class="input-container">
-                <label for="input1" class="input-label">Título:</label>
-                <input type="text" id="Titulo" name="Titulo" class="blue-border" placeholder="Ingrese aquí" defaultValue = {formData.Titulo} onChange={(e) => handleChange(e, 4)}/>
-              </div>
-              <div class="input-container">
-                <label for="input2" class="input-label">Descripción:</label>
-                <input type="text" id="Descripcion" name = "Descripcion" class="blue-border" placeholder="Ingrese aquí" defaultValue = {formData.Descripcion} onChange={(e) => handleChange(e, 4)}/>
-              </div>
-            </Col>
-            <Col className="COL" xs={12} sm ={12} md ={12} lg = {6}>
-              <div class="input-container">
-                <label for="combobox" class="input-label">País:</label>
-                <select id="combobox" name="IDPais" class="blue-border" value={formData.IDPais} onChange={(e) => handleChange(e, 4)}>
-                            {paises.map(pais => (
-                                    <option key={pais.idPais} value={pais.idPais}>{pais.pais}</option>
-                                ))}
-                </select>
-              </div>
-              <div class="button-container">
-                <button class="btn" onClick={handleEditar}>Editar Borrador <BsFillEraserFill  size={25}/></button>
-              </div>
-            </Col>
-            <Col className="COL" xs={12} sm ={12} md ={12} lg = {6}>
-            <div class="input-container">
-                            <label for="photoInput" class="input-label" >Publicar:</label>
-                            <input type="file" id="Fotos1" name="Fotos1" accept="image/*" class="fotoinput" onChange={(e) => handleChange(e, 1)}/>
+
+          <Col xs={10} md={9} style={{padding:'20px'}}>
+            <Container className="CreaPublicCuerpo">
+              <Row>
+                <Col md={12}>
+                  <h1>Editar Borrador</h1>
+                </Col>
+                <Col md={12} className="CrearPublicTitulo">
+                  <Container fluid>
+                    <Row>
+                      <Col md={1}>
+                        <label for="input1" class="input-label">Título:</label>
+                      </Col>
+                      <Col md={7} style={{paddingLeft:'20px'}}>
+                        <input type="text" id="Titulo" name="Titulo" class="blue-border" placeholder="Ingrese aquí" defaultValue = {formData.Titulo} onChange={(e) => handleChange(e, 4)}/>                      
+                      </Col>
+                      <Col md={4}>
+                      <label for="combobox" class="input-label">País:</label>
+                        <select id="combobox" name="IDPais" class="blue-border" value={formData.IDPais} onChange={(e) => handleChange(e, 4)}>
+                          {paises.map(pais => (
+                            <option key={pais.idPais} value={pais.idPais}>{pais.pais}</option>
+                          ))}
+                        </select>
+                      </Col>
+                    </Row>
+                  </Container>
+                </Col>
+                
+                <Col md={12} className="CrearPublicDesc">
+                  <label for="input2" class="input-label">Descripción:</label>
+                  <input type="text" id="Descripcion" name = "Descripcion" class="blue-border" placeholder="Ingrese aquí" defaultValue = {formData.Descripcion} onChange={(e) => handleChange(e, 4)}/>
+                </Col>
+
+                <Col md={12}>
+                  <Container>
+                    <Row>
+                      <Col md={4}>
+                        <div class="input-container">
+                          <label for="photoInput" class="input-label" >Imagen 1:</label>
+                          <input style={{marginBottom:'15px'}} type="file" id="Fotos1" name="Fotos1" accept="image/*" class="fotoinput" onChange={(e) => handleChange(e, 1)}/>
                         </div>
                         <div class="image-container">
-                            <img src={usarFoto} alt="Imagen" id="uploadedImage"/>
+                          <img src={usarFoto} alt="Imagen" id="uploadedImage"/>
                         </div>
+                      </Col>
+                      <Col md={4}>
                         <div class="input-container">
-                            <label for="photoInput" class="input-label" >Publicar:</label>
-                            <input type="file" id="Fotos2" name="Fotos2" accept="image/*" class="fotoinput" onChange={(e) => handleChange(e, 2)}/>
+                          <label for="photoInput" class="input-label" >Imagen 2:</label>
+                          <input style={{marginBottom:'15px'}} type="file" id="Fotos2" name="Fotos2" accept="image/*" class="fotoinput" onChange={(e) => handleChange(e, 2)}/>
                         </div>
                         <div class="image-container">
-                            <img src={usarFoto2} alt="Imagen" id="uploadedImage"/>
+                          <img src={usarFoto2} alt="Imagen" id="uploadedImage"/>
                         </div>
+                      </Col>
+                      <Col md={4}>
                         <div class="input-container">
-                            <label for="photoInput" class="input-label" >Publicar:</label>
-                            <input type="file" id="Fotos3" name="Fotos3" accept="image/*" class="fotoinput" multiple onChange={(e) => handleChange(e, 3)}/>
+                            <label for="photoInput" class="input-label" >Imagen 3:</label>
+                            <input style={{marginBottom:'15px'}} type="file" id="Fotos3" name="Fotos3" accept="image/*" class="fotoinput" multiple onChange={(e) => handleChange(e, 3)}/>
                         </div>
                         <div class="image-container">
                             <img src={usarFoto3} alt="Imagen" id="uploadedImage"/>
                         </div>
-              <div class="button-container">
-                <button class="btn" onClick={handlePublicar}>Publicar <FaRegPaperPlane size={25}/></button>
-              </div>
-            </Col>
+                      </Col>
+                    </Row>
+                  </Container>
+                </Col>
+
+                <Col md={12} className="CrearPublicBotones">
+                  <button onClick={handleEditar}>Editar Borrador <BsFillEraserFill  size={25}/></button>
+                  <button onClick={handlePublicar}>Publicar <FaRegPaperPlane size={25}/></button>
+                </Col>
+              </Row>
+            </Container>
           </Col>
+          
         </Row>
+      </Container>
     </div>
   );
   }
