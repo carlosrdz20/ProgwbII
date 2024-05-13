@@ -75,24 +75,18 @@ function PublicDisplay({ IDPublicacion, idUsuario, NombreUsu, ImagenUsu, Fecha, 
 	  }, []);
 	
 	const handleRatingChange = async (newRating) => {
-		setRating(newRating);
-		console.log("Rating: ", newRating);
-		console.log("IDPublicacion", IDPublicacion);
-		console.log("Usuario: ", user.IDUsuario);
-	
-		// Actualizar ratingData antes de enviarlo al servidor y enviar la solicitud de axios
-		setRatingData((prevRatingData) => {
-			const updatedRatingData = {
-				...prevRatingData,
-				Calificacion: newRating
-			};
-	
-			console.log("Data: ", updatedRatingData);
-			return updatedRatingData;
-		});
+		const data = {
+			Calificacion: newRating,
+			IDPublicacion: IDPublicacion,
+			IDUsuario: user.IDUsuario
+		  };
 	
 		try {
-			axios.post('http://localhost:4200/insertarCalificacion', ratingData, {
+			axios.post('http://localhost:4200/insertarCalificacion', {
+				Calificacion: newRating,
+				IDPublicacion: IDPublicacion,
+				IDUsuario: user.IDUsuario
+			  }, {
 				headers: {
 					authorization: 'Bearer ' + localStorage.getItem('token')
 				}
@@ -292,7 +286,11 @@ function PublicDisplay({ IDPublicacion, idUsuario, NombreUsu, ImagenUsu, Fecha, 
                   <div className="NomBot">
                     <Link className="LinkUsuName" to={'/Perfil'}>{NombreUsu}</Link>
                   </div>
-                ) : null}
+                ) : Tipo === 'mpubAjeno' ?(
+				<div className="NomBot">
+					<span className="LinkUsuName" onClick={(e) => { e.preventDefault(); }}>{NombreUsu}</span>
+				  </div>
+				): null}
                 <div className="FechaRating">
                   <div>
                     <h3>
@@ -300,13 +298,21 @@ function PublicDisplay({ IDPublicacion, idUsuario, NombreUsu, ImagenUsu, Fecha, 
                     </h3>
                   </div>
                   <div>
-                    <h4>
-                      <lable>Popularidad: </lable>
-                      {PromCalificacion} <i className="bi bi-star-fill text-warning"></i>
-                    </h4>                    
+					{Tipo !== 'Borrador' && (
+					<div>
+						<h4>
+						<label>Popularidad: </label>
+						{PromCalificacion} <i className="bi bi-star-fill text-warning"></i>
+						</h4>                    
+					</div>
+					)}                  
                   </div>
                   <div>
-                    <Rating initialRating={Calificacion} onRatingChange={handleRatingChange} />	                    
+					{Tipo !== 'Propio' && Tipo !== 'Borrador' && (
+					<div>
+					<Rating initialRating={Calificacion} onRatingChange={handleRatingChange} />
+					</div>
+					)}   
                   </div>
                 </div>
               </Col>
@@ -324,7 +330,12 @@ function PublicDisplay({ IDPublicacion, idUsuario, NombreUsu, ImagenUsu, Fecha, 
                   <Col lg={2} className="PaisReacc">
                     <img className="PublicBan" src={`/Imagenes/${Pais}`} alt="Bandera" />
                   </Col>
-                ) : null}
+                ) : Tipo === 'mpubAjeno' ? (
+					<Col lg={2} className="PaisReacc">
+                    <img className="PublicBan" src={`/Imagenes/${Pais}`} alt="Bandera" />
+					<Corazon IDPublicacionxd={IDPublicacion} Savedxd={Saved} />
+                  </Col>
+				): null}
               </Col>
             </Row>
           </Container>

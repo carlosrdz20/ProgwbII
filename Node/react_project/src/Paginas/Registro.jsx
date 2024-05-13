@@ -58,7 +58,7 @@ export default function Registro(){
       
     } catch (error) {
       console.error('Error al registrar usuario:', error);
-      alert('Ocurrió un error al registrar el usuario');
+      alert(error.response.data.error);
     }
     
   };

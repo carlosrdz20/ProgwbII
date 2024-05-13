@@ -54,6 +54,7 @@ export default function Buscador({actualizarPublicaciones}) {
         })
         .catch(error => {
           console.error('Error al obtener las publicaciones filtradas:', error);
+          alert(error.response.data.error);
         });
 
   };
@@ -76,6 +77,8 @@ export default function Buscador({actualizarPublicaciones}) {
         })
         .catch(error => {
           console.error('Error al obtener las publicaciones filtradas:', error);
+          alert(error.response.data.error);
+
         });
 
   };

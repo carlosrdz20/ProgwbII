@@ -74,7 +74,11 @@ function CrearPublicacion() {
         })
         .catch(error => {
           console.error('Error al insertar la publicación:', error);
-          alert("No jaló")
+          if (error.response && error.response.data && error.response.data.error) {
+            alert(error.response.data.error);
+          } else {
+            alert("Error al insertar la publicación. Por favor, agrega todos los datos");
+          }
         });
       };
 
@@ -90,9 +94,7 @@ function CrearPublicacion() {
       })
       .catch(error => {
         console.error('Error al insertar el borrador:', error);
-        logout();
-        alert("La sesión ya expiró, por favor vuelve a iniciar sesión");
-        navigate('/');
+        alert(error.response.data.error);
       });
     };
 
@@ -150,7 +152,7 @@ function CrearPublicacion() {
                       </Col>
                       <Col md={4}>
                         <label for="combobox" class="input-label">País: </label>
-                        <select id="combobox" name="IDPais" className="blue-border" value={paisSeleccionado} onChange={(e) => handleChange(e, 4)}>
+                        <select id="combobox" name="IDPais" className="blue-border" value={formData.IDPais} onChange={(e) => handleChange(e, 4)}>
                           {paises.map(pais => (
                             <option key={pais.idPais} value={pais.idPais}>{pais.pais}</option>
                           ))}
@@ -174,7 +176,7 @@ function CrearPublicacion() {
                           <input style={{marginBottom:'15px'}} type="file" id="Fotos1" name="Fotos1" accept="image/*" class="fotoinput" onChange={(e) => handleChange(e, 1)}/>
                         </div>
                         <div class="image-container">
-                          <img src={usarFoto} alt="Imagen" id="uploadedImage"/>
+                          <img style={{width: '100%'}} src={usarFoto} alt="Imagen" id="uploadedImage"/>
                         </div>
                       </Col>
                       <Col md={4}>
@@ -183,7 +185,7 @@ function CrearPublicacion() {
                           <input style={{marginBottom:'15px'}} type="file" id="Fotos2" name="Fotos2" accept="image/*" class="fotoinput" onChange={(e) => handleChange(e, 2)}/>
                         </div>
                         <div class="image-container">
-                          <img src={usarFoto2} alt="Imagen" id="uploadedImage"/>
+                          <img style={{width: '100%'}} src={usarFoto2} alt="Imagen" id="uploadedImage"/>
                         </div>
                       </Col>
                       <Col md={4}>
@@ -192,7 +194,7 @@ function CrearPublicacion() {
                           <input style={{marginBottom:'15px'}} type="file" id="Fotos3" name="Fotos3" accept="image/*" class="fotoinput" multiple onChange={(e) => handleChange(e, 3)}/>
                         </div>
                         <div class="image-container">
-                          <img src={usarFoto3} alt="Imagen" id="uploadedImage"/>
+                          <img style={{width: '100%'}} src={usarFoto3} alt="Imagen" id="uploadedImage"/>
                         </div>
                       </Col>
                     </Row>

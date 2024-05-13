@@ -17,11 +17,16 @@ function PerfilCuerpo() {
   const [user2, setuser2] = useState();
 
   useEffect(() => {
-    if (user) {
-      setuser2(user);
+
+    const userData = localStorage.getItem('user');
+    const userD = JSON.parse(userData);
+
+    if (userD) {
+      setuser2(userD);
+      console.log("Usuario?:", userD);
       // Formatear la fecha
-      setFecha(user.FechaNacimiento.split('T')[0]);
-      setFotoxd(`/Imagenes/${user.Foto}`);
+      setFecha(userD.FechaNacimiento.split('T')[0]);
+      setFotoxd(`/Imagenes/${userD.Foto}`);
     }
   }, []);
 

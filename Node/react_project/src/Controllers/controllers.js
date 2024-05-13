@@ -34,6 +34,37 @@ const insertarUsuario = async (req, res) => {
       }
   }
 
+   // Validaciones
+   const nombreUsuarioRegex = /^[^\s]+$/; 
+   const nombreRegex = /^[a-zA-Z\s]+$/; 
+   const correoRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+}{"':;?/>.<,])(?=.*[a-zA-Z]).{6,}$/; 
+ 
+   if (!nombreUsuarioRegex.test(req.body.NombreUsuario)) {
+     return res.status(400).json({ error: "El Nombre de Usuario no debe contener espacios" });
+   }
+ 
+   if (!nombreRegex.test(req.body.Nombre)) {
+     return res.status(400).json({ error: "El Nombre debe contener solo letras y espacios" });
+   }
+ 
+   if (!correoRegex.test(req.body.Correo)) {
+     return res.status(400).json({ error: "El Correo electrónico debe tener un formato válido" });
+   }
+ 
+   if (req.body.Contrasena.includes(" ") || !passwordRegex.test(req.body.Contrasena)) {
+     return res.status(400).json({ error: "La Contraseña debe contener al menos una mayúscula, una minúscula, un dígito, un carácter especial y ser mayor a 6 caracteres" });
+   }
+ 
+   if (!foto) {
+     return res.status(400).json({ error: "La Foto es requerida" });
+   }
+ 
+   
+   if (!req.body.FechaNacimiento || !req.body.Genero) {
+     return res.status(400).json({ error: "Fecha de Nacimiento y Género son campos obligatorios" });
+   }
+
   const usuario = new Usuario({
       IDUsuario: Math.floor(Math.random() * (1000000 - 1 + 1)) + 1,
       NombreUsuario: req.body.NombreUsuario,
@@ -60,6 +91,19 @@ const insertarUsuario = async (req, res) => {
 const autenticarUsuario = async (req, res) =>{
 
     const {email, password} = req.body;
+    
+
+  
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(401).json({ error: "Por favor ingresa un correo electrónico válido" });
+  }
+  
+  // Validación de la contraseña
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+}{"':;?/>.<,])(?=.*[a-zA-Z]).{6,}$/;
+  if (password.length < 6 || password.includes(" ") || !passwordRegex.test(password)) {
+    return res.status(401).json({ error: "La contraseña debe contener al menos una mayúscula, una minúscula, un dígito, un carácter especial y ser mayor a 6 caracteres" });
+  }
 
     try {
         const usuario = await Usuario.findOne({ Correo: email, Contrasena: password });
@@ -108,6 +152,10 @@ const editarUsuario = async (req, res) => {
       console.error("Error al guardar la foto:", error);
       return res.status(500).json({ error: "Error al guardar la foto" });
     }
+  }
+
+  if (!NombreUsuario || !Nombre || !Correo || !Contrasena || !FechaNacimiento || !Genero) {
+    return res.status(400).json({ error: "Todos los campos son requeridos, por favor completalos" });
   }
 
   try {
@@ -202,9 +250,39 @@ const insertarPublicacion = async (req, res) => {
   console.log("Imágenes", req.files);
   console.log("Aquí terminan las imagenes") // Accede a req.files para obtener las imágenes
 
+  const { Titulo, Descripcion, IDPais, IDUsuario } = req.body;
+
+  if(!Titulo){
+    return res.status(400).json({ error: "El campo de titulo no puede estar vacio" });
+  }
+  if(!Descripcion){
+    return res.status(400).json({ error: "El campo de descripción no puede estar vacio" });
+  }
+  if(!IDPais){
+    return res.status(400).json({ error: "Por favor selecciona un país" });
+  }
+  if(!IDUsuario){
+    return res.status(400).json({ error: "No se encontró un usuario para agregar a la publicación" });
+  }
+
+
+
   const fotos = req.files ? req.files : [];
   let fotoPaths = [];
+  
+  if (!req.files || !req.files.Fotos1 || !req.files.Fotos1[0] || !req.files.Fotos1[0].filename) {
+    return res.status(400).json({ error: "Por favor agrega la primera foto" });
+  }
+  
+  if (!req.files.Fotos2 || !req.files.Fotos2[0] || !req.files.Fotos2[0].filename) {
+    return res.status(400).json({ error: "Por favor agrega la segunda foto" });
+  }
+  
+  if (!req.files.Fotos3 || !req.files.Fotos3[0] || !req.files.Fotos3[0].filename) {
+    return res.status(400).json({ error: "Por favor agrega la tercer foto" });
+  }
 
+  let contador = 0;
   if (fotos.length > 0) {
     try {
       console.log("Entramos a fotos")
@@ -214,6 +292,7 @@ const insertarPublicacion = async (req, res) => {
                           const extension = path.extname(foto.originalname);
                           const fotoName = `foto_${uuidv4()}${extension}`;
                           const fotoPath = path.join(uploadDir, fotoName);
+                          contador++;
                           return fotoName; // Devuelve el nombre del archivo guardado
                       })
                   );
@@ -252,8 +331,37 @@ const insertarBorrador = async (req, res) => {
   console.log("INSERTAR BORRADOR ", req.body);
   console.log("Imágenes", req.files); // Accede a req.files para obtener las imágenes
 
+  const { Titulo, Descripcion, IDPais, IDUsuario } = req.body;
+
+  if(!Titulo){
+    return res.status(400).json({ error: "El campo de titulo no puede estar vacio" });
+  }
+  if(!Descripcion){
+    return res.status(400).json({ error: "El campo de descripción no puede estar vacio" });
+  }
+  if(!IDPais){
+    return res.status(400).json({ error: "Por favor selecciona un país" });
+  }
+  if(!IDUsuario){
+    return res.status(400).json({ error: "No se encontró un usuario para agregar a la publicación" });
+  }
+
+
+
   const fotos = req.files ? req.files : [];
   let fotoPaths = [];
+  
+  if (!req.files || !req.files.Fotos1 || !req.files.Fotos1[0] || !req.files.Fotos1[0].filename) {
+    return res.status(400).json({ error: "Por favor agrega la primera foto" });
+  }
+  
+  if (!req.files.Fotos2 || !req.files.Fotos2[0] || !req.files.Fotos2[0].filename) {
+    return res.status(400).json({ error: "Por favor agrega la segunda foto" });
+  }
+  
+  if (!req.files.Fotos3 || !req.files.Fotos3[0] || !req.files.Fotos3[0].filename) {
+    return res.status(400).json({ error: "Por favor agrega la tercer foto" });
+  }
 
   if (fotos.length > 0) {
     try {
@@ -382,6 +490,33 @@ const mostrarPublicaciones = async (req, res) => {
         }
       },
       {
+        $lookup: {
+          from: "guardados",
+          let: { pubId: "$IDPublicacion" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$IDPublicacion", "$$pubId"] },
+                    { $eq: ["$IDUsuario", parseInt(req.params.IDUsuario)] },
+                    { $eq: ["$Estatus", 1] }
+                  ]
+                }
+              }
+            },
+            { $count: "savedCount" }
+          ],
+          as: "saved"
+        }
+      },
+      // Agrega el campo "Saved" basado en si se encontró un registro en "guardados"
+      {
+        $addFields: {
+          Saved: { $gt: [{ $size: "$saved" }, 0] }
+        }
+      },
+      {
         $project: {
           _id: 1,
           IDPublicacion: 1,
@@ -502,7 +637,54 @@ const mostrarFavoritos = async (req, res) => {
       
       { $unwind: "$pais" },
 
-      // Filtra las publicaciones por el atributo "Estatus"
+      // Aquí había una coma extra, la he eliminado
+      // Realiza una búsqueda en el documento "calificaciones" para verificar si el usuario ha calificado la publicación
+      {
+        $lookup: {
+          from: "calificaciones",
+          let: { pubId: "$IDPublicacion", userId: parseInt(req.params.IDUsuario) },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$IDPublicacion", "$$pubId"] },
+                    { $eq: ["$IDUsuario", "$$userId"] }
+                  ]
+                }
+              }
+            }
+          ],
+          as: "calificacionUsuario"
+        }
+      },
+      // Obtén la calificación del usuario si existe, de lo contrario, establece Calificacion como 0
+      {
+        $addFields: {
+          Calificacion: {
+            $cond: { 
+              if: { $gt: [{ $size: "$calificacionUsuario" }, 0] },
+              then: { $arrayElemAt: ["$calificacionUsuario.Calificacion", 0] },
+              else: 0
+            }
+          }
+        }
+      },
+      // Realiza una búsqueda en el documento "calificaciones" para calcular el promedio de calificaciones
+      {
+        $lookup: {
+          from: "calificaciones",
+          localField: "IDPublicacion",
+          foreignField: "IDPublicacion",
+          as: "calificaciones"
+        }
+      },
+      // Calcula el promedio de calificaciones
+      {
+        $addFields: {
+          PromedioCalificaciones: { $avg: "$calificaciones.Calificacion" }
+        }
+      },
       { $match: { Estatus: 1 } }, // Aquí puedes especificar el valor de estatus que desees mostrar
 
       {
@@ -541,13 +723,31 @@ const mostrarFavoritos = async (req, res) => {
           Estatus: 1,
           "usuario.NombreUsuario": 1,
           "usuario.Foto": 1,
+          "usuario._id": 1,
           "pais.pais": 1,
-          "pais.imagen": 1
+          "pais.imagen": 1,
+          PromedioCalificaciones: 1,
+          Calificacion: 1
         }
       }
     ]);
 
-    res.status(200).json(publicacionesFavoritas);
+    const publicacionesConSeguimiento = await Promise.all(publicacionesFavoritas.map(async (publicacion) => {
+      // Realizar la consulta adicional para verificar el seguimiento
+      const sigue = await Seguidores.exists({
+        IDSeguidor: req.params._idUsuarioS,
+        IDSeguido: publicacion.usuario._id,
+        Estatus: 1
+      });
+
+      // Establecer el valor de SigueUsuario basado en el resultado de la consulta adicional
+      return {
+        ...publicacion,
+        SigueUsuario: sigue ? 1 : 0
+      };
+    }));
+
+    res.status(200).json(publicacionesConSeguimiento);
   } catch (error) {
     console.error("Error al buscar publicaciones favoritas:", error);
     res.status(500).json({ error: "Error interno del servidor" });
@@ -597,7 +797,56 @@ const mostrarFavoritosFiltrados = async (req, res) => {
       { $unwind: "$pais" },
 
       // Filtra las publicaciones por el atributo "Estatus"
-      { $match: matchPublicaciones }, // Aquí puedes especificar el valor de estatus que desees mostrar
+      { $match: matchPublicaciones },
+
+      // Aquí había una coma extra, la he eliminado
+      // Realiza una búsqueda en el documento "calificaciones" para verificar si el usuario ha calificado la publicación
+      {
+        $lookup: {
+          from: "calificaciones",
+          let: { pubId: "$IDPublicacion", userId: parseInt(req.params.IDUsuario) },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$IDPublicacion", "$$pubId"] },
+                    { $eq: ["$IDUsuario", "$$userId"] }
+                  ]
+                }
+              }
+            }
+          ],
+          as: "calificacionUsuario"
+        }
+      },
+      // Obtén la calificación del usuario si existe, de lo contrario, establece Calificacion como 0
+      {
+        $addFields: {
+          Calificacion: {
+            $cond: { 
+              if: { $gt: [{ $size: "$calificacionUsuario" }, 0] },
+              then: { $arrayElemAt: ["$calificacionUsuario.Calificacion", 0] },
+              else: 0
+            }
+          }
+        }
+      },
+      // Realiza una búsqueda en el documento "calificaciones" para calcular el promedio de calificaciones
+      {
+        $lookup: {
+          from: "calificaciones",
+          localField: "IDPublicacion",
+          foreignField: "IDPublicacion",
+          as: "calificaciones"
+        }
+      },
+      // Calcula el promedio de calificaciones
+      {
+        $addFields: {
+          PromedioCalificaciones: { $avg: "$calificaciones.Calificacion" }
+        }
+      }, // Aquí puedes especificar el valor de estatus que desees mostrar
 
       {
         $lookup: {
@@ -636,12 +885,32 @@ const mostrarFavoritosFiltrados = async (req, res) => {
           "usuario.NombreUsuario": 1,
           "usuario.Foto": 1,
           "pais.pais": 1,
-          "pais.imagen": 1
+          "pais.imagen": 1,
+          PromedioCalificaciones: 1,
+          Calificacion: 1
         }
       }
     ]);
 
-    res.status(200).json(publicacionesFiltradas);
+    const publicacionesConSeguimiento = await Promise.all(publicacionesConUsuariosYPaises.map(async (publicacion) => {
+      // Realizar la consulta adicional para verificar el seguimiento
+      const sigue = await Seguidores.exists({
+        IDSeguidor: req.params._idUsuarioS,
+        IDSeguido: publicacion.usuario._id,
+        Estatus: 1
+      });
+
+      // Establecer el valor de SigueUsuario basado en el resultado de la consulta adicional
+      return {
+        ...publicacion,
+        SigueUsuario: sigue ? 1 : 0
+      };
+    }));
+
+    // Filtrar las publicaciones donde SigueUsuario = 1
+    const publicacionesFFiltradas = publicacionesConSeguimiento.filter(publicacion => publicacion.SigueUsuario === 1);
+
+    res.status(200).json(publicacionesFFiltradas);
   } catch (error) {
     console.error("Error al buscar publicaciones filtradas:", error);
     res.status(500).json({ error: "Error interno del servidor" });
@@ -682,6 +951,53 @@ const mostrarMisPublicaciones = async (req, res) => {
       },
       
       { $unwind: "$pais" },
+      // Realiza una búsqueda en el documento "calificaciones" para verificar si el usuario ha calificado la publicación
+      {
+        $lookup: {
+          from: "calificaciones",
+          let: { pubId: "$IDPublicacion", userId: parseInt(req.params.IDUsuario) },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$IDPublicacion", "$$pubId"] },
+                    { $eq: ["$IDUsuario", "$$userId"] }
+                  ]
+                }
+              }
+            }
+          ],
+          as: "calificacionUsuario"
+        }
+      },
+      // Obtén la calificación del usuario si existe, de lo contrario, establece Calificacion como 0
+      {
+        $addFields: {
+          Calificacion: {
+            $cond: { 
+              if: { $gt: [{ $size: "$calificacionUsuario" }, 0] },
+              then: { $arrayElemAt: ["$calificacionUsuario.Calificacion", 0] },
+              else: 0
+            }
+          }
+        }
+      },
+      // Realiza una búsqueda en el documento "calificaciones" para calcular el promedio de calificaciones
+      {
+        $lookup: {
+          from: "calificaciones",
+          localField: "IDPublicacion",
+          foreignField: "IDPublicacion",
+          as: "calificaciones"
+        }
+      },
+      // Calcula el promedio de calificaciones
+      {
+        $addFields: {
+          PromedioCalificaciones: { $avg: "$calificaciones.Calificacion" }
+        }
+      },
 
       //Buscar si el usuario ha guardado la publicación para mandar un Saved en true o false y rellenar el corazón o no
       // Realiza una búsqueda en el documento "guardados" para verificar si el usuario ha guardado la publicación
@@ -728,7 +1044,9 @@ const mostrarMisPublicaciones = async (req, res) => {
           "usuario.Foto": 1, 
           "pais.pais": 1, 
           "pais.imagen": 1,
-          Saved: 1
+          Saved: 1,
+          PromedioCalificaciones: 1,
+          Calificacion: 1
         }
       }
     ]);
@@ -744,7 +1062,7 @@ const mpubAjeno = async (req, res) => {
   try {
     
     // Buscar el usuario por su IDUsuario
-    const usuario = await Usuario.findOne({ _id: req.params.IDUsuario });
+    const usuario = await Usuario.findOne({ _id: req.params.IDUsuarioAjeno });
 
     if (!usuario) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
@@ -785,8 +1103,54 @@ const mpubAjeno = async (req, res) => {
       
       { $unwind: "$pais" },
 
-      //Buscar si el usuario ha guardado la publicación para mandar un Saved en true o false y rellenar el corazón o no
-      // Realiza una búsqueda en el documento "guardados" para verificar si el usuario ha guardado la publicación
+      // Aquí había una coma extra, la he eliminado
+      // Realiza una búsqueda en el documento "calificaciones" para verificar si el usuario ha calificado la publicación
+      {
+        $lookup: {
+          from: "calificaciones",
+          let: { pubId: "$IDPublicacion", userId: parseInt(req.params.IDUsuario) },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$IDPublicacion", "$$pubId"] },
+                    { $eq: ["$IDUsuario", "$$userId"] }
+                  ]
+                }
+              }
+            }
+          ],
+          as: "calificacionUsuario"
+        }
+      },
+      // Obtén la calificación del usuario si existe, de lo contrario, establece Calificacion como 0
+      {
+        $addFields: {
+          Calificacion: {
+            $cond: { 
+              if: { $gt: [{ $size: "$calificacionUsuario" }, 0] },
+              then: { $arrayElemAt: ["$calificacionUsuario.Calificacion", 0] },
+              else: 0
+            }
+          }
+        }
+      },
+      // Realiza una búsqueda en el documento "calificaciones" para calcular el promedio de calificaciones
+      {
+        $lookup: {
+          from: "calificaciones",
+          localField: "IDPublicacion",
+          foreignField: "IDPublicacion",
+          as: "calificaciones"
+        }
+      },
+      // Calcula el promedio de calificaciones
+      {
+        $addFields: {
+          PromedioCalificaciones: { $avg: "$calificaciones.Calificacion" }
+        }
+      },
       {
         $lookup: {
           from: "guardados",
@@ -830,7 +1194,9 @@ const mpubAjeno = async (req, res) => {
           "usuario.Foto": 1, 
           "pais.pais": 1, 
           "pais.imagen": 1,
-          Saved: 1
+          Saved: 1,
+          PromedioCalificaciones: 1,
+          Calificacion: 1
         }
       }
     ]);
@@ -841,6 +1207,7 @@ const mpubAjeno = async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };
+
 
 const buscarPublicacionPorID = async (req, res) => {
   try {
@@ -946,9 +1313,26 @@ const editarPublicacion = async (req, res) => {
   console.log(req.body.Fotos3);
   const idPublicacion = req.body.IDPublicacion; // Suponiendo que obtienes el ID de la publicación de los parámetros de la solicitud
 
+
+  const { Titulo, Descripcion, IDPais, IDUsuario } = req.body;
+
+  if(!Titulo){
+    return res.status(400).json({ error: "El campo de titulo no puede estar vacio" });
+  }
+  if(!Descripcion){
+    return res.status(400).json({ error: "El campo de descripción no puede estar vacio" });
+  }
+  if(!IDPais){
+    return res.status(400).json({ error: "Por favor selecciona un país" });
+  }
+  if(!IDUsuario){
+    return res.status(400).json({ error: "No se encontró un usuario para agregar a la publicación" });
+  }
+
   // Verificar si se proporcionó un archivo de imagen
   const fotos = req.files ? req.files : [];
   let fotoPaths = [];
+
 
   if (fotos.length > 0) {
     try {
@@ -1120,9 +1504,23 @@ const mostrarMisBorradores = async (req, res) => {
 const editarBorrador = async (req, res) => {
   console.log("Entré");
   
-  const idPublicacion = req.body.IDPublicacion; // Suponiendo que obtienes el ID de la publicación de los parámetros de la solicitud
+  const idPublicacion = req.body.IDPublicacion; 
 
-  // Verificar si se proporcionó un archivo de imagen
+  const { Titulo, Descripcion, IDPais, IDUsuario } = req.body;
+
+  if(!Titulo){
+    return res.status(400).json({ error: "El campo de titulo no puede estar vacio" });
+  }
+  if(!Descripcion){
+    return res.status(400).json({ error: "El campo de descripción no puede estar vacio" });
+  }
+  if(!IDPais){
+    return res.status(400).json({ error: "Por favor selecciona un país" });
+  }
+  if(!IDUsuario){
+    return res.status(400).json({ error: "No se encontró un usuario para agregar a la publicación" });
+  }
+
   const fotos = req.files ? req.files : [];
   let fotoPaths = [];
 
@@ -1814,9 +2212,13 @@ const mostrarPublicacionesPorTexto = async (req, res) => {
 const busquedaAvanzadaPublic = async (req, res) => {
   try {
     const textoBusqueda = req.query.textoBusqueda;
-    const fechaInicio = req.query.fechaInicio; // Obtener fecha de inicio desde la solicitud
-    const fechaFin = req.query.fechaFin; // Obtener fecha de fin desde la solicitud
-    const paisSeleccionado = req.query.paisSeleccionado; // Obtener país seleccionado desde la solicitud
+    const fechaInicio = req.query.fechaInicio; 
+    const fechaFin = req.query.fechaFin; 
+    const paisSeleccionado = req.query.paisSeleccionado; 
+
+    if (!textoBusqueda || !fechaInicio || !fechaFin || !paisSeleccionado) {
+      return res.status(400).json({ error: "Por favor selecciona y llena todos los campos (Texto, Fecha de inicio y fin y país)" });
+    }
 
     let publicacionesConUsuariosYPaises = await Publicaciones.aggregate([
       // Realiza un "lookup" para unir la colección de usuarios

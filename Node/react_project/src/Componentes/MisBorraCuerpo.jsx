@@ -83,23 +83,31 @@ function InicioCuerpo() {
                 </div>
               </Col>
               <Col md={12}>
-                {misborradores.map(publicacion => (
-                  <PublicDisplay
-                  IDPublicacion={publicacion.IDPublicacion}
-                  NombreUsu={publicacion.usuario.NombreUsuario}
-                  ImagenUsu={publicacion.usuario.Foto}
-                  Fecha={publicacion.FechaPub}
-                  Pais={publicacion.pais.imagen}
-                  Titulo={publicacion.Titulo}
-                  Contenido={publicacion.Descripcion}
-                  Imagen1={publicacion.ImagenUno}
-                  Imagen2={publicacion.ImagenDos}
-                  Imagen3={publicacion.ImagenTres}
-                  Tipo= "Borrador"
-                  Saved={publicacion.Saved}
-                  Pagina = "MisPublicaciones"
-                  />
-                ))}
+              {misborradores.length > 0 ? (
+                  misborradores.map(publicacion => (
+                    <PublicDisplay
+                      IDPublicacion={publicacion.IDPublicacion}
+                      NombreUsu={publicacion.usuario.NombreUsuario}
+                      ImagenUsu={publicacion.usuario.Foto}
+                      Fecha={publicacion.FechaPub}
+                      Pais={publicacion.pais.imagen}
+                      Titulo={publicacion.Titulo}
+                      Contenido={publicacion.Descripcion}
+                      Imagen1={publicacion.ImagenUno}
+                      Imagen2={publicacion.ImagenDos}
+                      Imagen3={publicacion.ImagenTres}
+                      Tipo= "Borrador"
+                      Saved={publicacion.Saved}
+                      Pagina = "MisPublicaciones"
+                    />
+                  ))
+                ) : (
+                  // Si no se devolvieron publicaciones, muestra una imagen de error
+                  <div>
+                    <img src={"/Imagenes/error.jpg"} alt="No tienes favoritos" style={{ marginLeft: '200px' }}/>
+                    <h1>No tienes borradores. ¡Puedes agregar borradores para compartirlos más tarde!</h1>
+                  </div>
+                )}
               </Col>
             </Row>
           </Col>

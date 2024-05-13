@@ -18,19 +18,19 @@ export default function Login() {
 
   const Enviar = async (evento) => {
     evento.preventDefault();
-    
-    // Validación del correo electrónico
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      alert("Por favor ingresa un correo electrónico válido");
-      return;
-    }
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+}{"':;?/>.<,])(?=.*[a-zA-Z]).{6,}$/;
-    // Validación de la contraseña (por ejemplo, longitud mínima)
-    if (formData.password.length < 6 || formData.password.includes(" ")) {
-      alert("La contraseña debe contener al menos una mayúscula, una minúscula, un dígito, un carácter especial y ser mayor a 6 caracteres");
-      return;
-    }
+
+     // Validación del correo electrónico
+     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+     if (!emailRegex.test(formData.email)) {
+       alert("Por favor ingresa un correo electrónico válido");
+       return;
+     }
+     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+}{"':;?/>.<,])(?=.*[a-zA-Z]).{6,}$/;
+     // Validación de la contraseña (por ejemplo, longitud mínima)
+     if (formData.password.length < 6 || formData.password.includes(" ") || !passwordRegex.test(formData.password)) {
+       alert("La contraseña debe contener al menos una mayúscula, una minúscula, un dígito, un carácter especial y ser mayor a 6 caracteres");
+       return;
+     }
 
     try {
       const response = await axios.post('http://localhost:4200/autentUsuario', formData);
@@ -42,12 +42,11 @@ export default function Login() {
         alert("Iniciaste Sesion");
         navigate('/Inicio')
       } else {
-        
-        alert('Error al iniciar sesión. Por favor, inténtalo de nuevo.');
+        alert('Correo y contraseña incorrectos. Por favor, inténtalo de nuevo.');
       }
     } catch (error) {
-      console.error('Error al iniciar sesión:', error);
-      alert('Error al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde.');
+      console.error('Credenciales inválidas: ', error);
+      alert(error.response.data.error);
     }
 
     

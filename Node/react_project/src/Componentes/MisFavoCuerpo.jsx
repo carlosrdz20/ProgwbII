@@ -23,7 +23,7 @@ function MisFavoCuerpo() {
     // Realiza la solicitud para obtener las publicaciones cuando el componente se monta
     const userData = localStorage.getItem('user');
     const user = JSON.parse(userData);
-    axios.get(`http://localhost:4200/misfavoritos/${user.IDUsuario}`, {
+    axios.get(`http://localhost:4200/misfavoritos/${user.IDUsuario}/${user._id}`, {
       headers: {
         authorization: 'Bearer ' + localStorage.getItem('token') 
       }
@@ -35,9 +35,7 @@ function MisFavoCuerpo() {
       .catch(error => {
         
         console.error('Error al obtener las publicaciones:', error);
-        logout();
-        alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
-        navigate('/')
+        alert(error.response.data.error);
       });
   }, []);
 
@@ -109,6 +107,10 @@ function MisFavoCuerpo() {
                       Tipo={"Ajeno"}
                       Saved={true}
                       Pagina = "MisFavoritos"
+                      Calificacion ={publicacion.Calificacion}
+                      PromCalificacion={publicacion.PromedioCalificaciones}
+                      idUsuario={publicacion.usuario._id}
+                      Sigue={publicacion.SigueUsuario}
                     />
                   ))
                 )}

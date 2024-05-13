@@ -87,11 +87,8 @@ function EditarPublicacion() {
                 // Puedes hacer alguna acción después de insertar la publicación, como redirigir al usuario a otra página
             })
             .catch(error => {
-                alert("La cagaste");
+                alert(error.response.data.error);
                 console.error('Error al insertar la publicación:', error);
-                logout();
-                alert("La sesión ya expiró, por favor vuelve a iniciar sesión");
-                navigate('/');
             });
     };
 
@@ -162,7 +159,7 @@ function EditarPublicacion() {
 														<input style={{marginBottom:'15px'}} type="file" id="Fotos1" name="Fotos1" accept="image/*" class="fotoinput" onChange={(e) => handleChange(e, 1)}/>
 													</div>
 													<div class="image-container">
-														<img src={usarFoto} alt="Imagen" id="uploadedImage"/>
+														<img style={{width: '100%'}} src={usarFoto} alt="Imagen" id="uploadedImage"/>
 													</div>
 												</Col>
 												<Col md={4}>
@@ -171,7 +168,7 @@ function EditarPublicacion() {
 														<input style={{marginBottom:'15px'}} type="file" id="Fotos2" name="Fotos2" accept="image/*" class="fotoinput" onChange={(e) => handleChange(e, 2)}/>
 													</div>
 													<div class="image-container">
-														<img src={usarFoto2} alt="Imagen" id="uploadedImage"/>
+														<img style={{width: '100%'}} src={usarFoto2} alt="Imagen" id="uploadedImage"/>
 													</div>
 												</Col>
 												<Col md={4}>
@@ -180,7 +177,7 @@ function EditarPublicacion() {
 														<input style={{marginBottom:'15px'}} type="file" id="Fotos3" name="Fotos3" accept="image/*" class="fotoinput" multiple onChange={(e) => handleChange(e, 3)}/>
 													</div>
 													<div class="image-container">
-														<img src={usarFoto3} alt="Imagen" id="uploadedImage"/>
+														<img style={{width: '100%'}} src={usarFoto3} alt="Imagen" id="uploadedImage"/>
 													</div>
 												</Col>
 											</Row>

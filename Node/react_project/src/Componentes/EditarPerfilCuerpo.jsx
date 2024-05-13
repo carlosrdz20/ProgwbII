@@ -24,6 +24,7 @@ function EditarPerfilCuerpo() {
     if (userData) {
       setuser2(user);
       // Formatear la fecha
+      console.log(user.FechaNacimiento);
       setFecha(user.FechaNacimiento.split('T')[0]);
       setFotoxd(`/Imagenes/${user.Foto}`);
     }
@@ -85,24 +86,17 @@ function EditarPerfilCuerpo() {
           alert("Iniciaste Sesion");
           navigate('/Inicio')
         } else {
-          
           alert('Error al iniciar sesión. Por favor, inténtalo de nuevo.');
         }
       } catch (error) {
         console.error('Error al iniciar sesión:', error);
-        alert('Error al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde.');
-        logout();
-        alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
-        navigate('/');
+        alert(error.response.data.error);
       }
       alert('Perfil actualizado exitosamente');
       
     } catch (error) {
       console.error('Error al editar perfil:', error);
-      alert('Ocurrió un error al editar su perfil, intente de nuevo más tarde.');
-      logout();
-      alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
-      navigate('/');
+      alert(error.response.data.error);
     }
     
   };

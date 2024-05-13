@@ -55,7 +55,7 @@ function PerfilAjenoCuerpo() {
     };
 
     const ajenoPub = async () => {
-          axios.get(`http://localhost:4200/mpubAjeno/${localStorage.getItem('usuAjeno')}`, {
+          axios.get(`http://localhost:4200/mpubAjeno/${localStorage.getItem('usuAjeno')}/${user.IDUsuario}/${user._id}`, {
       headers: {
         authorization: 'Bearer ' + localStorage.getItem('token') 
       }
@@ -180,7 +180,7 @@ function PerfilAjenoCuerpo() {
                     Imagen1={publicacion.ImagenUno}
                     Imagen2={publicacion.ImagenDos}
                     Imagen3={publicacion.ImagenTres}
-                    Tipo={publicacion.Tipo}
+                    Tipo="mpubAjeno"
                     Saved={publicacion.Saved}
                     Pagina = "Inicio"
                     Calificacion ={publicacion.Calificacion}
