@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import useAuth from '../Context/useAuth';
 import { Row, Col, Container } from 'react-bootstrap';
 
-function FiltroLateral({ actualizarPublicaciones, tipoMis }){
+function FiltroLateral({ actualizarPublicaciones, tipoMis, setFechaInicioF, setFechaFinF, setPaisFiltro, totalPagesFiltro }){
   const navigate = useNavigate();
   const [paises, setPaises] = useState([]);
   const [paisSeleccionado, setPaisSeleccionado] = useState(1); //puse el ID 1 de inicio por si nunca entra al handleChange
@@ -54,22 +54,25 @@ function FiltroLateral({ actualizarPublicaciones, tipoMis }){
     }
     
     if(tipoMis === 3){
-      axios.get(`http://localhost:4200/misfavoritosfiltrados/${user.IDUsuario}?pais=${paisSeleccionado}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`, {
+      axios.get(`http://localhost:4200/misfavoritosfiltrados/${user.IDUsuario}/${user._id}?pais=${paisSeleccionado}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`, {
         headers: {
           authorization: 'Bearer ' + localStorage.getItem('token') 
         }
       })
         .then(response => {
-          const nuevasPublicaciones = response.data;
+          const nuevasPublicaciones = response.data.publicaciones;
+          const nuevasTotalPages = response.data.totalPages;
           // Llamar a la función de callback para actualizar las publicaciones en MisFavoCuerpo
           actualizarPublicaciones(nuevasPublicaciones);
+          setFechaInicioF(fechaInicio);
+          setFechaFinF(fechaFin);
+          setPaisFiltro(paisSeleccionado);
+          totalPagesFiltro(nuevasTotalPages);
           console.log("Se insertaron las publicaciones filtradas");
         })
         .catch(error => {
           console.error('Error al obtener las publicaciones filtradas:', error);
-          logout();
-          alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
-          navigate('/')
+          alert(error.response.data.error);
         });
     }else if(tipoMis === 2){
       axios.get(`http://localhost:4200/mborradoresFiltro/${user.IDUsuario}?pais=${paisSeleccionado}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`, {
@@ -78,16 +81,19 @@ function FiltroLateral({ actualizarPublicaciones, tipoMis }){
         }
       })
         .then(response => {
-          const nuevasPublicaciones = response.data;
+          const nuevasPublicaciones = response.data.publicaciones;
+          const nuevasTotalPages = response.data.totalPages;
           // Llamar a la función de callback para actualizar las publicaciones en MisFavoCuerpo
           actualizarPublicaciones(nuevasPublicaciones);
+          setFechaInicioF(fechaInicio);
+          setFechaFinF(fechaFin);
+          setPaisFiltro(paisSeleccionado);
+          totalPagesFiltro(nuevasTotalPages);
           console.log("Se insertaron las publicaciones filtradas");
         })
         .catch(error => {
           console.error('Error al obtener las publicaciones filtradas:', error);
-          logout();
-          alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
-          navigate('/')
+          alert(error.response.data.error);
         });
     }else if(tipoMis === 1){
       axios.get(`http://localhost:4200/mpubFiltrado/${user.IDUsuario}?pais=${paisSeleccionado}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`, {
@@ -96,16 +102,19 @@ function FiltroLateral({ actualizarPublicaciones, tipoMis }){
         }
       })
         .then(response => {
-          const nuevasPublicaciones = response.data;
+          const nuevasPublicaciones = response.data.publicaciones;
+          const nuevasTotalPages = response.data.totalPages;
           // Llamar a la función de callback para actualizar las publicaciones en MisFavoCuerpo
           actualizarPublicaciones(nuevasPublicaciones);
+          setFechaInicioF(fechaInicio);
+          setFechaFinF(fechaFin);
+          setPaisFiltro(paisSeleccionado);
+          totalPagesFiltro(nuevasTotalPages);
           console.log("Se insertaron las publicaciones filtradas");
         })
         .catch(error => {
-          console.error('Error al obtener las publicaciones filtradas:', error);
-          logout();
-          alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
-          navigate('/')
+          console.error('Error al obtener las publicaciones filtradas:', error); 
+          alert(error.response.data.error);
         });
     }
 

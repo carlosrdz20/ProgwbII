@@ -408,6 +408,10 @@ const insertarBorrador = async (req, res) => {
 
 const mostrarPublicaciones = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 4;
+    const totalPublicaciones = await Publicaciones.countDocuments({ Estatus: 1 });
+    const totalPages = Math.ceil(totalPublicaciones / limit);
     const publicacionesConUsuariosYPaises = await Publicaciones.aggregate([
       // Realiza un "lookup" para unir la colección de usuarios
       {
@@ -539,8 +543,12 @@ const mostrarPublicaciones = async (req, res) => {
           // Incluimos la calificación del usuario
           Calificacion: 1
         }
-      }
-    ]);
+      },
+      { $sort: { FechaPub: -1 } }
+    ])
+    .skip((page-1)*limit)
+    .limit(limit);
+    
 
     const publicacionesConSeguimiento = await Promise.all(publicacionesConUsuariosYPaises.map(async (publicacion) => {
       // Realizar la consulta adicional para verificar el seguimiento
@@ -559,8 +567,10 @@ const mostrarPublicaciones = async (req, res) => {
 
     console.log("Publicaciones con seguimiento de usuario:", publicacionesConSeguimiento);
 
-
-    res.status(200).json(publicacionesConSeguimiento);
+    res.status(200).json({
+      publicaciones: publicacionesConSeguimiento,
+      totalPages: totalPages
+    });
   } catch (error) {
     console.error("Error al buscar publicaciones con usuarios y países:", error);
     res.status(500).json({ error: "Error interno del servidor" });
@@ -611,6 +621,8 @@ const insertarGuardado = async (req, res) => {
 const mostrarFavoritos = async (req, res) => {
   try {
     const userID = parseInt(req.params.IDUsuario);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 4;
 
     // Utiliza la agregación para filtrar las publicaciones guardadas por el usuario actual
     const publicacionesFavoritas = await Publicaciones.aggregate([
@@ -747,7 +759,20 @@ const mostrarFavoritos = async (req, res) => {
       };
     }));
 
-    res.status(200).json(publicacionesConSeguimiento);
+    // Calcula el índice de inicio y final para la paginación
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    // Segmenta las publicaciones según la paginación
+    const paginatedPublicaciones = publicacionesConSeguimiento.slice(startIndex, endIndex);
+
+    // Calcula el total de páginas
+    const totalPages = Math.ceil(publicacionesConSeguimiento.length / limit);
+
+    res.status(200).json({
+      publicaciones: paginatedPublicaciones,
+      totalPages: totalPages
+    });
   } catch (error) {
     console.error("Error al buscar publicaciones favoritas:", error);
     res.status(500).json({ error: "Error interno del servidor" });
@@ -755,23 +780,25 @@ const mostrarFavoritos = async (req, res) => {
 };
 
 const mostrarFavoritosFiltrados = async (req, res) => {
-  const userID = parseInt(req.params.IDUsuario);
-  const { pais, fechaInicio, fechaFin } = req.query;
-
-  let matchPublicaciones = {
-    Estatus: 1 // Suponiendo que solo quieres las publicaciones activas
-  };
-
-  if (pais) {
-    matchPublicaciones['IDPais'] = parseInt(pais);
-  }
-
-  if (fechaInicio && fechaFin) {
-    matchPublicaciones.FechaPub = { $gte: new Date(fechaInicio), $lte: new Date(fechaFin + 'T23:59:59') };
-  }
-
   try {
-    // Utiliza la agregación para filtrar las publicaciones guardadas por el usuario actual
+    const userID = parseInt(req.params.IDUsuario);
+    const { pais, fechaInicio, fechaFin } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 4;
+
+    let matchPublicaciones = {
+      Estatus: 1 // Suponiendo que solo quieres las publicaciones activas
+    };
+
+    if (pais) {
+      matchPublicaciones['IDPais'] = parseInt(pais);
+    }
+
+    if (fechaInicio && fechaFin) {
+      matchPublicaciones.FechaPub = { $gte: new Date(fechaInicio), $lte: new Date(fechaFin + 'T23:59:59') };
+      console.log("Match: ", matchPublicaciones);
+    }
+
     const publicacionesFiltradas = await Publicaciones.aggregate([
       // Realiza un "lookup" para unir la colección de usuarios
       {
@@ -782,9 +809,7 @@ const mostrarFavoritosFiltrados = async (req, res) => {
           as: "usuario" 
         }
       },
-      
       { $unwind: "$usuario" },
-      
       {
         $lookup: {
           from: "paises", 
@@ -793,18 +818,12 @@ const mostrarFavoritosFiltrados = async (req, res) => {
           as: "pais"
         }
       },
-      
       { $unwind: "$pais" },
-
-      // Filtra las publicaciones por el atributo "Estatus"
-      { $match: matchPublicaciones },
-
-      // Aquí había una coma extra, la he eliminado
       // Realiza una búsqueda en el documento "calificaciones" para verificar si el usuario ha calificado la publicación
       {
         $lookup: {
           from: "calificaciones",
-          let: { pubId: "$IDPublicacion", userId: parseInt(req.params.IDUsuario) },
+          let: { pubId: "$IDPublicacion", userId: userID },
           pipeline: [
             {
               $match: {
@@ -846,8 +865,8 @@ const mostrarFavoritosFiltrados = async (req, res) => {
         $addFields: {
           PromedioCalificaciones: { $avg: "$calificaciones.Calificacion" }
         }
-      }, // Aquí puedes especificar el valor de estatus que desees mostrar
-
+      },
+      { $match: matchPublicaciones },
       {
         $lookup: {
           from: "guardados",
@@ -884,6 +903,7 @@ const mostrarFavoritosFiltrados = async (req, res) => {
           Estatus: 1,
           "usuario.NombreUsuario": 1,
           "usuario.Foto": 1,
+          "usuario._id": 1,
           "pais.pais": 1,
           "pais.imagen": 1,
           PromedioCalificaciones: 1,
@@ -891,8 +911,8 @@ const mostrarFavoritosFiltrados = async (req, res) => {
         }
       }
     ]);
-
-    const publicacionesConSeguimiento = await Promise.all(publicacionesConUsuariosYPaises.map(async (publicacion) => {
+    console.log("Publicaciones: " ,publicacionesFiltradas);
+    const publicacionesConSeguimiento = await Promise.all(publicacionesFiltradas.map(async (publicacion) => {
       // Realizar la consulta adicional para verificar el seguimiento
       const sigue = await Seguidores.exists({
         IDSeguidor: req.params._idUsuarioS,
@@ -907,19 +927,33 @@ const mostrarFavoritosFiltrados = async (req, res) => {
       };
     }));
 
-    // Filtrar las publicaciones donde SigueUsuario = 1
-    const publicacionesFFiltradas = publicacionesConSeguimiento.filter(publicacion => publicacion.SigueUsuario === 1);
+    // Calcula el índice de inicio y final para la paginación
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
 
-    res.status(200).json(publicacionesFFiltradas);
+    // Segmenta las publicaciones según la paginación
+    const paginatedPublicaciones = publicacionesConSeguimiento.slice(startIndex, endIndex);
+
+    // Calcula el total de páginas
+    const totalPages = Math.ceil(publicacionesConSeguimiento.length / limit);
+
+    res.status(200).json({
+      publicaciones: paginatedPublicaciones,
+      totalPages: totalPages
+    });
   } catch (error) {
-    console.error("Error al buscar publicaciones filtradas:", error);
+    console.error("Error al buscar publicaciones favoritas filtradas:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };
 
 
+
 const mostrarMisPublicaciones = async (req, res) => {
   try {
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 4;
     // Utiliza la agregación para realizar un "join" entre las colecciones
     const publicacionesDelUsuario = await Publicaciones.aggregate([
       // Agrega un filtro para obtener solo las publicaciones del usuario específico
@@ -1051,7 +1085,22 @@ const mostrarMisPublicaciones = async (req, res) => {
       }
     ]);
 
-    res.status(200).json(publicacionesDelUsuario);
+    // Calcula el índice de inicio y final para la paginación
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    // Segmenta las publicaciones según la paginación
+    const paginatedPublicaciones = publicacionesDelUsuario.slice(startIndex, endIndex);
+
+    // Calcula el total de páginas
+    const totalPages = Math.ceil(publicacionesDelUsuario.length / limit);
+
+    // Envía la respuesta JSON con las publicaciones paginadas y el total de páginas
+    res.status(200).json({
+      publicaciones: paginatedPublicaciones,
+      totalPages: totalPages
+    });
+
   } catch (error) {
     console.error("Error al buscar publicaciones del usuario:", error);
     res.status(500).json({ error: "Error interno del servidor" });
@@ -1412,7 +1461,10 @@ const borrarPublicacion = async (req, res) => {
 
 const mostrarMisBorradores = async (req, res) => {
   try {
-    // Utiliza la agregación para realizar un "join" entre las colecciones
+    
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 4;
+
     const publicacionesDelUsuario = await Publicaciones.aggregate([
       // Agrega un filtro para obtener solo las publicaciones del usuario específico
       {
@@ -1494,7 +1546,23 @@ const mostrarMisBorradores = async (req, res) => {
       }
     ]);
 
-    res.status(200).json(publicacionesDelUsuario);
+
+      // Calcula el índice de inicio y final para la paginación
+      const startIndex = (page - 1) * limit;
+      const endIndex = page * limit;
+
+      // Segmenta las publicaciones según la paginación
+      const paginatedPublicaciones = publicacionesDelUsuario.slice(startIndex, endIndex);
+
+      // Calcula el total de páginas
+      const totalPages = Math.ceil(publicacionesDelUsuario.length / limit);
+
+      // Envía la respuesta JSON con las publicaciones paginadas y el total de páginas
+      res.status(200).json({
+        publicaciones: paginatedPublicaciones,
+        totalPages: totalPages
+      });
+    
   } catch (error) {
     console.error("Error al buscar publicaciones del usuario:", error);
     res.status(500).json({ error: "Error interno del servidor" });
@@ -1674,6 +1742,8 @@ const insertarSeguimiento = async (req, res) => {
 
 const mpubSeguidos = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 4;
     const publicacionesConUsuariosYPaises = await Publicaciones.aggregate([
       // Realiza un "lookup" para unir la colección de usuarios
       {
@@ -1778,7 +1848,8 @@ const mpubSeguidos = async (req, res) => {
           // Incluimos la calificación del usuario
           Calificacion: 1
         }
-      }
+      },
+      { $sort: { FechaPub: -1 } }
     ]);
 
     const publicacionesConSeguimiento = await Promise.all(publicacionesConUsuariosYPaises.map(async (publicacion) => {
@@ -1799,9 +1870,18 @@ const mpubSeguidos = async (req, res) => {
     // Filtrar las publicaciones donde SigueUsuario = 1
     const publicacionesFiltradas = publicacionesConSeguimiento.filter(publicacion => publicacion.SigueUsuario === 1);
 
-    console.log("Publicaciones con seguimiento de usuario:", publicacionesFiltradas);
+        // Calcular el total de páginas necesarias
+        const totalPages = Math.ceil(publicacionesFiltradas.length / limit);
 
-    res.status(200).json(publicacionesFiltradas);
+        // Obtener las publicaciones para la página actual
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+        const publicacionesPaginadas = publicacionesFiltradas.slice(startIndex, endIndex);
+
+    res.status(200).json({
+      publicaciones: publicacionesPaginadas,
+      totalPages: totalPages
+    });
   } catch (error) {
     console.error("Error al buscar publicaciones con usuarios y países:", error);
     res.status(500).json({ error: "Error interno del servidor" });
@@ -1860,6 +1940,9 @@ const mostrarMisPublicacionesFiltrados = async (req, res) => {
   try {
     const userID = parseInt(req.params.IDUsuario);
     const { pais, fechaInicio, fechaFin } = req.query;
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 4;
 
     let matchPublicaciones = {
       IDUsuario: userID, // Filtra por el ID del usuario
@@ -1954,7 +2037,21 @@ const mostrarMisPublicacionesFiltrados = async (req, res) => {
       }
     ]);
 
-    res.status(200).json(publicacionesDelUsuario);
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+    
+        // Segmenta las publicaciones según la paginación
+        const paginatedPublicaciones = publicacionesDelUsuario.slice(startIndex, endIndex);
+    
+        // Calcula el total de páginas
+        const totalPages = Math.ceil(publicacionesDelUsuario.length / limit);
+    
+        // Envía la respuesta JSON con las publicaciones paginadas y el total de páginas
+        res.status(200).json({
+          publicaciones: paginatedPublicaciones,
+          totalPages: totalPages
+        });
+
   } catch (error) {
     console.error("Error al buscar publicaciones del usuario:", error);
     res.status(500).json({ error: "Error interno del servidor" });
@@ -1966,6 +2063,8 @@ const mborradoresFiltro = async (req, res) => {
   try {
     const userID = parseInt(req.params.IDUsuario);
     const { pais, fechaInicio, fechaFin } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 4; 
 
     let matchPublicaciones = {
       IDUsuario: userID,
@@ -2059,7 +2158,22 @@ const mborradoresFiltro = async (req, res) => {
       }
     ]);
 
-    res.status(200).json(publicacionesDelUsuario);
+    // Calcula el índice de inicio y final para la paginación
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    // Segmenta las publicaciones según la paginación
+    const paginatedPublicaciones = publicacionesDelUsuario.slice(startIndex, endIndex);
+
+    // Calcula el total de páginas
+    const totalPages = Math.ceil(publicacionesDelUsuario.length / limit);
+
+    // Envía la respuesta JSON con las publicaciones paginadas y el total de páginas
+    res.status(200).json({
+      publicaciones: paginatedPublicaciones,
+      totalPages: totalPages
+    });
+
   } catch (error) {
     console.error("Error al buscar publicaciones del usuario:", error);
     res.status(500).json({ error: "Error interno del servidor" });
@@ -2070,6 +2184,8 @@ const mborradoresFiltro = async (req, res) => {
 const mostrarPublicacionesPorTexto = async (req, res) => {
   try {
     const textoBusqueda = req.query.textoBusqueda;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 4;
 
     const publicacionesConUsuariosYPaises = await Publicaciones.aggregate([
       // Realiza un "lookup" para unir la colección de usuarios
@@ -2199,9 +2315,22 @@ const mostrarPublicacionesPorTexto = async (req, res) => {
       return regex.test(publicacion.Titulo) || regex.test(publicacion.Descripcion);
     });
 
-    console.log("Publicaciones filtradas por texto de búsqueda:", publicacionesFiltradas);
+        // Calcula el índice de inicio y final para la paginación
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+    
+        // Segmenta las publicaciones según la paginación
+        const paginatedPublicaciones = publicacionesFiltradas.slice(startIndex, endIndex);
+    
+        // Calcula el total de páginas
+        const totalPages = Math.ceil(publicacionesFiltradas.length / limit);
 
-    res.status(200).json(publicacionesFiltradas);
+    console.log("Publicaciones filtradas por texto de búsqueda:", paginatedPublicaciones);
+
+    res.status(200).json({
+      publicaciones: paginatedPublicaciones,
+      totalPages: totalPages
+    });
   } catch (error) {
     console.error("Error al buscar publicaciones con usuarios y países:", error);
     res.status(500).json({ error: "Error interno del servidor" });
@@ -2215,6 +2344,9 @@ const busquedaAvanzadaPublic = async (req, res) => {
     const fechaInicio = req.query.fechaInicio; 
     const fechaFin = req.query.fechaFin; 
     const paisSeleccionado = req.query.paisSeleccionado; 
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 4; 
+
 
     if (!textoBusqueda || !fechaInicio || !fechaFin || !paisSeleccionado) {
       return res.status(400).json({ error: "Por favor selecciona y llena todos los campos (Texto, Fecha de inicio y fin y país)" });
@@ -2386,7 +2518,20 @@ const busquedaAvanzadaPublic = async (req, res) => {
 
     console.log("Publicaciones filtradas:", publicacionesFiltradas);
 
-    res.status(200).json(publicacionesFiltradas);
+    // Calcula el índice de inicio y final para la paginación
+      const startIndex = (page - 1) * limit;
+      const endIndex = page * limit;
+
+      // Segmenta las publicaciones según la paginación
+      const paginatedPublicaciones = publicacionesFiltradas.slice(startIndex, endIndex);
+
+      // Calcula el total de páginas
+      const totalPages = Math.ceil(publicacionesFiltradas.length / limit);
+
+    res.status(200).json({
+      publicaciones: paginatedPublicaciones,
+      totalPages: totalPages
+    });
   } catch (error) {
     console.error("Error al buscar publicaciones con usuarios y países:", error);
     res.status(500).json({ error: "Error interno del servidor" });

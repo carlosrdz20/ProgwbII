@@ -14,31 +14,103 @@ import { FaFilter } from "react-icons/fa";
 function InicioCuerpo() {
   const navigate = useNavigate();
   const [misborradores, setMisBorradores] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limitPerPage, setLimitPerPage] = useState(4);
+  const [totalPages, setTotalPages] = useState(1);
+  const [paisFiltro, setFiltroPais] = useState(1);
+  const [fechaInicio, setFiltroFI] = useState('');
+  const [fechaFin, setFiltroFF] = useState('');
+  const [vistaPublicaciones, setVistaPublicaciones] = useState('misborradores');
   const { logout } = useAuth();
   const { user } = useAuth();
 
   useEffect(() => {
-    // Realiza la solicitud para obtener las publicaciones cuando el componente se monta
-    axios.get(`http://localhost:4200/misborradores/${user.IDUsuario}`, {
-      headers: {
-        authorization: 'Bearer ' + localStorage.getItem('token') 
-      }
-    })
-      .then(response => {
-        setMisBorradores(response.data);
-        console.log("Se insertaron las publicaciones");
+    if(vistaPublicaciones === 'misborradores'){
+      axios.get(`http://localhost:4200/misborradores/${user.IDUsuario}?page=${currentPage}&limit=${limitPerPage}`, {
+        headers: {
+          authorization: 'Bearer ' + localStorage.getItem('token') 
+        }
       })
-      .catch(error => {
-        console.error('Error al obtener las publicaciones:', error);
-        logout();
-        alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
-        navigate('/');
-      });
-  }, []);
+        .then(response => {
+          setMisBorradores(response.data.publicaciones);
+          setTotalPages(response.data.totalPages);
+          console.log("Se insertaron las publicaciones");
+        })
+        .catch(error => {
+          console.error('Error al obtener las publicaciones:', error);
+          logout();
+          alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
+          navigate('/');
+        });
+    }else if(vistaPublicaciones === 'filtrados'){
+      axios.get(`http://localhost:4200/mborradoresFiltro/${user.IDUsuario}?pais=${paisFiltro}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}&page=${currentPage}&limit=${limitPerPage}`, {
+        headers: {
+          authorization: 'Bearer ' + localStorage.getItem('token') 
+        }
+      })
+        .then(response => {
+          setMisBorradores(response.data.publicaciones);
+          setTotalPages(response.data.totalPages);
+          console.log("Se insertaron las publicaciones");
+        })
+        .catch(error => {
+          console.error('Error al obtener las publicaciones:', error);
+          logout();
+          alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
+          navigate('/');
+        });
+    }
+
+  }, [currentPage]);
 
   const actualizarPublicaciones = (nuevasPublicaciones) => {
     setMisBorradores(nuevasPublicaciones);
   };  
+
+        // Función para manejar el cambio de página
+        const handlePageChange = (page) => {
+          setCurrentPage(page);
+      };
+    
+      // Función para retroceder a la página anterior
+      const handlePrevPage = () => {
+        if (currentPage > 1) {
+          setCurrentPage(currentPage - 1);
+        }
+      };
+    
+      // Función para avanzar a la siguiente página
+      const handleNextPage = () => {
+        if (currentPage < totalPages) {
+          setCurrentPage(currentPage + 1);
+        }
+      };
+    
+      const setFechaInicio = (newFechaInicio) =>{
+        setFiltroFI(newFechaInicio);
+      }
+  
+      const setFechaFin = (newFechaFin) =>{
+        setFiltroFF(newFechaFin)
+      }
+  
+      const setPaisFiltro = (newPaisFiltro) =>{
+        setFiltroPais(newPaisFiltro)
+        setVistaPublicaciones('filtrados');
+      }
+  
+      const totalPagesFiltro = (newPages) =>{
+        setTotalPages(newPages);
+      }
+      // Generar los botones de página dinámicamente
+      const pageButtons = [];
+      for (let i = 1; i <= totalPages; i++) {
+        pageButtons.push(
+          <button key={i} onClick={() => handlePageChange(i)} className={currentPage === i ? 'active' : ''}>
+            {i}
+          </button>
+        );
+      }
 
   const [show, setShow] = useState(false);
 
@@ -74,13 +146,11 @@ function InicioCuerpo() {
           <Col xs={8} lg={6}>
             <Row>
               <Col md={12}>
-                <div className="Paginacion">
-                  <button> <RiArrowLeftCircleFill size={30}/> </button>
-                  <button> 1 </button>
-                  <button> 2 </button>
-                  <button> 3 </button>
-                  <button> <RiArrowRightCircleFill size={30}/> </button>
-                </div>
+              <div className="Paginacion">
+                    <button onClick={handlePrevPage}><RiArrowLeftCircleFill size={30} /></button>
+                    {pageButtons}
+                    <button onClick={handleNextPage}><RiArrowRightCircleFill size={30} /></button>
+              </div>
               </Col>
               <Col md={12}>
               {misborradores.length > 0 ? (
@@ -125,7 +195,7 @@ function InicioCuerpo() {
               </Offcanvas.Header>
               <Offcanvas.Body>
                 <Container fluid>
-                  <FiltroLateral actualizarPublicaciones={actualizarPublicaciones} tipoMis = {2}/>
+                  <FiltroLateral actualizarPublicaciones={actualizarPublicaciones} tipoMis = {2} setFechaInicioF = {setFechaInicio} setFechaFinF = {setFechaFin} setPaisFiltro = {setPaisFiltro} totalPagesFiltro = {totalPagesFiltro}/>
                 </Container>
               </Offcanvas.Body>
             </Offcanvas>

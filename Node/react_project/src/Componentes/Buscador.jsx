@@ -4,7 +4,7 @@ import '../Estilos/Buscador.css'
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function Buscador({actualizarPublicaciones}) {
+export default function Buscador({actualizarPublicaciones, setTextoBusquedaNuevo, setTotalPagesBusqueda, setFIBusqueda, setFFBusqueda, setPaisBusquedaS, setTextoBusquedaAvanzadaB}) {
 
   const [texto, setTexto] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -47,9 +47,12 @@ export default function Buscador({actualizarPublicaciones}) {
         }
       })
         .then(response => {
-          const nuevasPublicaciones = response.data;
+          const nuevasPublicaciones = response.data.publicaciones;
+          const nuevasTotalPages = response.data.totalPages;
           // Llamar a la función de callback para actualizar las publicaciones en MisFavoCuerpo
           actualizarPublicaciones(nuevasPublicaciones);
+          setTotalPagesBusqueda(nuevasTotalPages)
+          setTextoBusquedaNuevo(texto);
           console.log("Se insertaron las publicaciones filtradas");
         })
         .catch(error => {
@@ -69,9 +72,14 @@ export default function Buscador({actualizarPublicaciones}) {
         }
       })
         .then(response => {
-          const nuevasPublicaciones = response.data;
+          const nuevasPublicaciones = response.data.publicaciones;
           // Llamar a la función de callback para actualizar las publicaciones en MisFavoCuerpo
           actualizarPublicaciones(nuevasPublicaciones);
+          setTextoBusquedaAvanzadaB(texto);
+          setFIBusqueda(fechaInicio);
+          setFFBusqueda(fechaFin);
+          setPaisBusquedaS(paisSeleccionado);
+          setTotalPagesBusqueda(response.data.totalPages)
           console.log("Se insertaron las publicaciones filtradas");
           toggleModal()
         })

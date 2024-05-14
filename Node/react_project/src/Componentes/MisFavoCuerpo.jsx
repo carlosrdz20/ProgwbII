@@ -15,33 +15,104 @@ import { FaFilter } from "react-icons/fa";
 function MisFavoCuerpo() {
   const navigate = useNavigate();
   const { logout } = useAuth();  
-
-  const [ UsuIni ] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limitPerPage, setLimitPerPage] = useState(4);
+  const [totalPages, setTotalPages] = useState(1);
+  const [paisFiltro, setFiltroPais] = useState(1);
+  const [fechaInicio, setFiltroFI] = useState('');
+  const [fechaFin, setFiltroFF] = useState('');
+  const [vistaPublicaciones, setVistaPublicaciones] = useState('misfavoritos');
   const [publicaciones, setPublicaciones] = useState([]);
 
   useEffect(() => {
-    // Realiza la solicitud para obtener las publicaciones cuando el componente se monta
     const userData = localStorage.getItem('user');
     const user = JSON.parse(userData);
-    axios.get(`http://localhost:4200/misfavoritos/${user.IDUsuario}/${user._id}`, {
-      headers: {
-        authorization: 'Bearer ' + localStorage.getItem('token') 
-      }
-    })
-      .then(response => {
-        setPublicaciones(response.data);
-        console.log("Se insertaron las publicaciones");
+    if(vistaPublicaciones === 'misfavoritos'){
+      
+      axios.get(`http://localhost:4200/misfavoritos/${user.IDUsuario}/${user._id}?page=${currentPage}&limit=${limitPerPage}`, {
+        headers: {
+          authorization: 'Bearer ' + localStorage.getItem('token') 
+        }
       })
-      .catch(error => {
-        
-        console.error('Error al obtener las publicaciones:', error);
-        alert(error.response.data.error);
-      });
-  }, []);
+        .then(response => {
+          setPublicaciones(response.data.publicaciones);
+          setTotalPages(response.data.totalPages);
+          console.log("Se insertaron las publicaciones");
+        })
+        .catch(error => {
+          
+          console.error('Error al obtener las publicaciones:', error);
+          alert(error.response.data.error);
+        });
+    }else if(vistaPublicaciones === 'misffiltros'){
+      
+      axios.get(`http://localhost:4200/misfavoritosfiltrados/${user.IDUsuario}/${user._id}?pais=${paisFiltro}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}&page=${currentPage}&limit=${limitPerPage}`, {
+        headers: {
+          authorization: 'Bearer ' + localStorage.getItem('token') 
+        }
+      })
+        .then(response => {
+          setPublicaciones(response.data.publicaciones);
+          setTotalPages(response.data.totalPages);
+          console.log("Se insertaron las publicaciones");
+        })
+        .catch(error => {
+          
+          console.error('Error al obtener las publicaciones:', error);
+          alert(error.response.data.error);
+        });
+    }
+
+  }, [currentPage]);
 
   const actualizarPublicaciones = (nuevasPublicaciones) => {
     setPublicaciones(nuevasPublicaciones);
-  };  
+  };
+  
+        // Función para manejar el cambio de página
+        const handlePageChange = (page) => {
+          setCurrentPage(page);
+      };
+    
+      // Función para retroceder a la página anterior
+      const handlePrevPage = () => {
+        if (currentPage > 1) {
+          setCurrentPage(currentPage - 1);
+        }
+      };
+    
+      // Función para avanzar a la siguiente página
+      const handleNextPage = () => {
+        if (currentPage < totalPages) {
+          setCurrentPage(currentPage + 1);
+        }
+      };
+    
+      const setFechaInicio = (newFechaInicio) =>{
+        setFiltroFI(newFechaInicio);
+      }
+  
+      const setFechaFin = (newFechaFin) =>{
+        setFiltroFF(newFechaFin)
+      }
+  
+      const setPaisFiltro = (newPaisFiltro) =>{
+        setFiltroPais(newPaisFiltro)
+        setVistaPublicaciones('misffiltros');
+      }
+  
+      const totalPagesFiltro = (newPages) =>{
+        setTotalPages(newPages);
+      }
+      // Generar los botones de página dinámicamente
+      const pageButtons = [];
+      for (let i = 1; i <= totalPages; i++) {
+        pageButtons.push(
+          <button key={i} onClick={() => handlePageChange(i)} className={currentPage === i ? 'active' : ''}>
+            {i}
+          </button>
+        );
+      }
 
   const [show, setShow] = useState(false);
 
@@ -77,13 +148,11 @@ function MisFavoCuerpo() {
           <Col xs={8} lg={6}>
             <Row>
               <Col md={12}>
-                <div className="Paginacion">
-                  <button> <RiArrowLeftCircleFill size={30}/> </button>
-                  <button> 1 </button>
-                  <button> 2 </button>
-                  <button> 3 </button>
-                  <button> <RiArrowRightCircleFill size={30}/> </button>
-                </div>
+              <div className="Paginacion">
+                    <button onClick={handlePrevPage}><RiArrowLeftCircleFill size={30} /></button>
+                    {pageButtons}
+                    <button onClick={handleNextPage}><RiArrowRightCircleFill size={30} /></button>
+              </div>
               </Col>
               <Col md={12}>
                 {publicaciones.length === 0 ? (
@@ -131,7 +200,7 @@ function MisFavoCuerpo() {
               </Offcanvas.Header>
               <Offcanvas.Body>
                 <Container fluid>
-                  <FiltroLateral actualizarPublicaciones={actualizarPublicaciones} tipoMis = {3}/>
+                  <FiltroLateral actualizarPublicaciones={actualizarPublicaciones} tipoMis = {3} setFechaInicioF = {setFechaInicio} setFechaFinF = {setFechaFin} setPaisFiltro = {setPaisFiltro} totalPagesFiltro = {totalPagesFiltro}/> 
                 </Container>
               </Offcanvas.Body>
             </Offcanvas>
