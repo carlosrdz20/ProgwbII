@@ -175,9 +175,9 @@ function InicioCuerpo() {
 
 
   const handleParati = async () => {
-    setCurrentPage(1);
-    setVistaPublicaciones('inicio');
     setVistaPublicacionesB('');
+    setVistaPublicaciones('inicio');
+    setCurrentPage(1);
   };
 
   const handleSiguiendo = async () => {

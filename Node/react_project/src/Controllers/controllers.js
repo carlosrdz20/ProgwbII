@@ -291,7 +291,7 @@ const insertarPublicacion = async (req, res) => {
                       fotos.map(async (foto) => {
                           const extension = path.extname(foto.originalname);
                           const fotoName = `foto_${uuidv4()}${extension}`;
-                          const fotoPath = path.join(uploadDir, fotoName);
+                          //const fotoPath = path.join(uploadDir, fotoName);
                           contador++;
                           return fotoName; // Devuelve el nombre del archivo guardado
                       })
@@ -371,7 +371,7 @@ const insertarBorrador = async (req, res) => {
                       fotos.map(async (foto) => {
                           const extension = path.extname(foto.originalname);
                           const fotoName = `foto_${uuidv4()}${extension}`;
-                          const fotoPath = path.join(uploadDir, fotoName);
+                          //const fotoPath = path.join(uploadDir, fotoName);
                           return fotoName; // Devuelve el nombre del archivo guardado
                       })
                   );
@@ -909,7 +909,8 @@ const mostrarFavoritosFiltrados = async (req, res) => {
           PromedioCalificaciones: 1,
           Calificacion: 1
         }
-      }
+      },
+      { $sort: { FechaPub: -1 } }
     ]);
     console.log("Publicaciones: " ,publicacionesFiltradas);
     const publicacionesConSeguimiento = await Promise.all(publicacionesFiltradas.map(async (publicacion) => {
@@ -1391,7 +1392,7 @@ const editarPublicacion = async (req, res) => {
                       fotos.map(async (foto) => {
                           const extension = path.extname(foto.originalname);
                           const fotoName = `foto_${uuidv4()}${extension}`;
-                          const fotoPath = path.join(uploadDir, fotoName);
+                          //const fotoPath = path.join(uploadDir, fotoName);
                           return fotoName; // Devuelve el nombre del archivo guardado
                       })
                   );
@@ -1600,7 +1601,7 @@ const editarBorrador = async (req, res) => {
                       fotos.map(async (foto) => {
                           const extension = path.extname(foto.originalname);
                           const fotoName = `foto_${uuidv4()}${extension}`;
-                          const fotoPath = path.join(uploadDir, fotoName);
+                          //const fotoPath = path.join(uploadDir, fotoName);
                           return fotoName; // Devuelve el nombre del archivo guardado
                       })
                   );
@@ -2034,7 +2035,8 @@ const mostrarMisPublicacionesFiltrados = async (req, res) => {
           "pais.imagen": 1,
           Saved: 1
         }
-      }
+      },
+      { $sort: { FechaPub: -1 } }
     ]);
 
         const startIndex = (page - 1) * limit;
@@ -2291,7 +2293,8 @@ const mostrarPublicacionesPorTexto = async (req, res) => {
           // Incluimos la calificación del usuario
           Calificacion: 1
         }
-      }
+      },
+      { $sort: { FechaPub: -1 } }
     ]);
 
     const publicacionesConSeguimiento = await Promise.all(publicacionesConUsuariosYPaises.map(async (publicacion) => {
@@ -2458,7 +2461,8 @@ const busquedaAvanzadaPublic = async (req, res) => {
           Calificacion: 1,
           IDPais: 1
         }
-      }
+      },
+      { $sort: { FechaPub: -1 } }
     ]);
 
     const publicacionesConSeguimiento = await Promise.all(publicacionesConUsuariosYPaises.map(async (publicacion) => {
