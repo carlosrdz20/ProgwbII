@@ -9,8 +9,18 @@ export default function Registro(){
 
   const Enviar = (evento) => {
     evento.preventDefault();
-    alert('Estas Registrandote');
     navigate('/');
+  };
+
+  const esMayorDeEdad = (fechaNacimiento) => {
+    const hoy = new Date();
+    const fechaNac = new Date(fechaNacimiento);
+    const edad = hoy.getFullYear() - fechaNac.getFullYear();
+    const mes = hoy.getMonth() - fechaNac.getMonth();
+    if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNac.getDate())) {
+      edad--;
+    }
+    return edad >= 18;
   };
 
   const [formData, setFormData] = useState({
@@ -20,8 +30,7 @@ export default function Registro(){
     Foto: null,
     FechaNacimiento: "",
     Genero: "",
-    Contrasena: "",
-    passwordrep: ""
+    Contrasena: ""
   });
 
   const handleChange = (e) => {
@@ -47,14 +56,17 @@ export default function Registro(){
   const handleSubmit = async (event) => {
     event.preventDefault();
     console.log("Registro",formData);
-    alert('Estas Registrandote');
+    if (!esMayorDeEdad(formData.FechaNacimiento)) {
+      alert('Debes ser mayor de 18 años para registrarte.');
+      return;
+    }
     try {
       // Enviar los datos del formulario al servidor
       
       const response = await axios.post('http://localhost:4200/insertarUsuario', formData, {headers:{'Content-Type': 'multipart/form-data'}});
       
       console.log(response.data);
-      alert('Usuario registrado exitosamente');
+      alert('Te has registrado con éxito.');
       
     } catch (error) {
       console.error('Error al registrar usuario:', error);
@@ -101,16 +113,11 @@ export default function Registro(){
               <option value="" disabled selected>Selecciona tu género</option>
               <option value="masculino">Masculino</option>
               <option value="femenino">Femenino</option>
-              <option value="otro">Otro</option>
             </select>
           </div>
           <h4>Contraseña</h4>
           <div class="textbox">
             <input type="password" placeholder="Contraseña" name="Contrasena" value={formData.Contrasena} onChange={handleChange} required />
-          </div>
-          <h4>Repetir contraseña</h4>
-          <div class="textbox">
-            <input type="password" placeholder="Repetir contraseña" name="passwordrep" value={formData.passwordrep} onChange={handleChange} required/>
           </div>
           <button type="submit" className="btn-IniSes">Registrate <strong>{'>'}</strong> </button>
         </form>

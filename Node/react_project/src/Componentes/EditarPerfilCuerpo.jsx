@@ -69,7 +69,6 @@ function EditarPerfilCuerpo() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     console.log("Editando perfil",user2);
-    alert('Se va a editar tu perfil con los datos proporcionados.');
     try {
       // Enviar los datos del formulario al servidor
       //FALTA CAMBIAR RUTA
@@ -83,7 +82,6 @@ function EditarPerfilCuerpo() {
           console.log("Datos del usuario:");
           console.log(response.data);
           login(response.data, response.data.token)
-          alert("Iniciaste Sesion");
           navigate('/Inicio')
         } else {
           alert('Error al iniciar sesión. Por favor, inténtalo de nuevo.');

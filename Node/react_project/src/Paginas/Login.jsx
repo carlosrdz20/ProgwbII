@@ -39,7 +39,6 @@ export default function Login() {
         console.log("Datos del usuario:");
         console.log(response.data);
         login(response.data, response.data.token)
-        alert("Iniciaste Sesion");
         navigate('/Inicio')
       } else {
         alert('Correo y contraseña incorrectos. Por favor, inténtalo de nuevo.');
@@ -82,7 +81,6 @@ export default function Login() {
           <p>¿No tienes una cuenta? </p>
           <p> <Link to={'/Registro'}>Registrate aquí</Link> </p>
           <hr />
-          <p> <Link to={'/Invitado'}>Navegar como invitado</Link> </p>
         </div>
       </div>
 
