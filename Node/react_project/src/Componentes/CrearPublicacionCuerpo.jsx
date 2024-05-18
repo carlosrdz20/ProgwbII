@@ -29,7 +29,7 @@ function CrearPublicacion() {
       Fotos2: null,
       Fotos3: null,
       Estatus: "",
-      IDUsuario: user.IDUsuario
+      IDUsuario: user ? user.IDUsuario : ""
     });
     
     const handleChange = (e, input) => {
@@ -99,6 +99,11 @@ function CrearPublicacion() {
     };
 
     useEffect(() => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+          // Si no hay token, redirigir al usuario a la página de inicio de sesión
+          navigate("/");
+      }
       axios.get('http://localhost:4200/tpaises')
       .then(response => {
         setPaises(response.data);

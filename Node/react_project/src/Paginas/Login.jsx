@@ -82,7 +82,7 @@ export default function Login() {
           <p>¿No tienes una cuenta? </p>
           <p> <Link to={'/Registro'}>Registrate aquí</Link> </p>
           <hr />
-          <p> <Link to={'/'}>Navegar como invitado</Link> </p>
+          <p> <Link to={'/Invitado'}>Navegar como invitado</Link> </p>
         </div>
       </div>
 

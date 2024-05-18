@@ -18,8 +18,8 @@ import PerfilAjeno from './Paginas/PerfilAjeno.jsx';
 import { UserProvider } from './Context/UserContext.js';
 import AuthProvider from './Context/AuthProvider.js';
 import PublicacionProvider from './Context/PubProvider.js';
-import PrivateRoute from './PrivateRoute';
 import Pruebas from './Paginas/Pruebas.jsx'
+import Invitado from './Paginas/Invitado.jsx'
 
 
 const router = createBrowserRouter([
@@ -75,6 +75,10 @@ const router = createBrowserRouter([
   {
     path:'/Pruebas',
     element: <Pruebas />,
+  },  
+  {
+    path:'/Invitado',
+    element: <Invitado />,
   }
 ])
 

@@ -2539,7 +2539,66 @@ const busquedaAvanzadaPublic = async (req, res) => {
 };
 
 
+//Invitado
 
+const mostrarComoInvitado = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 4;
+    const totalPublicaciones = await Publicaciones.countDocuments({ Estatus: 1 });
+    const totalPages = Math.ceil(totalPublicaciones / limit);
+    const publicacionesConUsuariosYPaises = await Publicaciones.aggregate([
+      // Realiza un "lookup" para unir la colección de usuarios
+      {
+        $lookup: {
+          from: "usuarios", 
+          localField: "IDUsuario", 
+          foreignField: "IDUsuario", 
+          as: "usuario" 
+        }
+      },
+      { $unwind: "$usuario" },
+      {
+        $lookup: {
+          from: "paises", 
+          localField: "IDPais", 
+          foreignField: "idPais", 
+          as: "pais"
+        }
+      },
+      { $unwind: "$pais" },
+      // Filtra las publicaciones por el atributo "Estatus"
+      { $match: { Estatus: 1 } },
+      {
+        $project: {
+          _id: 1,
+          IDPublicacion: 1,
+          Titulo: 1,
+          Descripcion: 1,
+          FechaPub: 1,
+          ImagenUno: 1,
+          ImagenDos: 1,
+          ImagenTres: 1,
+          Estatus: 1,
+          "usuario._id": 1,
+          "usuario.NombreUsuario": 1, 
+          "usuario.Foto": 1, 
+          "pais.pais": 1, 
+          "pais.imagen": 1
+        }
+      },
+      { $sort: { FechaPub: -1 } }
+    ])
+
+
+    res.status(200).json({
+      publicaciones: publicacionesConUsuariosYPaises,
+    });
+  } catch (error) {
+    console.error("Error al buscar publicaciones con usuarios y países:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+};
 
 
 module.exports = {
@@ -2569,5 +2628,6 @@ module.exports = {
     mostrarMisPublicacionesFiltrados,
     mborradoresFiltro,
     mostrarPublicacionesPorTexto,
-    busquedaAvanzadaPublic
+    busquedaAvanzadaPublic,
+    mostrarComoInvitado
 }

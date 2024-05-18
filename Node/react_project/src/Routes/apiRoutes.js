@@ -33,7 +33,7 @@ routers.post(
   jwt_helper.verifyToken, 
   controllers.insertarPublicacion
 );
-routers.get('/tpublicaciones/:IDUsuario/:_idUsuario', controllers.mostrarPublicaciones);
+routers.get('/tpublicaciones/:IDUsuario/:_idUsuario',jwt_helper.verifyToken, controllers.mostrarPublicaciones);
 routers.post('/insertarBorrador', upload.fields([
   { name: 'Fotos1', maxCount: 1 }, 
   { name: 'Fotos2', maxCount: 1 }, 
@@ -68,6 +68,7 @@ routers.get('/mpubFiltrado/:IDUsuario',jwt_helper.verifyToken, controllers.mostr
 routers.get('/mborradoresFiltro/:IDUsuario',jwt_helper.verifyToken, controllers.mborradoresFiltro);
 routers.get('/busquedaPublicaciones/:IDUsuario/:_idUsuario',jwt_helper.verifyToken, controllers.mostrarPublicacionesPorTexto);
 routers.get('/busquedaAvanzada/:IDUsuario/:_idUsuario',jwt_helper.verifyToken, controllers.busquedaAvanzadaPublic);
+routers.get('/invitado', controllers.mostrarComoInvitado);
 
 
 

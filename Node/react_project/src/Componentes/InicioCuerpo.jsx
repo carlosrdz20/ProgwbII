@@ -31,111 +31,117 @@ function InicioCuerpo() {
   const { logout } = useAuth();
 
   useEffect(() => {
-    // Realiza la solicitud para obtener las publicaciones cuando el componente se monta
-    const userData = localStorage.getItem('user');
-    const user = JSON.parse(userData);
-    let requestUrl = '';
-    if(vistaPublicaciones === 'inicio' && vistaPublicacionesB !== 'busqueda' && vistaPublicacionesB !== 'busquedaAvanzada'){
-      requestUrl =`http://localhost:4200/tpublicaciones/${user.IDUsuario}/${user._id}`;
-    }else if(vistaPublicaciones === 'siguiendo' && vistaPublicacionesB !== 'busqueda' && vistaPublicacionesB !== 'busquedaAvanzada'){
-      requestUrl = `http://localhost:4200/mpubSeguidos/${user.IDUsuario}/${user._id}`;
-    }else if(vistaPublicacionesB === 'busqueda'){
-      requestUrl = `http://localhost:4200/busquedaPublicaciones/${user.IDUsuario}/${user._id}?textoBusqueda=${textoBusqueda}`;
-    }else if(vistaPublicacionesB === 'busquedaAvanzada'){
-      requestUrl = `http://localhost:4200/busquedaAvanzada/${user.IDUsuario}/${user._id}?textoBusqueda=${textoBusquedaAvanzada}&fechaInicio=${FechaInicioBusqueda}&fechaFin==${FechaFinBusqueda}&paisSeleccionado=${paisBusqueda}`;
-    }
-    if(vistaPublicaciones === 'inicio' && vistaPublicacionesB !== 'busqueda' && vistaPublicacionesB !== 'busquedaAvanzada'){
-      axios.get(`${requestUrl}?page=${currentPage}&limit=${limitPerPage}`, {
-        headers: {
-          authorization: 'Bearer ' + localStorage.getItem('token') 
-        }
-      })
-        .then(response => {
-          setPublicaciones(response.data.publicaciones);
-          setTotalPages(response.data.totalPages)
-          console.log("Se insertaron las publicaciones");
-        })
-        .catch(error => {
-          console.error('Error al obtener las publicaciones:', error);
-          logout();
-          alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
-          navigate('/')
-        });
-  
-        axios.get(`http://localhost:4200/topPaises`, {
+    
+
+    if(localStorage.getItem('token')){
+      const userData = localStorage.getItem('user');
+      const user = JSON.parse(userData);
+      let requestUrl = '';
+      if(vistaPublicaciones === 'inicio' && vistaPublicacionesB !== 'busqueda' && vistaPublicacionesB !== 'busquedaAvanzada'){
+        requestUrl =`http://localhost:4200/tpublicaciones/${user.IDUsuario}/${user._id}`;
+      }else if(vistaPublicaciones === 'siguiendo' && vistaPublicacionesB !== 'busqueda' && vistaPublicacionesB !== 'busquedaAvanzada'){
+        requestUrl = `http://localhost:4200/mpubSeguidos/${user.IDUsuario}/${user._id}`;
+      }else if(vistaPublicacionesB === 'busqueda'){
+        requestUrl = `http://localhost:4200/busquedaPublicaciones/${user.IDUsuario}/${user._id}?textoBusqueda=${textoBusqueda}`;
+      }else if(vistaPublicacionesB === 'busquedaAvanzada'){
+        requestUrl = `http://localhost:4200/busquedaAvanzada/${user.IDUsuario}/${user._id}?textoBusqueda=${textoBusquedaAvanzada}&fechaInicio=${FechaInicioBusqueda}&fechaFin==${FechaFinBusqueda}&paisSeleccionado=${paisBusqueda}`;
+      }
+      if(vistaPublicaciones === 'inicio' && vistaPublicacionesB !== 'busqueda' && vistaPublicacionesB !== 'busquedaAvanzada'){
+        axios.get(`${requestUrl}?page=${currentPage}&limit=${limitPerPage}`, {
           headers: {
             authorization: 'Bearer ' + localStorage.getItem('token') 
           }
         })
           .then(response => {
-            setTopPaises(response.data);
+            setPublicaciones(response.data.publicaciones);
+            setTotalPages(response.data.totalPages)
             console.log("Se insertaron las publicaciones");
           })
           .catch(error => {
             console.error('Error al obtener las publicaciones:', error);
+            logout();
+            alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
+            navigate('/')
           });
-    }else if(vistaPublicaciones === 'siguiendo' && vistaPublicacionesB !== 'busqueda'){
-      axios.get(`${requestUrl}?page=${currentPage}&limit=${limitPerPage}`, {
-        headers: {
-          authorization: 'Bearer ' + localStorage.getItem('token') 
-        }
-      })
-        .then(response => {
-          setPublicaciones(response.data.publicaciones);
-          setTotalPages(response.data.totalPages)
-          console.log("Se insertaron las publicaciones");
-        })
-        .catch(error => {
-          console.error('Error al obtener las publicaciones:', error);
-          logout();
-          alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
-          navigate('/')
-        });
-  
-        axios.get(`http://localhost:4200/topPaises`, {
+    
+          axios.get(`http://localhost:4200/topPaises`, {
+            headers: {
+              authorization: 'Bearer ' + localStorage.getItem('token') 
+            }
+          })
+            .then(response => {
+              setTopPaises(response.data);
+              console.log("Se insertaron las publicaciones");
+            })
+            .catch(error => {
+              console.error('Error al obtener las publicaciones:', error);
+            });
+      }else if(vistaPublicaciones === 'siguiendo' && vistaPublicacionesB !== 'busqueda'){
+        axios.get(`${requestUrl}?page=${currentPage}&limit=${limitPerPage}`, {
           headers: {
             authorization: 'Bearer ' + localStorage.getItem('token') 
           }
         })
           .then(response => {
-            setTopPaises(response.data);
+            setPublicaciones(response.data.publicaciones);
+            setTotalPages(response.data.totalPages)
             console.log("Se insertaron las publicaciones");
           })
           .catch(error => {
             console.error('Error al obtener las publicaciones:', error);
+            logout();
+            alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
+            navigate('/')
           });
-    }else if(vistaPublicacionesB === 'busqueda' || vistaPublicacionesB === 'busquedaAvanzada'){
-      axios.get(`${requestUrl}&page=${currentPage}&limit=${limitPerPage}`, {
-        headers: {
-          authorization: 'Bearer ' + localStorage.getItem('token') 
-        }
-      })
-        .then(response => {
-          setPublicaciones(response.data.publicaciones);
-          setTotalPages(response.data.totalPages);
-          console.log("Se insertaron las publicaciones");
-        })
-        .catch(error => {
-          console.error('Error al obtener las publicaciones:', error);
-          logout();
-          alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
-          navigate('/')
-        });
-  
-        axios.get(`http://localhost:4200/topPaises`, {
+    
+          axios.get(`http://localhost:4200/topPaises`, {
+            headers: {
+              authorization: 'Bearer ' + localStorage.getItem('token') 
+            }
+          })
+            .then(response => {
+              setTopPaises(response.data);
+              console.log("Se insertaron las publicaciones");
+            })
+            .catch(error => {
+              console.error('Error al obtener las publicaciones:', error);
+            });
+      }else if(vistaPublicacionesB === 'busqueda' || vistaPublicacionesB === 'busquedaAvanzada'){
+        axios.get(`${requestUrl}&page=${currentPage}&limit=${limitPerPage}`, {
           headers: {
             authorization: 'Bearer ' + localStorage.getItem('token') 
           }
         })
           .then(response => {
-            setTopPaises(response.data);
+            setPublicaciones(response.data.publicaciones);
+            setTotalPages(response.data.totalPages);
             console.log("Se insertaron las publicaciones");
           })
           .catch(error => {
             console.error('Error al obtener las publicaciones:', error);
+            logout();
+            alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
+            navigate('/')
           });
+    
+          axios.get(`http://localhost:4200/topPaises`, {
+            headers: {
+              authorization: 'Bearer ' + localStorage.getItem('token') 
+            }
+          })
+            .then(response => {
+              setTopPaises(response.data);
+              console.log("Se insertaron las publicaciones");
+            })
+            .catch(error => {
+              console.error('Error al obtener las publicaciones:', error);
+            });
+      }
+    }else{
+      navigate("/");
     }
 
+    
   }, [currentPage,vistaPublicaciones]);
   
     // Función para manejar el cambio de página
@@ -225,27 +231,29 @@ function InicioCuerpo() {
     <div className="Cuerpo">
       <Container fluid>
         <Row>
-          <Col xs={2} lg={3}>
-            <Container fluid>
-              <button variant="primary" className="d-lg-none" onClick={handleShow}>
-                <BiSolidFoodMenu size={25}/>
-              </button>
-            </Container>
+        {localStorage.getItem('token') && // Verifica si hay un token en el localStorage
+            <Col xs={2} lg={3}>
+              <Container fluid>
+                <button variant="primary" className="d-lg-none" onClick={handleShow}>
+                  <BiSolidFoodMenu size={25}/>
+                </button>
+              </Container>
 
-            <Offcanvas show={show} onHide={handleClose} responsive="lg" className="bodycanvas">
-              <Offcanvas.Header closeButton>
-                <Offcanvas.Title></Offcanvas.Title>
-              </Offcanvas.Header>
-              <Offcanvas.Body>
-                <MenuLateral pagina={'Inicio'}/>
-              </Offcanvas.Body>
-            </Offcanvas>
-          </Col>
+              <Offcanvas show={show} onHide={handleClose} responsive="lg" className="bodycanvas">
+                <Offcanvas.Header closeButton>
+                  <Offcanvas.Title></Offcanvas.Title>
+                </Offcanvas.Header>
+                <Offcanvas.Body>
+                  <MenuLateral pagina={'Inicio'}/>
+                </Offcanvas.Body>
+              </Offcanvas>
+            </Col>
+          }
           
           <Col xs={8} lg={6}>
             <Container>
-              <Row >
-                {UsuIni?(
+            <Row >
+                {localStorage.getItem('token') && UsuIni ? (
                   <>                    
                     <Col xs={12}>
                       <Buscador actualizarPublicaciones={actualizarPublicaciones} setTextoBusquedaNuevo = {setTextoBusquedaNuevo} setTotalPagesBusqueda = {setTotalPagesBusqueda} setFIBusqueda = {setFIBusqueda} setFFBusqueda = {setFFBusqueda} setPaisBusquedaS = {setPaisBusquedaS} setTextoBusquedaAvanzadaB = {setTextoBusquedaAvanzadaB}  />
@@ -265,15 +273,9 @@ function InicioCuerpo() {
                 ) : (
                   <>
                     <Col xs={12}>
-                      <Buscador actualizarPublicaciones={actualizarPublicaciones} />
                     </Col>
                     <Col xs={12}>
                       <Container fluid className="Paginacion">
-                        <button> <RiArrowLeftCircleFill size={30}/> </button>
-                        <button> 1 </button>
-                        <button> 2 </button>
-                        <button> 3 </button>
-                        <button> <RiArrowRightCircleFill size={30}/> </button>
                       </Container>
                     </Col>
                   </>

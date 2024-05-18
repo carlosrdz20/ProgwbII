@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../Estilos/Navibar.css'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import useAuth from '../Context/useAuth';
 import NavibarUsuario from './NavibarUsuario.jsx';
 import { Navbar, Container } from 'react-bootstrap';
@@ -9,6 +9,16 @@ import { Navbar, Container } from 'react-bootstrap';
 function Navibar() {
 
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  // Función para verificar la existencia del token en localStorage
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    // Si no hay token, redirigir al usuario a la página de inicio
+    if (!token) {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <Navbar className='Navibar'>
