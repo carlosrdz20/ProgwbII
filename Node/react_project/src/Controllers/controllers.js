@@ -65,6 +65,21 @@ const insertarUsuario = async (req, res) => {
      return res.status(400).json({ error: "Fecha de Nacimiento y Género son campos obligatorios" });
    }
 
+     
+    const fechaNacimiento = new Date(req.body.FechaNacimiento);
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+    const mes = hoy.getMonth() - fechaNacimiento.getMonth();
+    const dia = hoy.getDate() - fechaNacimiento.getDate();
+    
+    if (mes < 0 || (mes === 0 && dia < 0)) {
+      edad--;
+    }
+
+    if (edad < 18 || edad > 100) {
+      return res.status(400).json({ error: "La Fecha de Nacimiento debe indicar que el usuario tiene entre 18 y 100 años" });
+    }
+
   const usuario = new Usuario({
       IDUsuario: Math.floor(Math.random() * (1000000 - 1 + 1)) + 1,
       NombreUsuario: req.body.NombreUsuario,

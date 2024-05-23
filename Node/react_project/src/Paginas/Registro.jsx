@@ -12,16 +12,7 @@ export default function Registro(){
     navigate('/');
   };
 
-  const esMayorDeEdad = (fechaNacimiento) => {
-    const hoy = new Date();
-    const fechaNac = new Date(fechaNacimiento);
-    const edad = hoy.getFullYear() - fechaNac.getFullYear();
-    const mes = hoy.getMonth() - fechaNac.getMonth();
-    if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNac.getDate())) {
-      edad--;
-    }
-    return edad >= 18;
-  };
+
 
   const [formData, setFormData] = useState({
     NombreUsuario: "",
@@ -56,10 +47,6 @@ export default function Registro(){
   const handleSubmit = async (event) => {
     event.preventDefault();
     console.log("Registro",formData);
-    if (!esMayorDeEdad(formData.FechaNacimiento)) {
-      alert('Debes ser mayor de 18 años para registrarte.');
-      return;
-    }
     try {
       // Enviar los datos del formulario al servidor
       
