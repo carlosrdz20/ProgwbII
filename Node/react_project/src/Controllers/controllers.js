@@ -138,6 +138,31 @@ const editarUsuario = async (req, res) => {
   const { NombreUsuario, Nombre, Correo, Contrasena, FechaNacimiento, Genero } = req.body; // Datos actualizados del usuario
   const foto = req.file ? req.file : null;
 
+  const nombreUsuarioRegex = /^[^\s]+$/; 
+  const nombreRegex = /^[a-zA-Z\s]+$/; 
+  const correoRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+}{"':;?/>.<,])(?=.*[a-zA-Z]).{6,}$/; 
+
+  if (!nombreUsuarioRegex.test(NombreUsuario)) {
+    return res.status(400).json({ error: "El Nombre de Usuario no debe contener espacios" });
+  }
+
+  if (!nombreRegex.test(Nombre)) {
+    return res.status(400).json({ error: "El Nombre debe contener solo letras y espacios" });
+  }
+
+  if (!correoRegex.test(Correo)) {
+    return res.status(400).json({ error: "El Correo electrónico debe tener un formato válido" });
+  }
+
+  if (Contrasena.includes(" ") || !passwordRegex.test(Contrasena)) {
+    return res.status(400).json({ error: "La Contraseña debe contener al menos una mayúscula, una minúscula, un dígito, un carácter especial y ser mayor a 6 caracteres" });
+  }
+  
+  if (!FechaNacimiento || !Genero) {
+    return res.status(400).json({ error: "Fecha de Nacimiento y Género son campos obligatorios" });
+  }
+
   // Verifica si se adjuntó una nueva foto
   let fotoPath = null;
   if (req.file) {

@@ -30,11 +30,19 @@
   display: flex;
 }
 
+.boton-seleccionado{
+  background-color: rgb(255, 19, 153);
+}
+
 .ColPublic{
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
   align-items: center;
+}
+
+.active-page{
+  background-color: rgb(255, 19, 153);
 }
 
 .DestiPopus{

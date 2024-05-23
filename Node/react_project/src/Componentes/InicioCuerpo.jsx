@@ -167,7 +167,7 @@ function InicioCuerpo() {
     const pageButtons = [];
     for (let i = 1; i <= totalPages; i++) {
       pageButtons.push(
-        <button key={i} onClick={() => handlePageChange(i)} className={currentPage === i ? 'active' : ''}>
+        <button key={i} onClick={() => handlePageChange(i)} className={currentPage === i ? 'active-page' : ''}>
           {i}
         </button>
       );
@@ -259,8 +259,8 @@ function InicioCuerpo() {
                       <Buscador actualizarPublicaciones={actualizarPublicaciones} setTextoBusquedaNuevo = {setTextoBusquedaNuevo} setTotalPagesBusqueda = {setTotalPagesBusqueda} setFIBusqueda = {setFIBusqueda} setFFBusqueda = {setFFBusqueda} setPaisBusquedaS = {setPaisBusquedaS} setTextoBusquedaAvanzadaB = {setTextoBusquedaAvanzadaB}  />
                     </Col>
                     <Col xs={12} md={5} className="Siguiendo">
-                        <button onClick={handleParati}>Para ti</button>
-                        <button onClick={handleSiguiendo}>Siguiendo</button>
+                        <button onClick={handleParati} className={vistaPublicaciones === 'inicio' ? 'boton-seleccionado' : 'boton-no-seleccionado'}>Para ti</button>
+                        <button onClick={handleSiguiendo} className={vistaPublicaciones === 'siguiendo' ? 'boton-seleccionado' : 'boton-no-seleccionado'}>Siguiendo</button>
                     </Col>
                     <Col xs={12} md={7}>
                     <div className="Paginacion">
