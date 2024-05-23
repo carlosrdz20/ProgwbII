@@ -33,7 +33,7 @@ routers.post(
   jwt_helper.verifyToken, 
   controllers.insertarPublicacion
 );
-routers.get('/tpublicaciones/:IDUsuario/:_idUsuario',jwt_helper.verifyToken, controllers.mostrarPublicaciones);
+routers.get('/tpublicaciones/:IDUsuario/:_idUsuario', controllers.mostrarPublicaciones);
 routers.post('/insertarBorrador', upload.fields([
   { name: 'Fotos1', maxCount: 1 }, 
   { name: 'Fotos2', maxCount: 1 }, 
@@ -63,7 +63,7 @@ routers.get('/usuarioAjeno',jwt_helper.verifyToken, controllers.busquedaAjeno);
 routers.get('/mpubAjeno/:IDUsuarioAjeno/:IDUsuario/:_idUsuario', controllers.mpubAjeno);
 routers.post('/insertarSeguimiento',jwt_helper.verifyToken, controllers.insertarSeguimiento);
 routers.get('/mpubSeguidos/:IDUsuario/:_idUsuario',jwt_helper.verifyToken, controllers.mpubSeguidos);
-routers.get('/topPaises', jwt_helper.verifyToken,controllers.obtenerTopPais);
+routers.get('/topPaises',controllers.obtenerTopPais);
 routers.get('/mpubFiltrado/:IDUsuario',jwt_helper.verifyToken, controllers.mostrarMisPublicacionesFiltrados);
 routers.get('/mborradoresFiltro/:IDUsuario',jwt_helper.verifyToken, controllers.mborradoresFiltro);
 routers.get('/busquedaPublicaciones/:IDUsuario/:_idUsuario',jwt_helper.verifyToken, controllers.mostrarPublicacionesPorTexto);

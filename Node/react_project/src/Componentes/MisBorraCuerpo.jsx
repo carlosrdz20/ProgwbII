@@ -25,7 +25,12 @@ function InicioCuerpo() {
   const { user } = useAuth();
 
   useEffect(() => {
-    if(vistaPublicaciones === 'misborradores'){
+    const token = localStorage.getItem('token');
+    // Si no hay token, redirigir al usuario a la página de inicio
+    if (!token) {
+      navigate("/");
+    }
+    if(vistaPublicaciones === 'misborradores' && token){
       axios.get(`http://localhost:4200/misborradores/${user.IDUsuario}?page=${currentPage}&limit=${limitPerPage}`, {
         headers: {
           authorization: 'Bearer ' + localStorage.getItem('token') 
@@ -42,7 +47,7 @@ function InicioCuerpo() {
           alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
           navigate('/');
         });
-    }else if(vistaPublicaciones === 'filtrados'){
+    }else if(vistaPublicaciones === 'filtrados' && token){
       axios.get(`http://localhost:4200/mborradoresFiltro/${user.IDUsuario}?pais=${paisFiltro}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}&page=${currentPage}&limit=${limitPerPage}`, {
         headers: {
           authorization: 'Bearer ' + localStorage.getItem('token') 

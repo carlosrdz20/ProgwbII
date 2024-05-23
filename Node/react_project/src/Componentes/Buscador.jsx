@@ -3,6 +3,7 @@ import { Form, Button, Modal, Container } from 'react-bootstrap';
 import '../Estilos/Buscador.css'
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Buscador({actualizarPublicaciones, setTextoBusquedaNuevo, setTotalPagesBusqueda, setFIBusqueda, setFFBusqueda, setPaisBusquedaS, setTextoBusquedaAvanzadaB}) {
 
@@ -12,6 +13,7 @@ export default function Buscador({actualizarPublicaciones, setTextoBusquedaNuevo
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
   const [paisSeleccionado, setPaisSeleccionado] = useState(1); //puse el ID 1 de inicio por si nunca entra al handleChange
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -35,6 +37,11 @@ export default function Buscador({actualizarPublicaciones, setTextoBusquedaNuevo
         .catch(error => {
             console.error('Error al obtener los países:', error);
         });
+        const token = localStorage.getItem('token');
+        // Si no hay token, redirigir al usuario a la página de inicio
+        if (!token) {
+          navigate("/");
+        }
   }, []);
 
   const busquedaNormal = () => {

@@ -25,7 +25,16 @@ function InicioCuerpo() {
   const { user } = useAuth();
 
   useEffect(() => {
-    if(vistaPublicaciones === 'mispublicaciones'){
+    const token = localStorage.getItem('token');
+    // Si no hay token, redirigir al usuario a la página de inicio
+    if (!token) {
+      navigate("/");
+    }
+    const userData = localStorage.getItem('user');
+    const user = JSON.parse(userData);
+
+    if(vistaPublicaciones === 'mispublicaciones' && token){
+      console.log("Pasé por aquí");
       axios.get(`http://localhost:4200/mispublicaciones/${user.IDUsuario}?page=${currentPage}&limit=${limitPerPage}`, {
         headers: {
           authorization: 'Bearer ' + localStorage.getItem('token') 
@@ -42,7 +51,7 @@ function InicioCuerpo() {
           alert("La sesión ya expiró, por favor vuelve a iniciar sesión")
           navigate('/');
         });
-    }else if(vistaPublicaciones === 'misFiltros'){
+    }else if(vistaPublicaciones === 'misFiltros' && token){
       axios.get(`http://localhost:4200/mpubFiltrado/${user.IDUsuario}?pais=${paisFiltro}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}&page=${currentPage}&limit=${limitPerPage}`, {
         headers: {
           authorization: 'Bearer ' + localStorage.getItem('token') 
@@ -60,6 +69,7 @@ function InicioCuerpo() {
           navigate('/');
         });
     }
+
 
   }, [currentPage]);
 

@@ -27,7 +27,13 @@ function MisFavoCuerpo() {
   useEffect(() => {
     const userData = localStorage.getItem('user');
     const user = JSON.parse(userData);
-    if(vistaPublicaciones === 'misfavoritos'){
+    const token = localStorage.getItem('token');
+    // Si no hay token, redirigir al usuario a la página de inicio
+    if (!token) {
+      navigate("/");
+    }
+    
+    if(vistaPublicaciones === 'misfavoritos' && token){
       
       axios.get(`http://localhost:4200/misfavoritos/${user.IDUsuario}/${user._id}?page=${currentPage}&limit=${limitPerPage}`, {
         headers: {
@@ -44,7 +50,7 @@ function MisFavoCuerpo() {
           console.error('Error al obtener las publicaciones:', error);
           alert(error.response.data.error);
         });
-    }else if(vistaPublicaciones === 'misffiltros'){
+    }else if(vistaPublicaciones === 'misffiltros' && token){
       
       axios.get(`http://localhost:4200/misfavoritosfiltrados/${user.IDUsuario}/${user._id}?pais=${paisFiltro}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}&page=${currentPage}&limit=${limitPerPage}`, {
         headers: {

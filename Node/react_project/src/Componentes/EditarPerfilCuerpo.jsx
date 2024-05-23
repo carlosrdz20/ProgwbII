@@ -20,8 +20,13 @@ function EditarPerfilCuerpo() {
     password: '' });
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    // Si no hay token, redirigir al usuario a la página de inicio
+    if (!token) {
+      navigate("/");
+    }
     const userData = localStorage.getItem('user');
-    if (userData) {
+    if (userData && token) {
       setuser2(user);
       // Formatear la fecha
       console.log(user.FechaNacimiento);
@@ -136,11 +141,11 @@ function EditarPerfilCuerpo() {
                           <Row>
                             <Col xs={12} md={6}>
                               <label>Nombre de usuario: </label>
-                              <input type="text" id="Usuario" className="InputPerfil" name="NombreUsuario" defaultValue={user.NombreUsuario} onChange={handleChange}/>
+                              <input type="text" id="Usuario" className="InputPerfil" name="NombreUsuario" defaultValue={user ? user.NombreUsuario : ''} onChange={handleChange}/>
                             </Col>
                             <Col xs={12} md={6}>
                               <label>Correo electronico: </label>
-                              <input type="text" id="Correo" className="InputPerfil" name="Correo" defaultValue={user.Correo} onChange={handleChange}/>
+                              <input type="text" id="Correo" className="InputPerfil" name="Correo" defaultValue={user ? user.Correo : ''} onChange={handleChange}/>
                             </Col>
                           </Row>
                         </Container>
@@ -150,13 +155,13 @@ function EditarPerfilCuerpo() {
                           <Row>
                             <Col xs={12} md={6}>
                               <label>Nombre completo: </label>
-                              <input type="text" id="Nombre" className="InputPerfil" name="Nombre" defaultValue={user.Nombre} onChange={handleChange}/>
+                              <input type="text" id="Nombre" className="InputPerfil" name="Nombre" defaultValue={user ? user.Nombre : ''} onChange={handleChange}/>
                             </Col>
                             <Col xs={12} md={6}>
                               <div>
                                 <label>Genero: </label>                                
                               </div>
-                              <select id="Combobox" className="Combobox" name="Genero" defaultValue={user.Genero === 'masculino' ? "masculino" : "femenino"} onChange={handleChange}>
+                              <select id="Combobox" className="Combobox" name="Genero" defaultValue={user && user.Genero === 'masculino' ? "masculino" : "femenino"} onChange={handleChange}>
                                 <option value="masculino">Masculino</option>
                                 <option value="femenino">Femenino</option>
                               </select>
@@ -169,7 +174,7 @@ function EditarPerfilCuerpo() {
                           <Row>
                             <Col xs={12} md={6}>
                               <label>Contraseña actual: </label>
-                              <input type="text" id="Password" className="InputPerfil" name="Contrasena" defaultValue={user.Contrasena} onChange={handleChange}/>
+                              <input type="text" id="Password" className="InputPerfil" name="Contrasena" defaultValue={user ? user.Contrasena : ''} onChange={handleChange}/>
                             </Col>
                             <Col xs={12} md={6}>
                               <label>Fecha de nacimiento: </label>

@@ -6,10 +6,11 @@ import PublicDisplay from "./PublicacionDisplay.jsx";
 import axios from "axios";
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import { BiSolidFoodMenu } from "react-icons/bi";
+import { Link, useNavigate } from "react-router-dom";
 
 
 function PerfilAjenoCuerpo() {
-
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [seguidores, setSeguidores] = useState();
   const [seguidos, setSeguidos] = useState();
@@ -19,58 +20,66 @@ function PerfilAjenoCuerpo() {
   const [textoSeguir, setTextoSeguir] = useState('+ Seguir')
 
   useEffect(() => {
-    const userData = localStorage.getItem('user');
-    const user = JSON.parse(userData);
-    console.log("Usuario ID: ", user._id);
-    const buscarUsuario = async () => {
-      try {
-        const response = await axios.get(`http://localhost:4200/usuarioAjeno?userId=${localStorage.getItem('usuAjeno')}&sessionID=${user._id}`, {
-          headers: {
-            authorization: 'Bearer ' + localStorage.getItem('token')
+    const token = localStorage.getItem('token');
+    // Si no hay token, redirigir al usuario a la página de inicio
+    if (!token) {
+      navigate("/");
+    }
+    else{
+      const userData = localStorage.getItem('user');
+      const user = JSON.parse(userData);
+      console.log("Usuario ID: ", user._id);
+      const buscarUsuario = async () => {
+        try {
+          const response = await axios.get(`http://localhost:4200/usuarioAjeno?userId=${localStorage.getItem('usuAjeno')}&sessionID=${user._id}`, {
+            headers: {
+              authorization: 'Bearer ' + localStorage.getItem('token')
+            }
+          });
+      
+          if (response.status === 200) {
+            const { usuario, seguidores, seguidos, sigue } = response.data;
+            
+            // Llenar los datos del usuario
+            setUsername(usuario.NombreUsuario);
+            setFoto(usuario.Foto);
+            // Llenar los datos de seguidores y seguidos
+            setSeguidores(seguidores);
+            setSeguidos(seguidos);
+            setSigue(sigue);
+            if(sigue === 1){
+              setTextoSeguir('Siguiendo');
+            }else{
+              setTextoSeguir('+ Seguir');
+            }
+            console.log("Sigue: ", sigue);
+          } else {
+            console.error('Error en la búsqueda:', response.status);
           }
-        });
-    
-        if (response.status === 200) {
-          const { usuario, seguidores, seguidos, sigue } = response.data;
-          
-          // Llenar los datos del usuario
-          setUsername(usuario.NombreUsuario);
-          setFoto(usuario.Foto);
-          // Llenar los datos de seguidores y seguidos
-          setSeguidores(seguidores);
-          setSeguidos(seguidos);
-          setSigue(sigue);
-          if(sigue === 1){
-            setTextoSeguir('Siguiendo');
-          }else{
-            setTextoSeguir('+ Seguir');
-          }
-          console.log("Sigue: ", sigue);
-        } else {
-          console.error('Error en la búsqueda:', response.status);
+        } catch (error) {
+          console.error('Error fatal en búsqueda:', error);
         }
-      } catch (error) {
-        console.error('Error fatal en búsqueda:', error);
-      }
-    };
-
-    const ajenoPub = async () => {
-          axios.get(`http://localhost:4200/mpubAjeno/${localStorage.getItem('usuAjeno')}/${user.IDUsuario}/${user._id}`, {
-      headers: {
-        authorization: 'Bearer ' + localStorage.getItem('token') 
-      }
-    })
-      .then(response => {
-        setPublicaciones(response.data);
-        console.log("Se insertaron las publicaciones");
+      };
+  
+      const ajenoPub = async () => {
+            axios.get(`http://localhost:4200/mpubAjeno/${localStorage.getItem('usuAjeno')}/${user.IDUsuario}/${user._id}`, {
+        headers: {
+          authorization: 'Bearer ' + localStorage.getItem('token') 
+        }
       })
-      .catch(error => {
-        console.error('Error al obtener las publicaciones:', error);
-      });
+        .then(response => {
+          setPublicaciones(response.data);
+          console.log("Se insertaron las publicaciones");
+        })
+        .catch(error => {
+          console.error('Error al obtener las publicaciones:', error);
+        });
+      }
+  
+      buscarUsuario();
+      ajenoPub();
     }
 
-    buscarUsuario();
-    ajenoPub();
   }, []); // Ejecutar una vez al cargar el componente
 
   const handleSeguirClick = async () => {

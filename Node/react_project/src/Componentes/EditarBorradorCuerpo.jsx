@@ -22,18 +22,23 @@ function EditarBorrador() {
     const [usarFoto3, setFoto3] = useState();
 
     const [formData, setFormData] = useState({
-        IDPublicacion: publicacion._id,
-        Titulo: publicacion.Titulo,
-        Descripcion: publicacion.Descripcion,
-        IDPais: publicacion.pais.idPais,
-        Fotos1: publicacion.ImagenUno,
-        Fotos2: publicacion.ImagenDos,
-        Fotos3: publicacion.ImagenTres,
-        Estatus: publicacion.Estatus,
-        IDUsuario: user.IDUsuario
+      IDPublicacion: publicacion ? publicacion._id : '',
+      Titulo: publicacion ? publicacion.Titulo : '',
+      Descripcion: publicacion ? publicacion.Descripcion : '',
+      IDPais: publicacion && publicacion.pais ? publicacion.pais.idPais : '',
+      Fotos1: publicacion ? publicacion.ImagenUno : '',
+      Fotos2: publicacion ? publicacion.ImagenDos : '',
+      Fotos3: publicacion ? publicacion.ImagenTres : '',
+      Estatus: publicacion ? publicacion.Estatus : '',
+      IDUsuario: user ? user.IDUsuario : ''
     });
 
     useEffect(() => {
+      const token = localStorage.getItem('token');
+      // Si no hay token, redirigir al usuario a la página de inicio
+      if (!token) {
+        navigate("/");
+      }
         axios.get('http://localhost:4200/tpaises')
             .then(response => {
                 setPaises(response.data);

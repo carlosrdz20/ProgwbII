@@ -23,6 +23,16 @@ function Corazon(props) {
 		IDUsuario: user.IDUsuario
 	});
 
+	
+	useEffect(() => {
+		
+		const token = localStorage.getItem('token');
+		
+		if (!token) {
+		  navigate("/");
+		}
+		// Aquí puedes realizar otras acciones después de que el estado textoBoton cambie
+	  }, []);
 	const HandleClick = async () => {
 
 		setActive(!active);
@@ -64,6 +74,11 @@ function PublicDisplay({ IDPublicacion, idUsuario, NombreUsu, ImagenUsu, Fecha, 
 
 	useEffect(() => {
 		
+		const token = localStorage.getItem('token');
+		
+		if (!token) {
+		  navigate("/");
+		}
 		console.log("Sigue; ", Sigue);
 		if(Sigue === 1){
             setTextoBoton('Siguiendo');
@@ -72,7 +87,7 @@ function PublicDisplay({ IDPublicacion, idUsuario, NombreUsu, ImagenUsu, Fecha, 
           }
 	
 		// Aquí puedes realizar otras acciones después de que el estado textoBoton cambie
-	  }, []);
+	  }, [Sigue]);
 	
 	const handleRatingChange = async (newRating) => {
 		const data = {

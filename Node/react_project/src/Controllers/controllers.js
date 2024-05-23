@@ -1083,7 +1083,8 @@ const mostrarMisPublicaciones = async (req, res) => {
           PromedioCalificaciones: 1,
           Calificacion: 1
         }
-      }
+      },
+      { $sort: { FechaPub: -1 } }
     ]);
 
     // Calcula el índice de inicio y final para la paginación
@@ -1892,44 +1893,37 @@ const mpubSeguidos = async (req, res) => {
 //Filtros
 const obtenerTopPais = async (req, res) => {
   try {
-      // Obtener todas las publicaciones
-      const publicaciones = await Publicaciones.find({Estatus: 1});
+      
+      const publicaciones = await Publicaciones.find({ Estatus: 1 });
 
-      // Crear un objeto para almacenar el conteo de países
+      
       const conteoPaises = {};
 
-      // Contar cuántas veces se repite cada país en las publicaciones
+      
       publicaciones.forEach(publicacion => {
-          const idPais = publicacion.IDPais.toString(); // Convertir a string para garantizar consistencia en las comparaciones
+          const idPais = publicacion.IDPais.toString(); 
           if (conteoPaises[idPais]) {
               conteoPaises[idPais]++;
           } else {
               conteoPaises[idPais] = 1;
           }
       });
-
-      // Convertir el objeto de conteo a una matriz de pares [idPais, cantidad]
+      
       const conteoPaisesArray = Object.entries(conteoPaises);
-
-      // Ordenar la matriz por la cantidad de repeticiones en orden descendente
       conteoPaisesArray.sort((a, b) => b[1] - a[1]);
-
-      // Obtener los IDs de los países en el top 5
-      const top5Ids = conteoPaisesArray.slice(0, Math.min(conteoPaisesArray.length, 5)).map(par => par[0]);
-
-      // Obtener los nombres de los países correspondientes a los IDs del top 5
+      const top5Ids = conteoPaisesArray.slice(0, 5).map(par => par[0]);
       const top5Paises = await Pais.find({ idPais: { $in: top5Ids } });
 
-      // Crear un objeto para almacenar el resultado final
-      const top5Resultados = top5Paises.map(pais => {
-          const idPais = pais.idPais.toString();
+      
+      const top5Resultados = top5Ids.map(idPais => {
+          const pais = top5Paises.find(p => p.idPais.toString() === idPais);
           const cantidad = conteoPaises[idPais];
           return {
-             pais: pais.pais,
-             imagen: pais.imagen,
-             cantidad };
+              pais: pais.pais,
+              imagen: pais.imagen,
+              cantidad
+          };
       });
-
       res.status(200).json(top5Resultados);
   } catch (error) {
       console.error('Error al obtener el top de países:', error);

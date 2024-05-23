@@ -1,7 +1,7 @@
 import '../Estilos/PerfilCuerpo.css';
 import MenuLateral from "./MenuIzquierdo.jsx";
 import { Row, Col, Container } from 'react-bootstrap';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useUser } from '../Context/UserContext';
@@ -10,18 +10,22 @@ import Offcanvas from 'react-bootstrap/Offcanvas';
 import { BiSolidFoodMenu } from "react-icons/bi";
 
 function PerfilCuerpo() {
-
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [fechaFormateada, setFecha] = useState();
   const [fotoxd, setFotoxd] = useState();
   const [user2, setuser2] = useState();
 
   useEffect(() => {
-
+    const token = localStorage.getItem('token');
+    // Si no hay token, redirigir al usuario a la página de inicio
+    if (!token) {
+      navigate("/");
+    }
     const userData = localStorage.getItem('user');
     const userD = JSON.parse(userData);
 
-    if (userD) {
+    if (userD && token) {
       setuser2(userD);
       console.log("Usuario?:", userD);
       // Formatear la fecha
@@ -67,11 +71,11 @@ function PerfilCuerpo() {
                           <Row>
                             <Col xs={12} md={6}>
                               <label>Nombre de usuario: </label>
-                              <input type="text" id="Usuario" className="InputPerfil" name="NombreUsuario" defaultValue={user.NombreUsuario} disabled/>
+                              <input type="text" id="Usuario" className="InputPerfil" name="NombreUsuario" defaultValue={user ? user.NombreUsuario : ''} disabled/>
                             </Col>
                             <Col xs={12} md={6}>
                               <label>Correo electronico: </label>
-                              <input type="text" id="Correo" className="InputPerfil" name="Correo" defaultValue={user.Correo} disabled/>  
+                              <input type="text" id="Correo" className="InputPerfil" name="Correo" defaultValue={user ? user.Correo : ''} disabled/>  
                             </Col>
                           </Row>
                         </Container>
@@ -81,13 +85,13 @@ function PerfilCuerpo() {
                           <Row>
                             <Col xs={12} md={6}>
                               <label>Nombre completo: </label>
-                              <input type="text" id="Nombre" className="InputPerfil" name="Nombre" defaultValue={user.Nombre} disabled/>
+                              <input type="text" id="Nombre" className="InputPerfil" name="Nombre" defaultValue={user ? user.Nombre : ''} disabled/>
                             </Col>
                             <Col xs={12} md={6}>
                               <div>
                                 <label>Genero: </label>                                
                               </div>
-                              <select id="Combobox" className="Combobox" name="Genero" defaultValue={user.Genero === 'masculino' ? "masculino" : "femenino"} disabled>
+                              <select id="Combobox" className="Combobox" name="Genero" defaultValue={user && user.Genero === 'masculino' ? "masculino" : "femenino"} disabled>
                                 <option value="masculino">Masculino</option>
                                 <option value="femenino">Femenino</option>
                               </select>
@@ -100,7 +104,7 @@ function PerfilCuerpo() {
                           <Row>
                             <Col xs={12} md={6}>
                               <label>Contraseña actual: </label>
-                              <input type="text" id="Password" className="InputPerfil" name="Contrasena" defaultValue={user.Contrasena} disabled/>
+                              <input type="text" id="Password" className="InputPerfil" name="Contrasena" defaultValue={user ? user.Contrasena : ''} disabled/>
                             </Col>
                             <Col xs={12} md={6}>
                               <label>Fecha de nacimiento: </label>
